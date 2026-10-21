@@ -1,0 +1,35 @@
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Large Datasets and Caches
+data/
+datasets/
+*.h5
+*.h5.gz
+*.parquet
+*.part
+.cache/
+
+# Outputs & Generated Artifacts
+outputs/features/*.npz
+outputs/features/*.csv
+outputs/features/*.parquet
+outputs/results/*.pkl
+outputs/results/*.joblib
+catboost_info/
+
+# LaTeX compilation temporaries
+outputs/report/*.aux
+outputs/report/*.log
+outputs/report/*.out
+outputs/report/*.synctex.gz
+outputs/report/*.toc
+
+# Jupyter Checkpoints
+.ipynb_checkpoints/
+
+# OS generated files
+.DS_Store
+Thumbs.db
