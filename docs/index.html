@@ -1,0 +1,722 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>PCam Tumour Detection — ES 335 ML Project</title>
+  <link rel="stylesheet" href="style.css">
+
+  <!-- KaTeX for math rendering -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css" crossorigin="anonymous">
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js" crossorigin="anonymous"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"
+    crossorigin="anonymous"
+    onload="renderMathInElement(document.body, {
+      delimiters: [
+        {left:'$$', right:'$$', display:true},
+        {left:'$',  right:'$',  display:false}
+      ]
+    });"></script>
+</head>
+<body>
+
+  <!-- ── Site Header ── -->
+  <header class="site-header">
+    <div class="header-inner">
+      <div>
+        <div class="site-title">PCam Tumour Detection</div>
+        <div class="site-subtitle">Benchmarking Classical ML on Histopathology Patches &bull; ES 335</div>
+      </div>
+      <div class="header-right">
+        <div class="team-info">
+          <strong>ES 335 &bull; IIT Gandhinagar</strong>
+          Devarsh Patel (24110245) &bull; Dhrumil Bhutaiya (24110075)
+        </div>
+        <button class="btn-theme" id="btnTheme" aria-label="Toggle colour scheme">
+          <span id="themeIcon">&#9790;</span> Dark
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- ── Tab Navigation ── -->
+  <nav class="tab-nav">
+    <div class="tab-nav-inner">
+      <button class="tab-btn active" data-tab="tab-overview">1. Overview</button>
+      <button class="tab-btn" data-tab="tab-inspector">2. Diagnostic Studio</button>
+      <button class="tab-btn" data-tab="tab-threshold">3. Threshold Simulator</button>
+      <button class="tab-btn" data-tab="tab-errors">4. Error Gallery</button>
+      <button class="tab-btn" data-tab="tab-benchmarks">5. Results &amp; Benchmarks</button>
+    </div>
+  </nav>
+
+  <!-- ── Main Content ── -->
+  <main class="main-content">
+
+    <!-- ================================================================ -->
+    <!-- TAB 1: OVERVIEW                                                  -->
+    <!-- ================================================================ -->
+    <div id="tab-overview" class="tab-pane active">
+
+      <!-- Key Stats -->
+      <div class="stat-row">
+        <div class="stat-box">
+          <div class="stat-val">79.76%</div>
+          <div class="stat-label">Champion Test Accuracy (Hybrid Blend)</div>
+        </div>
+        <div class="stat-box">
+          <div class="stat-val">0.8853</div>
+          <div class="stat-label">ROC-AUC on 5,000 Held-Out Patches</div>
+        </div>
+        <div class="stat-box">
+          <div class="stat-val">59-dim</div>
+          <div class="stat-label">Handcrafted Multimodal Feature Vector</div>
+        </div>
+      </div>
+
+      <!-- Project Context -->
+      <div class="card">
+        <h2 class="card-title">Project Overview</h2>
+        <p class="card-subtitle">Automated sentinel lymph node metastasis detection for breast cancer staging.</p>
+
+        <p style="color:var(--text-muted); margin-bottom:1rem; font-size:0.92rem;">
+          Metastatic involvement of sentinel lymph nodes is the most critical prognostic indicator for breast cancer survival.
+          Pathologists must manually review gigapixel Whole-Slide Images (WSIs), an exhausting process where focal micro-metastases
+          containing as few as 10&ndash;20 cancer cells can be overlooked.
+          This project provides a controlled benchmark comparing classical machine learning paradigms using handcrafted
+          multimodal histological features on the <strong>PatchCamelyon (PCam)</strong> dataset.
+        </p>
+
+        <p style="color:var(--text-muted); font-size:0.88rem;">
+          Every $96 \times 96$ px patch (scanned at $10\times$ magnification, $0.97\,\mu\text{m/px}$) carries a binary label
+          governed strictly by its central $32 \times 32$ window: the patch is positive (tumour) if and only if at least one pixel
+          of metastatic carcinoma falls within this central region.
+          We evaluate on a fixed split of 40,000 training, 5,000 validation, and 5,000 test patches.
+        </p>
+      </div>
+
+      <!-- Feature Pipeline & ML Paradigms -->
+      <div class="grid-2">
+
+        <div class="card">
+          <h3 class="card-title">59-Dimensional Feature Pipeline</h3>
+          <p class="card-subtitle">Biologically grounded histological representations engineered from raw pixels.</p>
+
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>Feature Family</th>
+                <th>Dim</th>
+                <th>Biological Target</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><strong>Color Moments</strong></td>
+                <td>18</td>
+                <td>Mean &amp; std across RGB, HSV, and CIE-Lab. Captures basophilic hematoxylin staining vs eosin stroma.</td>
+              </tr>
+              <tr>
+                <td><strong>GLCM Texture</strong></td>
+                <td>6</td>
+                <td>Contrast, dissimilarity, homogeneity, energy, correlation, ASM. Measures chromatin spatial disorder.</td>
+              </tr>
+              <tr>
+                <td><strong>Local Binary Patterns</strong></td>
+                <td>11</td>
+                <td>Rotation-invariant uniform codes ($P=8, R=1$). Detects nuclear membrane borders and pleomorphism.</td>
+              </tr>
+              <tr>
+                <td><strong>Spatial Edge Gradients</strong></td>
+                <td>4</td>
+                <td>Sobel mean, Sobel std, edge density, Laplacian variance. Measures nuclear crowding and packing density.</td>
+              </tr>
+              <tr>
+                <td><strong>Bilinear Pixel PCA</strong></td>
+                <td>20</td>
+                <td>Downsampled spatial luminance projections. Preserves macroscopic tissue architecture.</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="card">
+          <h3 class="card-title">Machine Learning Paradigms</h3>
+          <p class="card-subtitle">Controlled progression from linear baselines to multi-paradigm ensembles.</p>
+
+          <ul class="findings-list">
+            <li>
+              <span class="finding-tag tag-linear">Linear</span>
+              <span>
+                <strong>Logistic Regression ($L_2$) &amp; Linear SVM:</strong>
+                Established the flat hyperplane capacity ceiling ($\approx 75.8\%$ test accuracy),
+                proving that linear decision boundaries cannot untangle histological tissue complexity.
+              </span>
+            </li>
+            <li>
+              <span class="finding-tag tag-rf">RF</span>
+              <span>
+                <strong>Tuned Random Forest (150 Trees):</strong>
+                Maximized positive predictive value ($85.31\%$ precision) and achieved the smallest
+                generalization drop ($\Delta = 0.98\%$) of any model.
+              </span>
+            </li>
+            <li>
+              <span class="finding-tag tag-gbm">GBM</span>
+              <span>
+                <strong>HistGradientBoosting:</strong>
+                Fast histogram-binned trees that broke the linear decision bottleneck,
+                reaching $78.82\%$ test accuracy as the top single model.
+              </span>
+            </li>
+            <li>
+              <span class="finding-tag tag-svm">SVM</span>
+              <span>
+                <strong>RBF Kernel SVM:</strong>
+                Continuous hyperspherical decision boundaries. Highest sensitivity ($73.28\%$)
+                but suffered from validation sample variance when over-regularized.
+              </span>
+            </li>
+            <li>
+              <span class="finding-tag tag-champion">Champion</span>
+              <span>
+                <strong>Hybrid Blend (50% RBF + 50% HistGBM):</strong>
+                Tournament champion with the lowest calibration Brier score ($0.1426$),
+                $79.76\%$ test accuracy, and $0.8853$ ROC-AUC.
+              </span>
+            </li>
+          </ul>
+        </div>
+
+      </div>
+
+      <!-- Consensus Failures -->
+      <div class="card">
+        <h3 class="card-title">The Empirical Feature Representation Limit</h3>
+        <p class="card-subtitle">
+          Why 613 consensus failures across all model families point to a fundamental ceiling, not algorithmic error.
+        </p>
+        <p style="font-size:0.88rem; color:var(--text-muted); margin-bottom:1rem;">
+          Of the 1,009 total misclassifications made by the champion ensemble, <strong>613 (60.7%)</strong> were failures
+          shared simultaneously across all model families — Logistic Regression, Random Forest, HistGBM, and RBF SVM all
+          made the same prediction error on these 613 patches. This figure constitutes 12.3% of the entire test cohort.
+          These consensus failures are not caused by model-specific algorithmic weaknesses; they arise because
+          <em>global pooled features cannot encode the sub-cellular spatial relationships</em> that a pathologist resolves
+          under high magnification. Convolutional receptive fields are necessary to surpass this ceiling.
+        </p>
+
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>Failure Tier</th>
+              <th>Error Type</th>
+              <th>Share</th>
+              <th>Biological Mechanism</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>Tier 1: Dense Germinal Centers</strong></td>
+              <td><span class="badge badge-warning">False Positive</span></td>
+              <td>30.7%</td>
+              <td>Reactive lymphoid follicles produce high edge density and intense hematoxylin absorption that global features cannot distinguish from invasive carcinoma sheets.</td>
+            </tr>
+            <tr>
+              <td><strong>Tier 2: Stroma-Dense Micrometastases</strong></td>
+              <td><span class="badge badge-tumor">False Negative</span></td>
+              <td>38.7%</td>
+              <td>Desmoplastic stroma dilutes the localized cancer signal during global feature pooling when only 5&ndash;15 cells occupy the central window.</td>
+            </tr>
+            <tr>
+              <td><strong>Tier 3: Necrosis &amp; Ghost Cells</strong></td>
+              <td><span class="badge badge-tumor">False Negative</span></td>
+              <td>15.9%</td>
+              <td>Ischemic karyolysis dissolves nuclear structure into amorphous ghost cells, collapsing recognizable LBP texture codes.</td>
+            </tr>
+            <tr>
+              <td><strong>Tier 4: Adipose &amp; Boundary Artifacts</strong></td>
+              <td><span class="badge badge-warning">Both</span></td>
+              <td>14.7%</td>
+              <td>Perinodal fat vacuoles (&gt;70% unstained area) and optical refractive edges skew GLCM statistics systematically.</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+    </div><!-- /tab-overview -->
+
+
+    <!-- ================================================================ -->
+    <!-- TAB 2: DIAGNOSTIC STUDIO                                         -->
+    <!-- ================================================================ -->
+    <div id="tab-inspector" class="tab-pane">
+      <div class="card">
+        <div style="display:flex; justify-content:space-between; align-items:flex-start; flex-wrap:wrap; gap:1rem; margin-bottom:1rem;">
+          <div>
+            <h2 class="card-title" id="patchIdTitle">Patch Inspector</h2>
+            <div style="display:flex; flex-wrap:wrap; gap:0.4rem; margin-top:0.35rem;">
+              <span id="currentPatchLabel" class="badge badge-normal">NORMAL</span>
+              <span id="patchCategoryBadge" class="badge badge-consensus">Benign Normal</span>
+              <span id="consensusBadge" class="badge badge-consensus">Consensus Agreement</span>
+            </div>
+          </div>
+          <div style="display:flex; gap:0.5rem; flex-wrap:wrap;">
+            <button id="btnPrevPatch" class="btn-tool">&#8592; Previous</button>
+            <button id="btnRandomPatch" class="btn-tool">Random</button>
+            <button id="btnNextPatch" class="btn-tool">Next &#8594;</button>
+          </div>
+        </div>
+
+        <!-- Category filter pills -->
+        <div class="filter-pills">
+          <span class="filter-label">Filter:</span>
+          <button class="filter-pill inspector-pill active" data-category="all">All (80)</button>
+          <button class="filter-pill inspector-pill" data-category="benign">Clear Benign (16)</button>
+          <button class="filter-pill inspector-pill" data-category="tumor">Invasive Tumour (16)</button>
+          <button class="filter-pill inspector-pill" data-category="fp">False Positives (16)</button>
+          <button class="filter-pill inspector-pill" data-category="fn">False Negatives (24)</button>
+          <button class="filter-pill inspector-pill" data-category="disputed">Ensemble Disputed (8)</button>
+        </div>
+
+        <div class="inspector-layout">
+          <!-- Left: canvas -->
+          <div>
+            <div class="canvas-wrapper">
+              <canvas id="patchCanvas" width="288" height="288"></canvas>
+            </div>
+
+            <div class="canvas-toolbar">
+              <button id="btnToggleROI" class="btn-tool active">Central 32&times;32 ROI</button>
+              <button class="btn-tool btn-filter active" data-filter="none">Normal</button>
+              <button class="btn-tool btn-filter" data-filter="sobel">Sobel Edges</button>
+              <button class="btn-tool btn-filter" data-filter="grayscale">Grayscale</button>
+              <button class="btn-tool btn-filter" data-filter="invert">Invert</button>
+            </div>
+
+            <div id="riskAlertBox" class="alert-box warning">
+              Reviewing case&hellip;
+            </div>
+          </div>
+
+          <!-- Right: metrics -->
+          <div>
+            <!-- Probability meters -->
+            <div class="panel">
+              <div class="panel-title">Model Tumour Probability Scores</div>
+              <div class="panel-subtitle">Decision threshold: 0.50 &bull; Higher = model believes tumour present</div>
+
+              <div class="model-meter">
+                <div class="meter-header">
+                  <span class="model-name">Hybrid Blend (50/50 Champion)</span>
+                  <span class="model-proba" id="valBlend">0.000</span>
+                </div>
+                <div class="progress-track"><div id="meterBlend" class="progress-fill fill-blend" style="width:0%"></div></div>
+              </div>
+
+              <div class="model-meter">
+                <div class="meter-header">
+                  <span class="model-name">HistGradientBoosting</span>
+                  <span class="model-proba" id="valHgbm">0.000</span>
+                </div>
+                <div class="progress-track"><div id="meterHgbm" class="progress-fill fill-hgbm" style="width:0%"></div></div>
+              </div>
+
+              <div class="model-meter">
+                <div class="meter-header">
+                  <span class="model-name">Tuned Random Forest</span>
+                  <span class="model-proba" id="valRf">0.000</span>
+                </div>
+                <div class="progress-track"><div id="meterRf" class="progress-fill fill-rf" style="width:0%"></div></div>
+              </div>
+
+              <div class="model-meter">
+                <div class="meter-header">
+                  <span class="model-name">RBF Kernel SVM</span>
+                  <span class="model-proba" id="valRbf">0.000</span>
+                </div>
+                <div class="progress-track"><div id="meterRbf" class="progress-fill fill-rbf" style="width:0%"></div></div>
+              </div>
+
+              <div class="model-meter">
+                <div class="meter-header">
+                  <span class="model-name">Logistic Regression (Baseline)</span>
+                  <span class="model-proba" id="valLr">0.000</span>
+                </div>
+                <div class="progress-track"><div id="meterLr" class="progress-fill fill-lr" style="width:0%"></div></div>
+              </div>
+            </div>
+
+            <!-- Feature Z-Score bars -->
+            <div class="panel">
+              <div class="panel-title">Biological Feature Deviations (Z-Score vs Cohort Mean)</div>
+              <div class="panel-subtitle">
+                Deviation in standard deviations ($\sigma$) from the global test cohort mean.
+                Blue indicates elevated values; red indicates deficits.
+              </div>
+              <div id="featureBarContainer"></div>
+              <div style="margin-top:0.85rem; padding-top:0.75rem; border-top:1px solid var(--border); font-size:0.78rem; color:var(--text-muted);">
+                <strong>Notes:</strong> <span id="clinicalNoteText">Loading&hellip;</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div><!-- /tab-inspector -->
+
+
+    <!-- ================================================================ -->
+    <!-- TAB 3: THRESHOLD SIMULATOR                                       -->
+    <!-- ================================================================ -->
+    <div id="tab-threshold" class="tab-pane">
+
+      <div class="sim-controls">
+        <div class="sim-header">
+          <div>
+            <div class="sim-title">Real-Time Decision Threshold Simulator</div>
+            <div class="sim-desc">
+              Evaluates all <strong>5,000 held-out test patches</strong> dynamically as you drag the operating threshold slider.
+            </div>
+          </div>
+          <div style="display:flex; align-items:center; gap:0.5rem;">
+            <label for="selectModel" style="font-size:0.8rem; color:var(--text-muted);">Model:</label>
+            <select id="selectModel" class="select-model">
+              <option value="b">Champion Hybrid Blend (50/50)</option>
+              <option value="h">HistGradientBoosting</option>
+              <option value="f">Tuned Random Forest</option>
+              <option value="r">RBF Kernel SVM</option>
+              <option value="l">Logistic Regression Baseline</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="slider-row">
+          <span class="slider-label">Threshold (&tau;):</span>
+          <input type="range" id="sliderThreshold" class="threshold-slider" min="0.01" max="0.99" step="0.01" value="0.50">
+          <div class="threshold-readout" id="thresholdVal">0.50</div>
+        </div>
+
+        <div class="preset-buttons">
+          <span class="preset-label">Clinical regimes:</span>
+          <button class="btn-preset" data-preset="0.35">Screening (&tau; = 0.35, high sensitivity)</button>
+          <button class="btn-preset" data-preset="0.50">Balanced (&tau; = 0.50, max accuracy)</button>
+          <button class="btn-preset" data-preset="0.65">Confirmatory (&tau; = 0.65, high precision)</button>
+        </div>
+      </div>
+
+      <div class="grid-2">
+        <!-- Confusion Matrix -->
+        <div class="card">
+          <h3 class="card-title">Live Confusion Matrix (N = 5,000)</h3>
+          <p class="card-subtitle">Counts recalculate in real time as the threshold changes.</p>
+
+          <table class="cm-table">
+            <thead>
+              <tr>
+                <th style="background:transparent; border:none;"></th>
+                <th>Predicted Benign (0)</th>
+                <th>Predicted Tumour (1)</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <th>Actual Benign (2,500)</th>
+                <td class="cm-cell cm-cell-tn">
+                  <span id="cmTN">2,161</span>
+                  <span class="cm-cell-sub">True Negatives</span>
+                </td>
+                <td class="cm-cell cm-cell-fp">
+                  <span id="cmFP">339</span>
+                  <span class="cm-cell-sub">False Positives</span>
+                </td>
+              </tr>
+              <tr>
+                <th>Actual Tumour (2,500)</th>
+                <td class="cm-cell cm-cell-fn">
+                  <span id="cmFN">673</span>
+                  <span class="cm-cell-sub">False Negatives</span>
+                </td>
+                <td class="cm-cell cm-cell-tp">
+                  <span id="cmTP">1,827</span>
+                  <span class="cm-cell-sub">True Positives</span>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+
+          <div id="simCallout" class="callout">Loading clinical summary&hellip;</div>
+        </div>
+
+        <!-- Metrics -->
+        <div class="card">
+          <h3 class="card-title">Operational Metrics</h3>
+          <p class="card-subtitle">All metrics update as the threshold and model change.</p>
+
+          <div class="grid-3" style="margin-bottom:1rem;">
+            <div class="metric-card">
+              <div class="metric-val" id="metricAcc">79.76%</div>
+              <div class="metric-label">Accuracy</div>
+            </div>
+            <div class="metric-card">
+              <div class="metric-val" id="metricSens">73.08%</div>
+              <div class="metric-label">Sensitivity</div>
+            </div>
+            <div class="metric-card">
+              <div class="metric-val" id="metricSpec">86.44%</div>
+              <div class="metric-label">Specificity</div>
+            </div>
+          </div>
+
+          <div class="grid-3">
+            <div class="metric-card">
+              <div class="metric-val" id="metricPrec">84.35%</div>
+              <div class="metric-label">Precision</div>
+            </div>
+            <div class="metric-card">
+              <div class="metric-val" id="metricF1">0.7831</div>
+              <div class="metric-label">F1-Score</div>
+            </div>
+            <div class="metric-card">
+              <div class="metric-val" id="metricBalAcc">79.76%</div>
+              <div class="metric-label">Balanced Accuracy</div>
+            </div>
+          </div>
+
+          <div style="margin-top:1.25rem; font-size:0.82rem; color:var(--text-muted); line-height:1.5; background:var(--bg-surface); border-radius:var(--radius); padding:0.85rem; border:1px solid var(--border);">
+            <strong>Clinical note:</strong> Lowering $\tau$ to $0.35$ raises sensitivity above $90\%$,
+            ensuring micro-metastases are not missed during preliminary triage.
+            Raising $\tau$ to $0.65$ reduces false alarms for confirmatory surgical planning.
+          </div>
+        </div>
+      </div>
+    </div><!-- /tab-threshold -->
+
+
+    <!-- ================================================================ -->
+    <!-- TAB 4: ERROR GALLERY                                             -->
+    <!-- ================================================================ -->
+    <div id="tab-errors" class="tab-pane">
+      <div class="card">
+        <h2 class="card-title">Pathological Failure Gallery</h2>
+        <p class="card-subtitle">
+          4-tier taxonomy of classification failures on the held-out test cohort. Click any card to inspect its feature profile in the Diagnostic Studio.
+        </p>
+
+        <div class="filter-pills" style="margin-bottom:1.5rem;">
+          <button class="filter-pill gallery-pill active" data-tier="all">All Errors &amp; Disputed (48)</button>
+          <button class="filter-pill gallery-pill" data-tier="Tier 1">Tier 1: Germinal Centers (16 FP)</button>
+          <button class="filter-pill gallery-pill" data-tier="Tier 2">Tier 2: Stroma-Dense (16 FN)</button>
+          <button class="filter-pill gallery-pill" data-tier="Tier 3">Tier 3: Necrosis (8 FN)</button>
+          <button class="filter-pill gallery-pill" data-tier="Disputed">Ensemble Disagreements (8)</button>
+        </div>
+
+        <div class="gallery-grid" id="galleryGrid">
+          <!-- Populated dynamically by app.js -->
+        </div>
+      </div>
+    </div><!-- /tab-errors -->
+
+
+    <!-- ================================================================ -->
+    <!-- TAB 5: RESULTS & BENCHMARKS                                      -->
+    <!-- ================================================================ -->
+    <div id="tab-benchmarks" class="tab-pane">
+
+      <!-- Leaderboard -->
+      <div class="card">
+        <h2 class="card-title">Final Test Benchmark Leaderboard (N = 5,000)</h2>
+        <p class="card-subtitle">
+          Evaluated once on the untouched held-out test cohort. Ranked by overall test accuracy.
+          Bootstrap 95% confidence intervals computed over 1,000 resamples ($p &lt; 10^{-7}$ vs linear baselines).
+        </p>
+        <div style="overflow-x:auto;">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>Model</th>
+                <th>Accuracy</th>
+                <th>ROC-AUC</th>
+                <th>PR-AUC</th>
+                <th>Sensitivity</th>
+                <th>Specificity</th>
+                <th>Precision</th>
+                <th>F1</th>
+                <th>Brier</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr class="highlight-row">
+                <td><strong>Hybrid Blend (50/50 RBF + HistGBM)</strong></td>
+                <td><strong>79.76%</strong></td>
+                <td><strong>0.8853</strong></td>
+                <td><strong>0.8767</strong></td>
+                <td>73.08%</td>
+                <td>86.44%</td>
+                <td>84.35%</td>
+                <td><strong>0.7831</strong></td>
+                <td><strong>0.1426</strong></td>
+              </tr>
+              <tr>
+                <td>Hybrid Blend (70/30 RBF + HistGBM)</td>
+                <td>79.56%</td>
+                <td>0.8804</td>
+                <td>0.8740</td>
+                <td>72.32%</td>
+                <td>86.80%</td>
+                <td>84.57%</td>
+                <td>0.7796</td>
+                <td>0.1453</td>
+              </tr>
+              <tr>
+                <td>HistGradientBoosting</td>
+                <td>78.82%</td>
+                <td>0.8845</td>
+                <td>0.8724</td>
+                <td>71.84%</td>
+                <td>85.80%</td>
+                <td>83.50%</td>
+                <td>0.7723</td>
+                <td>0.1460</td>
+              </tr>
+              <tr>
+                <td>Default RBF Kernel SVM</td>
+                <td>78.80%</td>
+                <td>0.8746</td>
+                <td>0.8681</td>
+                <td><strong>73.28%</strong></td>
+                <td>84.32%</td>
+                <td>82.37%</td>
+                <td>0.7756</td>
+                <td>0.1493</td>
+              </tr>
+              <tr>
+                <td>Tuned Random Forest (150 Trees)</td>
+                <td>78.46%</td>
+                <td>0.8863</td>
+                <td>0.8714</td>
+                <td>68.76%</td>
+                <td><strong>88.16%</strong></td>
+                <td><strong>85.31%</strong></td>
+                <td>0.7615</td>
+                <td>0.1467</td>
+              </tr>
+              <tr>
+                <td>Tuned RBF Kernel SVM ($C=3.0$)</td>
+                <td>77.92%</td>
+                <td>0.8637</td>
+                <td>0.8626</td>
+                <td>70.88%</td>
+                <td>84.96%</td>
+                <td>82.50%</td>
+                <td>0.7625</td>
+                <td>0.1535</td>
+              </tr>
+              <tr>
+                <td>Logistic Regression ($L_2$, Baseline)</td>
+                <td>75.84%</td>
+                <td>0.8373</td>
+                <td>0.8284</td>
+                <td>70.96%</td>
+                <td>80.72%</td>
+                <td>78.63%</td>
+                <td>0.7460</td>
+                <td>0.1679</td>
+              </tr>
+              <tr>
+                <td>Linear SVM (Dual, $C=1.0$)</td>
+                <td>75.46%</td>
+                <td>0.8292</td>
+                <td>0.8226</td>
+                <td>71.12%</td>
+                <td>79.80%</td>
+                <td>77.88%</td>
+                <td>0.7435</td>
+                <td>0.1850</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- ROC + PR plots -->
+      <div class="grid-2">
+        <div class="card">
+          <h3 class="card-title">ROC &amp; PR Discrimination Curves</h3>
+          <p class="card-subtitle">Full threshold discrimination on the held-out test cohort.</p>
+          <div style="display:flex; flex-direction:column; gap:1rem;">
+            <img src="plots/test_roc_curves.png" alt="Test ROC Curves" class="plot-img">
+            <img src="plots/test_pr_curves.png" alt="Test PR Curves" class="plot-img">
+          </div>
+        </div>
+
+        <div>
+          <!-- Generalization Gap -->
+          <div class="card">
+            <h3 class="card-title">Generalization Gap (Val &rarr; Test)</h3>
+            <p class="card-subtitle">Overfitting quantified as validation-to-test accuracy drop.</p>
+            <table class="data-table">
+              <thead>
+                <tr>
+                  <th>Model</th>
+                  <th>Val Acc</th>
+                  <th>Test Acc</th>
+                  <th>Drop (&Delta;)</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td><strong>Tuned Random Forest</strong></td>
+                  <td>79.44%</td>
+                  <td>78.46%</td>
+                  <td>&minus;0.98% <em>(most stable)</em></td>
+                </tr>
+                <tr>
+                  <td><strong>HistGradientBoosting</strong></td>
+                  <td>80.66%</td>
+                  <td>78.82%</td>
+                  <td>&minus;1.84%</td>
+                </tr>
+                <tr class="highlight-row">
+                  <td><strong>Hybrid Blend (50/50)</strong></td>
+                  <td>81.92%</td>
+                  <td>79.76%</td>
+                  <td>&minus;2.16%</td>
+                </tr>
+                <tr>
+                  <td>Logistic Regression</td>
+                  <td>78.18%</td>
+                  <td>75.84%</td>
+                  <td>&minus;2.34%</td>
+                </tr>
+                <tr>
+                  <td>Tuned RBF Kernel SVM</td>
+                  <td>82.36%</td>
+                  <td>77.92%</td>
+                  <td>&minus;4.44% <em>(overfitted)</em></td>
+                </tr>
+              </tbody>
+            </table>
+            <p style="margin-top:0.85rem; font-size:0.8rem; color:var(--text-muted); line-height:1.5;">
+              Tree ensembles generalized with consistent stability (&Delta; &lt; 2%), while the
+              high-capacity tuned RBF SVM ($C=3.0$) suffered from validation sample variance.
+              Blending both orthogonal paradigms yielded the best test generalization overall.
+            </p>
+          </div>
+
+          <!-- Error consensus plots -->
+          <div class="card">
+            <h3 class="card-title">Error Consensus &amp; Failure Taxonomy</h3>
+            <p class="card-subtitle">Cross-paradigm consensus failures demonstrate the empirical feature limit.</p>
+            <img src="plots/consensus_vs_specific_errors.png" alt="Consensus vs Specific Errors" class="plot-img" style="margin-bottom:1rem;">
+            <img src="plots/error_taxonomy_breakdown.png" alt="Failure Taxonomy Breakdown" class="plot-img">
+          </div>
+        </div>
+      </div>
+
+    </div><!-- /tab-benchmarks -->
+
+  </main>
+
+  <!-- Application Engine -->
+  <script src="app.js"></script>
+</body>
+</html>
