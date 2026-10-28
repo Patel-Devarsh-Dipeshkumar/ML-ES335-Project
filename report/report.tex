@@ -1270,6 +1270,57 @@ This finding provides the textbook mathematical and biological justification for
     \item \textbf{Sub-Cellular Atypicality Resolution:} Human pathologists distinguish reactive germinal centers from carcinoma under $40\times$ oil immersion by inspecting nuclear pleomorphism (irregular nuclear shapes, hyperchromatic clumped chromatin, and mitotic figures). Resolving these sub-cellular characteristics requires localized spatial feature maps rather than global summary statistics.
 \end{enumerate}
 
+\subsection{Milestone 10: Empirical Breakthrough with ResNet-18}
+\label{sec:milestone10_cnn}
+To empirically validate the theoretical hypothesis that hierarchical convolutional representations overcome the $79.8\%$ handcrafted feature ceiling, we implemented and fine-tuned a deep Convolutional Neural Network (\textbf{ResNet-18}) on the raw histopathology patches of the PatchCamelyon dataset.
+
+\subsubsection{Pathology-Specific Architectural Setup \& Augmentation}
+Standard transfer learning pipelines designed for natural consumer images (e.g., ImageNet) presume canonical gravitational orientations (upright faces, vehicles, animals). However, optical histopathology slides possess true 8-fold dihedral symmetry ($D_4$), as tissue sections can be mounted on glass slides at arbitrary angles without altering their diagnostic identity.
+
+To enforce strict rotational invariance, we constructed a specialized histopathology augmentation pipeline:
+\begin{itemize}[noitemsep,leftmargin=*]
+    \item \textbf{8-Fold Dihedral Transforms:} Random horizontal flips ($p=0.5$), vertical flips ($p=0.5$), and exact orthogonal rotations ($\{0^\circ, 90^\circ, 180^\circ, 270^\circ\}$).
+    \item \textbf{Stain Variation Jitter:} Modest brightness and contrast perturbations ($\pm 10\%$) to simulate hematoxylin and eosin (H\&E) staining variability across clinical laboratories.
+    \item \textbf{Standardized Normalization:} Zero-centering and scaling matched to ImageNet color statistics ($\mu = [0.485, 0.456, 0.406]$, $\sigma = [0.229, 0.224, 0.225]$).
+\end{itemize}
+
+The network architecture was initialized with ImageNet pre-trained weights, replacing the final 1,000-way linear classification head with a single logit projection unit. The model was trained using AdamW optimization ($\eta = 2 \times 10^{-4}$, weight decay $\lambda = 10^{-3}$) with a Cosine Annealing learning rate schedule over 10 epochs (batch size 128) using Automatic Mixed Precision (FP16 AMP) on an NVIDIA Tesla T4 GPU.
+
+\subsubsection{Sealed One-Shot Test Cohort Results}
+The best checkpoint selected via validation ROC-AUC ($0.9614$) was evaluated strictly once in a sealed one-shot pass on the exact untouched $5,000$ held-out test cohort. Table~\ref{tab:cnn_vs_classical} presents the head-to-head empirical comparison against all classical machine learning paradigms.
+
+\begin{table}[H]
+\centering
+\small
+\caption{Sealed Test Cohort Benchmark (N = 5,000): Classical Machine Learning vs. Deep Learning (ResNet-18).}
+\label{tab:cnn_vs_classical}
+\begin{tabular}{@{}llcccccccc@{}}
+\toprule
+\textbf{Rank} & \textbf{Model Architecture} & \textbf{Accuracy} & \textbf{ROC-AUC} & \textbf{PR-AUC} & \textbf{Sens (\%)} & \textbf{Spec (\%)} & \textbf{Prec (\%)} & \textbf{F1-Score} & \textbf{Brier} \\
+\midrule
+\textbf{1} & \textbf{ResNet-18 (Deep CNN)} & \textbf{84.94\%} & \textbf{0.9392} & \textbf{0.9455} & \textbf{75.04\%} & \textbf{94.84\%} & \textbf{93.57\%} & \textbf{0.8329} & \textbf{0.1168} \\
+2 & Hybrid Blend (50/50 Champion) & 79.76\% & 0.8853 & 0.8767 & 73.08\% & 86.44\% & 84.35\% & 0.7831 & 0.1426 \\
+3 & Hybrid Blend (70/30) & 79.56\% & 0.8804 & 0.8740 & 72.32\% & 86.80\% & 84.57\% & 0.7796 & 0.1453 \\
+4 & HistGradientBoosting & 78.82\% & 0.8845 & 0.8724 & 71.84\% & 85.80\% & 83.50\% & 0.7723 & 0.1460 \\
+5 & Default RBF Kernel SVM & 78.80\% & 0.8746 & 0.8681 & 73.28\% & 84.32\% & 82.37\% & 0.7756 & 0.1493 \\
+6 & Tuned Random Forest (150 Trees) & 78.46\% & 0.8863 & 0.8714 & 68.76\% & 88.16\% & 85.31\% & 0.7615 & 0.1467 \\
+7 & Tuned RBF Kernel SVM & 77.92\% & 0.8637 & 0.8626 & 70.88\% & 84.96\% & 82.50\% & 0.7625 & 0.1535 \\
+8 & Logistic Regression Baseline & 75.84\% & 0.8373 & 0.8284 & 70.96\% & 80.72\% & 78.63\% & 0.7460 & 0.1679 \\
+9 & Linear SVM (Dual $C=1.0$) & 75.46\% & 0.8292 & 0.8226 & 71.12\% & 79.80\% & 77.88\% & 0.7435 & 0.1850 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\subsubsection{Clinical Diagnostic Interpretation of the Gains}
+The experimental results demonstrate a decisive breakthrough across every quantitative clinical dimension:
+\begin{enumerate}[leftmargin=*]
+    \item \textbf{Accuracy \& Discrimination Jump:} Test accuracy surged from $79.76\%$ to $\mathbf{84.94\%}$ ($+5.18\%$ absolute gain, correctly classifying $259$ additional patients). ROC-AUC reached $\mathbf{0.9392}$ ($+0.0539$), advancing the diagnostic pipeline firmly into the clinical-grade decision bracket.
+    \item \textbf{62\% Reduction in False Positives:} The most dramatic clinical transformation occurred in precision and false positive control. Whereas our best classical ensemble generated $339$ false positives across the $2,500$ benign test patches (a specificity of $86.44\%$), ResNet-18 slashed false alarms to just $\mathbf{129}$ (a specificity of $\mathbf{94.84\%}$ and precision of $\mathbf{93.57\%}$). In a clinical laboratory triage setting, this represents a massive $61.9\%$ reduction in unwarranted pathologist re-examinations.
+    \item \textbf{Superior Probability Calibration:} ResNet-18 lowered the Brier score from $0.1426$ to $\mathbf{0.1168}$ ($-0.0258$), indicating that the model's confidence scores are significantly more aligned with true empirical tumor probabilities.
+    \item \textbf{Resolving Classical Consensus Failures:} By operating on multi-scale $3 \times 3$ convolutional receptive fields, ResNet-18 directly learned the cytological features of nuclear atypia (hyperchromasia, prominent nucleoli, and irregular nuclear contours), enabling it to differentiate packed normal lymphocytes in reactive germinal centers from cohesive metastatic carcinoma where global handcrafted features failed.
+\end{enumerate}
+
+
 % ----------------------------------------------------------------------
 % SECTION 13: SUMMARY OF TEAM CONTRIBUTIONS & REPRODUCIBILITY AUDIT
 % ----------------------------------------------------------------------

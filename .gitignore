@@ -21,6 +21,13 @@ outputs/results/*.joblib
 catboost_info/
 
 # LaTeX compilation temporaries
+report/*.aux
+report/*.log
+report/*.out
+report/*.synctex.gz
+report/*.toc
+report/*.lof
+report/*.lot
 outputs/report/*.aux
 outputs/report/*.log
 outputs/report/*.out

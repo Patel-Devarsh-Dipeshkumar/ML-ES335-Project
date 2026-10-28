@@ -1,0 +1,2 @@
+model,test_accuracy,test_roc_auc,test_pr_auc,test_sensitivity,test_specificity,test_precision,test_f1_score,test_balanced_accuracy,brier_score,true_positives,false_negatives,true_negatives,false_positives
+ResNet-18 (Deep CNN),0.8494,0.9392,0.9455,0.7504,0.9484,0.9357,0.8329,0.8494,0.1168,1876,624,2371,129

@@ -61,16 +61,20 @@
       <!-- Key Stats -->
       <div class="stat-row">
         <div class="stat-box">
-          <div class="stat-val">79.76%</div>
-          <div class="stat-label">Champion Test Accuracy (Hybrid Blend)</div>
+          <div class="stat-val">84.94%</div>
+          <div class="stat-label">Deep CNN Benchmark (ResNet-18)</div>
         </div>
         <div class="stat-box">
-          <div class="stat-val">0.8853</div>
-          <div class="stat-label">ROC-AUC on 5,000 Held-Out Patches</div>
+          <div class="stat-val">0.9392</div>
+          <div class="stat-label">Deep Learning ROC-AUC (5,000 Patches)</div>
+        </div>
+        <div class="stat-box">
+          <div class="stat-val">79.76%</div>
+          <div class="stat-label">Champion Classical Blend (RBF+Hist)</div>
         </div>
         <div class="stat-box">
           <div class="stat-val">59-dim</div>
-          <div class="stat-label">Handcrafted Multimodal Feature Vector</div>
+          <div class="stat-label">Handcrafted Feature Vector</div>
         </div>
       </div>
 
@@ -544,16 +548,27 @@
               </tr>
             </thead>
             <tbody>
+              <tr class="highlight-row" style="background: rgba(46, 125, 50, 0.08);">
+                <td><strong>ResNet-18 (Deep CNN Benchmark)</strong></td>
+                <td><strong>84.94%</strong></td>
+                <td><strong>0.9392</strong></td>
+                <td><strong>0.9455</strong></td>
+                <td>75.04%</td>
+                <td><strong>94.84%</strong></td>
+                <td><strong>93.57%</strong></td>
+                <td><strong>0.8329</strong></td>
+                <td><strong>0.1168</strong></td>
+              </tr>
               <tr class="highlight-row">
                 <td><strong>Hybrid Blend (50/50 RBF + HistGBM)</strong></td>
-                <td><strong>79.76%</strong></td>
-                <td><strong>0.8853</strong></td>
-                <td><strong>0.8767</strong></td>
+                <td>79.76%</td>
+                <td>0.8853</td>
+                <td>0.8767</td>
                 <td>73.08%</td>
                 <td>86.44%</td>
                 <td>84.35%</td>
-                <td><strong>0.7831</strong></td>
-                <td><strong>0.1426</strong></td>
+                <td>0.7831</td>
+                <td>0.1426</td>
               </tr>
               <tr>
                 <td>Hybrid Blend (70/30 RBF + HistGBM)</td>

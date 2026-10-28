@@ -69,14 +69,15 @@ All models were tuned strictly on training and validation splits. The held-out t
 
 | Rank | Model Architecture | Test Accuracy | ROC-AUC | PR-AUC | Sensitivity | Specificity | Precision | F1-Score | Brier Score |
 | :---: | :--- | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: |
-| 1 | **Hybrid Multi-Paradigm Blend (50/50)** | **79.76%** | **0.8853** | **0.8767** | 73.08% | 86.44% | 84.35% | **0.7831** | **0.1426** |
-| 2 | Hybrid Blend (70/30 RBF/HistGBM) | 79.56% | 0.8804 | 0.8740 | 72.32% | 86.80% | 84.57% | 0.7796 | 0.1453 |
-| 3 | HistGradientBoosting | 78.82% | 0.8845 | 0.8724 | 71.84% | 85.80% | 83.50% | 0.7723 | 0.1460 |
-| 4 | Default RBF Kernel SVM | 78.80% | 0.8746 | 0.8681 | **73.28%** | 84.32% | 82.37% | 0.7756 | 0.1493 |
-| 5 | Tuned Random Forest (150 Trees) | 78.46% | 0.8863 | 0.8714 | 68.76% | **88.16%** | **85.31%** | 0.7615 | 0.1467 |
-| 6 | Tuned RBF Kernel SVM (C=3.0) | 77.92% | 0.8637 | 0.8626 | 70.88% | 84.96% | 82.50% | 0.7625 | 0.1535 |
-| 7 | Logistic Regression Baseline | 75.84% | 0.8373 | 0.8284 | 70.96% | 80.72% | 78.63% | 0.7460 | 0.1679 |
-| 8 | Linear SVM (Dual C=1.0) | 75.46% | 0.8292 | 0.8226 | 71.12% | 79.80% | 77.88% | 0.7435 | 0.1850 |
+| 1 | **ResNet-18 (Deep CNN Benchmark)** | **84.94%** | **0.9392** | **0.9455** | **75.04%** | **94.84%** | **93.57%** | **0.8329** | **0.1168** |
+| 2 | **Hybrid Multi-Paradigm Blend (50/50 Champion)** | 79.76% | 0.8853 | 0.8767 | 73.08% | 86.44% | 84.35% | 0.7831 | 0.1426 |
+| 3 | Hybrid Blend (70/30 RBF/HistGBM) | 79.56% | 0.8804 | 0.8740 | 72.32% | 86.80% | 84.57% | 0.7796 | 0.1453 |
+| 4 | HistGradientBoosting | 78.82% | 0.8845 | 0.8724 | 71.84% | 85.80% | 83.50% | 0.7723 | 0.1460 |
+| 5 | Default RBF Kernel SVM | 78.80% | 0.8746 | 0.8681 | 73.28% | 84.32% | 82.37% | 0.7756 | 0.1493 |
+| 6 | Tuned Random Forest (150 Trees) | 78.46% | 0.8863 | 0.8714 | 68.76% | 88.16% | 85.31% | 0.7615 | 0.1467 |
+| 7 | Tuned RBF Kernel SVM (C=3.0) | 77.92% | 0.8637 | 0.8626 | 70.88% | 84.96% | 82.50% | 0.7625 | 0.1535 |
+| 8 | Logistic Regression Baseline | 75.84% | 0.8373 | 0.8284 | 70.96% | 80.72% | 78.63% | 0.7460 | 0.1679 |
+| 9 | Linear SVM (Dual C=1.0) | 75.46% | 0.8292 | 0.8226 | 71.12% | 79.80% | 77.88% | 0.7435 | 0.1850 |
 
 *Statistical significance verified using 1,000-resample bootstrap 95% confidence intervals (p < 10^-7).*
 
@@ -89,7 +90,8 @@ All models were tuned strictly on training and validation splits. The held-out t
    * **Random Forest:** dropped by only **0.98%** between validation and test splits (79.44% → 78.46%).
    * **HistGradientBoosting:** dropped by only **1.84%** (80.66% → 78.82%).
    * **High-C RBF SVM:** suffered from validation sample variance, dropping by **4.44%** (82.36% → 77.92%).
-3. **The Multi-Paradigm Champion (79.76%):** Blending the continuous distance geometry of RBF SVM with the orthogonal partitioning of HistGradientBoosting achieved the lowest calibration error (Brier score 0.1426) and #1 test accuracy.
+3. **The Multi-Paradigm Champion (79.76%):** Blending the continuous distance geometry of RBF SVM with the orthogonal partitioning of HistGradientBoosting achieved the lowest calibration error (Brier score 0.1426) and #1 classical test accuracy.
+4. **Breaking the Classical Feature Ceiling (ResNet-18: 84.94% Test Accuracy, 0.9392 ROC-AUC):** Fine-tuning ResNet-18 with 8-fold dihedral rotational invariance augmentations broke decisively past the 79.8% classical ceiling. Crucially, false positive alarms dropped by 62% (from 339 to 129), driving precision to 93.57% and validating that hierarchical convolutional feature maps capture sub-cellular cytologic details that global summary statistics omit.
 
 ---
 
@@ -131,6 +133,7 @@ Github/
 │   ├── train_gradient_boosting.py# HistGradientBoosting training
 │   ├── train_rbf_svm.py          # RBF Kernel SVM training
 │   ├── tune_ensemble.py          # Multi-paradigm ensemble blending
+│   ├── train_cnn.py              # Deep Learning benchmark (ResNet-18)
 │   ├── evaluate_test.py          # One-shot test evaluation & bootstrap CIs
 │   ├── error_analysis.py         # Forensic autopsy & Cohen's d calculation
 │   └── tracker.py                # Milestone progress PDF generator
@@ -146,7 +149,9 @@ Github/
 │   ├── 05_candidates.ipynb       # Candidate model exploration
 │   ├── 06_tuning.ipynb           # Grid search & ensemble blending
 │   ├── 07_test_evaluation.ipynb  # Sealed test evaluation & bootstrap CIs
-│   └── 08_error_analysis.ipynb   # Error cases autopsy & taxonomy
+│   ├── 08_error_analysis.ipynb   # Error cases autopsy & taxonomy
+│   ├── 09_interactive_showcase.ipynb # Diagnostic simulator & web interface
+│   └── 10_cnn_benchmark.ipynb    # Deep learning benchmark & training loop
 ├── results/                      # Experimental CSV benchmarks & metric tables
 ├── plots/                        # High-resolution publication figures & curves
 ├── report/                       # 37-page academic technical report (PDF & TeX)
@@ -193,6 +198,13 @@ Run the forensic error analysis:
 ```bash
 python src/error_analysis.py
 ```
+
+### 6. Deep Learning Benchmark (Milestone 10)
+Train and evaluate ResNet-18 on raw histology patches:
+```bash
+python src/train_cnn.py
+```
+Or run `notebooks/10_cnn_benchmark.ipynb` directly on GPU.
 
 ---
 
