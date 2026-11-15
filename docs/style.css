@@ -954,6 +954,165 @@ main.main-content {
 .tag-champion { background: var(--accent-light); color: var(--accent); border: 1px solid var(--accent); }
 
 /* ── Responsive ── */
+/* ── Diagnostic Studio Interactive Enhancements ── */
+.upload-zone {
+  border: 2px dashed var(--border);
+  border-radius: var(--radius);
+  background: var(--bg-surface);
+  padding: 1.25rem 1rem;
+  text-align: center;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  margin-bottom: 1rem;
+}
+
+.upload-zone:hover, .upload-zone.dragover {
+  border-color: var(--accent);
+  background: var(--accent-light);
+}
+
+.upload-prompt {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.35rem;
+  font-size: 0.85rem;
+  color: var(--text-muted);
+}
+
+.upload-icon {
+  font-size: 1.8rem;
+}
+
+.model-select-bar {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  background: var(--bg-surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 0.75rem 1rem;
+  margin-bottom: 1rem;
+}
+
+.model-select-bar label {
+  font-size: 0.84rem;
+  font-weight: 600;
+  color: var(--text);
+  white-space: nowrap;
+}
+
+.model-select-bar select {
+  flex: 1;
+}
+
+.diagnosis-banner {
+  border-radius: var(--radius-lg);
+  padding: 1.1rem 1.25rem;
+  margin-bottom: 1.25rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  border: 1px solid;
+  transition: all 0.2s;
+}
+
+.diagnosis-banner.malignant {
+  background: var(--red-light);
+  border-color: var(--red);
+  color: var(--red);
+}
+
+.diagnosis-banner.benign {
+  background: var(--green-light);
+  border-color: var(--green);
+  color: var(--green);
+}
+
+.diagnosis-status-group {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.diagnosis-icon {
+  font-size: 1.8rem;
+  line-height: 1;
+}
+
+.diagnosis-headline {
+  font-size: 1.1rem;
+  font-weight: 800;
+  letter-spacing: 0.02em;
+}
+
+.diagnosis-subheadline {
+  font-size: 0.8rem;
+  color: var(--text-muted);
+  margin-top: 0.15rem;
+}
+
+.confidence-pill {
+  padding: 0.35rem 0.85rem;
+  border-radius: 9999px;
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  background: var(--bg);
+  border: 1px solid currentColor;
+}
+
+.multi-model-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.8rem;
+  margin-top: 0.5rem;
+}
+
+.multi-model-table th, .multi-model-table td {
+  padding: 0.45rem 0.65rem;
+  text-align: left;
+  border-bottom: 1px solid var(--border-light);
+}
+
+.multi-model-table th {
+  font-weight: 600;
+  color: var(--text-muted);
+  background: var(--bg-surface);
+}
+
+.multi-model-table tr.active-eval-model td {
+  background: var(--accent-light);
+  font-weight: 600;
+  color: var(--text);
+}
+
+.scientific-callout {
+  background: var(--bg-surface);
+  border-left: 4px solid var(--accent);
+  border-radius: 0 var(--radius) var(--radius) 0;
+  padding: 1rem 1.25rem;
+  margin: 1.25rem 0;
+  font-size: 0.86rem;
+  line-height: 1.55;
+  color: var(--text-muted);
+}
+
+.scientific-callout strong {
+  color: var(--text);
+}
+
+.scientific-callout cite {
+  display: block;
+  font-style: italic;
+  margin-top: 0.5rem;
+  color: var(--text-subtle);
+  font-size: 0.8rem;
+}
+
 @media (max-width: 900px) {
   .inspector-layout { grid-template-columns: 1fr; }
   .grid-2, .grid-3, .stat-row { grid-template-columns: 1fr; }

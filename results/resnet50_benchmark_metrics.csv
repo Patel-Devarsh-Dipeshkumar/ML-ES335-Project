@@ -1,0 +1,2 @@
+model,test_accuracy,test_roc_auc,test_pr_auc,test_sensitivity,test_specificity,test_precision,test_f1_score,test_balanced_accuracy,brier_score,true_positives,false_negatives,true_negatives,false_positives
+ResNet-50 (Deep CNN Full96),0.8214,0.9285,0.9124,0.7248,0.9180,0.8984,0.7910,0.8214,0.1378,1812,688,2295,205

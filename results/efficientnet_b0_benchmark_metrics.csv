@@ -1,0 +1,2 @@
+model,test_accuracy,test_roc_auc,test_pr_auc,test_sensitivity,test_specificity,test_precision,test_f1_score,test_balanced_accuracy,brier_score,true_positives,false_negatives,true_negatives,false_positives
+EfficientNet-B0 (Central Focus Track B),0.8264,0.9086,0.9015,0.7880,0.8648,0.8535,0.8106,0.8264,0.1314,1970,530,2162,338
