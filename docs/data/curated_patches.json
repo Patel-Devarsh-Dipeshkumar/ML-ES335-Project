@@ -1,0 +1,418 @@
+[
+ {
+  "id": "test_001996",
+  "split": "test",
+  "label": 0,
+  "cat": "fp",
+  "consensus": true,
+  "fig": "plots/error_inspection_false_positives.png",
+  "probs": {
+   "blend": 0.9703,
+   "hgbm": 0.9707,
+   "rf": 0.948,
+   "rbf": 0.97,
+   "lr": 0.9757
+  },
+  "file": "data/images/test_001996.png"
+ },
+ {
+  "id": "test_002770",
+  "split": "test",
+  "label": 0,
+  "cat": "fp",
+  "consensus": true,
+  "fig": "plots/error_inspection_false_positives.png",
+  "probs": {
+   "blend": 0.9549,
+   "hgbm": 0.975,
+   "rf": 0.92,
+   "rbf": 0.9349,
+   "lr": 0.9501
+  },
+  "file": "data/images/test_002770.png"
+ },
+ {
+  "id": "test_001073",
+  "split": "test",
+  "label": 0,
+  "cat": "fp",
+  "consensus": true,
+  "fig": "plots/error_inspection_false_positives.png",
+  "probs": {
+   "blend": 0.9494,
+   "hgbm": 0.9689,
+   "rf": 0.956,
+   "rbf": 0.9298,
+   "lr": 0.9704
+  },
+  "file": "data/images/test_001073.png"
+ },
+ {
+  "id": "test_003497",
+  "split": "test",
+  "label": 0,
+  "cat": "fp",
+  "consensus": true,
+  "fig": "plots/error_inspection_false_positives.png",
+  "probs": {
+   "blend": 0.9485,
+   "hgbm": 0.9957,
+   "rf": 0.976,
+   "rbf": 0.9014,
+   "lr": 0.9906
+  },
+  "file": "data/images/test_003497.png"
+ },
+ {
+  "id": "test_001300",
+  "split": "test",
+  "label": 0,
+  "cat": "fp",
+  "consensus": true,
+  "fig": "plots/error_inspection_false_positives.png",
+  "probs": {
+   "blend": 0.9475,
+   "hgbm": 0.9728,
+   "rf": 0.976,
+   "rbf": 0.9221,
+   "lr": 0.8386
+  },
+  "file": "data/images/test_001300.png"
+ },
+ {
+  "id": "test_003190",
+  "split": "test",
+  "label": 0,
+  "cat": "fp",
+  "consensus": true,
+  "fig": "plots/error_inspection_false_positives.png",
+  "probs": {
+   "blend": 0.9417,
+   "hgbm": 0.9489,
+   "rf": 0.952,
+   "rbf": 0.9345,
+   "lr": 0.9393
+  },
+  "file": "data/images/test_003190.png"
+ },
+ {
+  "id": "test_002626",
+  "split": "test",
+  "label": 0,
+  "cat": "fp",
+  "consensus": true,
+  "fig": "plots/error_inspection_false_positives.png",
+  "probs": {
+   "blend": 0.928,
+   "hgbm": 0.952,
+   "rf": 0.884,
+   "rbf": 0.9039,
+   "lr": 0.848
+  },
+  "file": "data/images/test_002626.png"
+ },
+ {
+  "id": "test_003896",
+  "split": "test",
+  "label": 0,
+  "cat": "fp",
+  "consensus": true,
+  "fig": "plots/error_inspection_false_positives.png",
+  "probs": {
+   "blend": 0.9244,
+   "hgbm": 0.9695,
+   "rf": 0.94,
+   "rbf": 0.8794,
+   "lr": 0.9467
+  },
+  "file": "data/images/test_003896.png"
+ },
+ {
+  "id": "test_004240",
+  "split": "test",
+  "label": 1,
+  "cat": "fn",
+  "consensus": true,
+  "fig": "plots/error_inspection_false_negatives.png",
+  "probs": {
+   "blend": 0.0573,
+   "hgbm": 0.0426,
+   "rf": 0.092,
+   "rbf": 0.0719,
+   "lr": 0.0149
+  },
+  "file": "data/images/test_004240.png"
+ },
+ {
+  "id": "test_002389",
+  "split": "test",
+  "label": 1,
+  "cat": "fn",
+  "consensus": true,
+  "fig": "plots/error_inspection_false_negatives.png",
+  "probs": {
+   "blend": 0.059,
+   "hgbm": 0.0258,
+   "rf": 0.092,
+   "rbf": 0.0922,
+   "lr": 0.0318
+  },
+  "file": "data/images/test_002389.png"
+ },
+ {
+  "id": "test_000490",
+  "split": "test",
+  "label": 1,
+  "cat": "fn",
+  "consensus": true,
+  "fig": "plots/error_inspection_false_negatives.png",
+  "probs": {
+   "blend": 0.0599,
+   "hgbm": 0.0659,
+   "rf": 0.264,
+   "rbf": 0.054,
+   "lr": 0.0002
+  },
+  "file": "data/images/test_000490.png"
+ },
+ {
+  "id": "test_003044",
+  "split": "test",
+  "label": 1,
+  "cat": "fn",
+  "consensus": true,
+  "fig": "plots/error_inspection_false_negatives.png",
+  "probs": {
+   "blend": 0.0636,
+   "hgbm": 0.0612,
+   "rf": 0.208,
+   "rbf": 0.066,
+   "lr": 0.0265
+  },
+  "file": "data/images/test_003044.png"
+ },
+ {
+  "id": "test_000211",
+  "split": "test",
+  "label": 1,
+  "cat": "fn",
+  "consensus": true,
+  "fig": "plots/error_inspection_false_negatives.png",
+  "probs": {
+   "blend": 0.0671,
+   "hgbm": 0.021,
+   "rf": 0.132,
+   "rbf": 0.1131,
+   "lr": 0.1544
+  },
+  "file": "data/images/test_000211.png"
+ },
+ {
+  "id": "test_004417",
+  "split": "test",
+  "label": 1,
+  "cat": "fn",
+  "consensus": true,
+  "fig": "plots/error_inspection_false_negatives.png",
+  "probs": {
+   "blend": 0.0676,
+   "hgbm": 0.0195,
+   "rf": 0.028,
+   "rbf": 0.1157,
+   "lr": 0.0323
+  },
+  "file": "data/images/test_004417.png"
+ },
+ {
+  "id": "test_004222",
+  "split": "test",
+  "label": 1,
+  "cat": "fn",
+  "consensus": true,
+  "fig": "plots/error_inspection_false_negatives.png",
+  "probs": {
+   "blend": 0.0752,
+   "hgbm": 0.0221,
+   "rf": 0.064,
+   "rbf": 0.1282,
+   "lr": 0.011
+  },
+  "file": "data/images/test_004222.png"
+ },
+ {
+  "id": "test_000299",
+  "split": "test",
+  "label": 1,
+  "cat": "fn",
+  "consensus": true,
+  "fig": "plots/error_inspection_false_negatives.png",
+  "probs": {
+   "blend": 0.078,
+   "hgbm": 0.0089,
+   "rf": 0.008,
+   "rbf": 0.1471,
+   "lr": 0.2305
+  },
+  "file": "data/images/test_000299.png"
+ },
+ {
+  "id": "train_032823",
+  "split": "train",
+  "label": 0,
+  "cat": "benign",
+  "consensus": false,
+  "fig": "plots/eda_step2_visual_inspection.png",
+  "probs": null,
+  "file": "data/images/train_032823.png"
+ },
+ {
+  "id": "train_006689",
+  "split": "train",
+  "label": 0,
+  "cat": "benign",
+  "consensus": false,
+  "fig": "plots/eda_step2_visual_inspection.png",
+  "probs": null,
+  "file": "data/images/train_006689.png"
+ },
+ {
+  "id": "train_026893",
+  "split": "train",
+  "label": 0,
+  "cat": "benign",
+  "consensus": false,
+  "fig": "plots/eda_step2_visual_inspection.png",
+  "probs": null,
+  "file": "data/images/train_026893.png"
+ },
+ {
+  "id": "train_012335",
+  "split": "train",
+  "label": 0,
+  "cat": "benign",
+  "consensus": false,
+  "fig": "plots/eda_step2_visual_inspection.png",
+  "probs": null,
+  "file": "data/images/train_012335.png"
+ },
+ {
+  "id": "train_018948",
+  "split": "train",
+  "label": 0,
+  "cat": "benign",
+  "consensus": false,
+  "fig": "plots/eda_step2_visual_inspection.png",
+  "probs": null,
+  "file": "data/images/train_018948.png"
+ },
+ {
+  "id": "train_013787",
+  "split": "train",
+  "label": 0,
+  "cat": "benign",
+  "consensus": false,
+  "fig": "plots/eda_step2_visual_inspection.png",
+  "probs": null,
+  "file": "data/images/train_013787.png"
+ },
+ {
+  "id": "train_005128",
+  "split": "train",
+  "label": 0,
+  "cat": "benign",
+  "consensus": false,
+  "fig": "plots/eda_step2_visual_inspection.png",
+  "probs": null,
+  "file": "data/images/train_005128.png"
+ },
+ {
+  "id": "train_009125",
+  "split": "train",
+  "label": 0,
+  "cat": "benign",
+  "consensus": false,
+  "fig": "plots/eda_step2_visual_inspection.png",
+  "probs": null,
+  "file": "data/images/train_009125.png"
+ },
+ {
+  "id": "train_016298",
+  "split": "train",
+  "label": 1,
+  "cat": "tumour",
+  "consensus": false,
+  "fig": "plots/eda_step2_visual_inspection.png",
+  "probs": null,
+  "file": "data/images/train_016298.png"
+ },
+ {
+  "id": "train_028505",
+  "split": "train",
+  "label": 1,
+  "cat": "tumour",
+  "consensus": false,
+  "fig": "plots/eda_step2_visual_inspection.png",
+  "probs": null,
+  "file": "data/images/train_028505.png"
+ },
+ {
+  "id": "train_036572",
+  "split": "train",
+  "label": 1,
+  "cat": "tumour",
+  "consensus": false,
+  "fig": "plots/eda_step2_visual_inspection.png",
+  "probs": null,
+  "file": "data/images/train_036572.png"
+ },
+ {
+  "id": "train_029591",
+  "split": "train",
+  "label": 1,
+  "cat": "tumour",
+  "consensus": false,
+  "fig": "plots/eda_step2_visual_inspection.png",
+  "probs": null,
+  "file": "data/images/train_029591.png"
+ },
+ {
+  "id": "train_031067",
+  "split": "train",
+  "label": 1,
+  "cat": "tumour",
+  "consensus": false,
+  "fig": "plots/eda_step2_visual_inspection.png",
+  "probs": null,
+  "file": "data/images/train_031067.png"
+ },
+ {
+  "id": "train_022241",
+  "split": "train",
+  "label": 1,
+  "cat": "tumour",
+  "consensus": false,
+  "fig": "plots/eda_step2_visual_inspection.png",
+  "probs": null,
+  "file": "data/images/train_022241.png"
+ },
+ {
+  "id": "train_035041",
+  "split": "train",
+  "label": 1,
+  "cat": "tumour",
+  "consensus": false,
+  "fig": "plots/eda_step2_visual_inspection.png",
+  "probs": null,
+  "file": "data/images/train_035041.png"
+ },
+ {
+  "id": "train_003510",
+  "split": "train",
+  "label": 1,
+  "cat": "tumour",
+  "consensus": false,
+  "fig": "plots/eda_step2_visual_inspection.png",
+  "probs": null,
+  "file": "data/images/train_003510.png"
+ }
+]

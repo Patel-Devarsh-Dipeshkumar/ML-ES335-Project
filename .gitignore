@@ -4,7 +4,8 @@ __pycache__/
 *$py.class
 
 # Large Datasets and Caches
-data/
+/data/
+!docs/data/
 datasets/
 *.h5
 *.h5.gz

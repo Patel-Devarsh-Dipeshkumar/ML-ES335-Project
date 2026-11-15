@@ -1,883 +1,806 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="light">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>PCam Tumour Detection &amp; Histopathology Benchmark — ES 335 ML Project</title>
-  <link rel="stylesheet" href="style.css">
-
-  <!-- KaTeX for math rendering -->
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css" crossorigin="anonymous">
-  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js" crossorigin="anonymous"></script>
-  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"
-    crossorigin="anonymous"
-    onload="renderMathInElement(document.body, {
-      delimiters: [
-        {left:'$$', right:'$$', display:true},
-        {left:'$',  right:'$',  display:false}
-      ]
-    });"></script>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Tumour Detection in Tissue Patches: PCam Benchmark | ES 335, IIT Gandhinagar</title>
+<meta name="description" content="Controlled benchmark of handcrafted features, classical ensembles and ResNet-18 for metastasis detection on PatchCamelyon. ES 335 Machine Learning, IIT Gandhinagar.">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+<link rel="stylesheet" href="./style.css">
 </head>
 <body>
+<a class="skip" href="#main">Skip to content</a>
 
-  <!-- ── Site Header ── -->
-  <header class="site-header">
-    <div class="header-inner">
+<header class="topbar">
+  <div class="topbar-in">
+    <a class="brand" href="#top" aria-label="Back to top">
+      <svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true"><rect x="1.5" y="1.5" width="21" height="21" rx="3" fill="none" stroke="currentColor" stroke-width="1.6"/><rect x="8" y="8" width="8" height="8" fill="none" stroke="currentColor" stroke-width="1.6" stroke-dasharray="2.2 1.6"/></svg>
+      <span>PCam Benchmark</span>
+    </a>
+    <button class="navtoggle" id="navToggle" aria-expanded="false" aria-controls="nav">Sections</button>
+    <nav id="nav" aria-label="Sections">
+      <a href="#problem">1. Problem &amp; Data</a>
+      <a href="#features">2. Preprocessing &amp; Features</a>
+      <a href="#baseline">3. Baseline &amp; Models</a>
+      <a href="#results">4. Results &amp; Benchmark</a>
+      <a href="#errors">5. Error Taxonomy</a>
+      <a href="#deep">6. Deep Learning Breakthrough</a>
+      <a href="#interactive">7. Interactive Studio &amp; Simulator</a>
+      <a href="#limits">8. Limitations &amp; Codebase</a>
+    </nav>
+    <button class="themebtn" id="themeBtn" type="button" aria-label="Switch colour theme" title="Switch colour theme">
+      <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><circle cx="12" cy="12" r="8.5" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M12 3.5a8.5 8.5 0 0 1 0 17z" fill="currentColor"/></svg>
+    </button>
+  </div>
+</header>
+
+<main id="main">
+
+<!-- ============================ HERO ============================ -->
+<section class="hero" id="top">
+  <div class="wrap">
+    <p class="kicker">ES 335: Machine Learning &middot; Indian Institute of Technology Gandhinagar</p>
+    <h1>Comparing Machine Learning Approaches for Tumour Detection in Tissue Patches</h1>
+    <p class="subtitle">Controlled benchmark of classical descriptors, multi-paradigm ensembles, and ResNet-18 on PatchCamelyon (PCam)</p>
+
+    <ul class="authors">
+      <li><strong>Devarsh Patel</strong> <span class="mono">24110245</span> <a href="mailto:devarsh.patel@iitgn.ac.in">devarsh.patel@iitgn.ac.in</a></li>
+      <li><strong>Dhrumil Bhutaiya</strong> <span class="mono">24110075</span> <a href="mailto:dhrumil.bhutaiya@iitgn.ac.in">dhrumil.bhutaiya@iitgn.ac.in</a></li>
+    </ul>
+
+    <div class="linkrow">
+      <a class="btn primary" href="https://github.com/Patel-Devarsh-Dipeshkumar/ML-ES335-Project" target="_blank" rel="noopener">
+        <svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true"><path fill="currentColor" d="M8 .2a8 8 0 0 0-2.5 15.6c.4.1.5-.2.5-.4v-1.4c-2.2.5-2.7-1-2.7-1-.4-.9-.9-1.2-.9-1.2-.7-.5.1-.5.1-.5.8.1 1.2.8 1.2.8.7 1.2 1.9.9 2.3.7.1-.5.3-.9.5-1.1-1.8-.2-3.6-.9-3.6-4a3.100 3.100 0 0 1 .8-2.100c-.1-.2-.4-1 .1-2.100 0 0 .7-.2 2.200.8a7.500 7.500 0 0 1 4 0c1.500-1 2.200-.8 2.200-.8.4 1.100.2 1.900.1 2.100.5.6.8 1.300.8 2.100 0 3.100-1.900 3.700-3.700 3.900.3.300.6.800.6 1.500v2.200c0 .2.100.500.600.400A8 8 0 0 0 8 .2z"/></svg>
+        GitHub Repository</a>
+      <a class="btn" href="https://github.com/Patel-Devarsh-Dipeshkumar/ML-ES335-Project/blob/main/report/report.pdf" target="_blank" rel="noopener">
+        <svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true"><path fill="none" stroke="currentColor" stroke-width="1.3" d="M3.500 1.500h6l3 3v10h-9zM9.500 1.500v3h3M5.500 8.500h5M5.500 11h5"/></svg>
+        Technical Report (PDF)</a>
+      <a class="btn" href="https://github.com/Patel-Devarsh-Dipeshkumar/ML-ES335-Project/tree/main/notebooks" target="_blank" rel="noopener">
+        <svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true"><path fill="none" stroke="currentColor" stroke-width="1.3" d="M4 1.500h9v13H4zM2.500 4.500h3M2.500 8h3M2.500 11.500h3"/></svg>
+        Jupyter Notebooks</a>
+      <a class="btn ghost" href="#interactive">Open the interactive suite</a>
+    </div>
+
+    <div class="statbar" role="list">
+      <div class="stat" role="listitem"><div class="stat-num">84.94%</div><div class="stat-lab">Test accuracy</div><div class="stat-sub">Deep CNN benchmark (ResNet-18)</div></div>
+      <div class="stat" role="listitem"><div class="stat-num">0.9392</div><div class="stat-lab">ROC-AUC</div><div class="stat-sub">ResNet-18 on 5,000 held-out test patches</div></div>
+      <div class="stat" role="listitem"><div class="stat-num">79.76%</div><div class="stat-lab">Test accuracy</div><div class="stat-sub">Best classical model: RBF SVM + HistGBM blend</div></div>
+      <div class="stat" role="listitem"><div class="stat-num">613</div><div class="stat-lab">Consensus failures</div><div class="stat-sub">Patches every classical model family gets wrong</div></div>
+    </div>
+
+    <div class="summary">
+      <h2 class="summary-h">The project in five sentences</h2>
+      <ol>
+        <li><strong>Question.</strong> Can a model tell whether a small lymph-node tissue patch contains metastatic breast cancer, and how far can handcrafted image features go before a deep network is needed?</li>
+        <li><strong>Data.</strong> 50,000 H&amp;E-stained <span class='tex'>96 \times 96</span> patches from PatchCamelyon, split 40,000 / 5,000 / 5,000 with an exact 50/50 class balance in every split.</li>
+        <li><strong>Method.</strong> Each patch becomes a 59-number feature vector (colour, texture, edges, PCA). Nine classical configurations and one fine-tuned ResNet-18 are compared on a test split that was scored once.</li>
+        <li><strong>Result.</strong> Linear models stop near 76% test accuracy, non-linear models and their blend near 80%, ResNet-18 reaches 84.94%.</li>
+        <li><strong>Why.</strong> 613 test patches are misclassified by all four classical model families at once, which points at the features, not the classifiers, as the limit.</li>
+      </ol>
+    </div>
+  </div>
+</section>
+
+<!-- ============================ 1 PROBLEM ============================ -->
+<section class="sec" id="problem">
+  <div class="wrap">
+    <p class="secnum">Section 1</p>
+    <h2>Clinical problem and what one row of data is</h2>
+
+    <div class="cols">
       <div>
-        <div class="site-title">PCam Tumour Detection &amp; Histopathology Benchmark</div>
-        <div class="site-subtitle">Benchmarking Classical ML, Ensembles, and Deep CNNs on 50,000 Patches &bull; ES 335</div>
+        <h3>The clinical challenge</h3>
+        <p>When breast cancer spreads, tumour cells travel through lymphatic channels and lodge in the axillary sentinel lymph nodes. Whether those nodes contain metastases is a key input to staging (the N in TNM) and to decisions about chemotherapy and further surgery. Pathologists answer the question by reading whole-slide images, each larger than 100,000 &times; 100,000 pixels. The search is slow, and small micrometastases of only 10&ndash;20 cells are easy to miss.</p>
+        <h3>The research question</h3>
+        <p class="question">Can machine-learning models reliably detect metastatic breast carcinoma in lymph-node tissue patches, and where is the capacity limit of handcrafted biological features compared with learned deep representations?</p>
       </div>
-      <div class="header-right">
-        <div class="team-info">
-          <strong>ES 335 &bull; IIT Gandhinagar</strong>
-          Devarsh Patel (24110245) &bull; Dhrumil Bhutaiya (24110075)
-        </div>
-        <button class="btn-theme" id="btnTheme" aria-label="Toggle colour scheme">
-          <span id="themeIcon">&#9790;</span> Dark
-        </button>
+      <div>
+        <h3>One row of data, seen two ways</h3>
+        <dl class="deflist">
+          <dt>As an image</dt>
+          <dd>One <span class='tex'>96 \times 96</span> pixel RGB patch of a sentinel lymph-node section stained with haematoxylin and eosin (H&amp;E), cut from a 40&times; whole-slide scan and downsampled to 10&times; (0.97 &micro;m per pixel).</dd>
+          <dt>As a feature row</dt>
+          <dd>A 59-dimensional numeric vector <span class='tex'>\mathbf{x} \in \mathbb{R}^{59}</span> (colour moments, GLCM texture, local binary patterns, edge statistics, PCA projections; see Section 3) together with a binary label <span class='tex'>y \in \{0, 1\}</span>.</dd>
+          <dt>The label</dt>
+          <dd><span class='tex'>y = 1</span> (tumour) if at least one pixel of metastatic tissue lies in the central <span class='tex'>32 \times 32</span> window; <span class='tex'>y = 0</span> (normal) otherwise, even when tumour is visible in the outer margin.</dd>
+        </dl>
       </div>
     </div>
-  </header>
 
-  <!-- ── Tab Navigation ── -->
-  <nav class="tab-nav">
-    <div class="tab-nav-inner">
-      <button class="tab-btn active" data-tab="tab-overview">1. Overview</button>
-      <button class="tab-btn" data-tab="tab-inspector">2. Diagnostic Studio</button>
-      <button class="tab-btn" data-tab="tab-threshold">3. Threshold Simulator</button>
-      <button class="tab-btn" data-tab="tab-errors">4. Error Gallery</button>
-      <button class="tab-btn" data-tab="tab-benchmarks">5. Results &amp; Benchmarks</button>
-    </div>
-  </nav>
+    <figure class="rulefig">
+      <svg viewBox="0 0 640 250" role="img" aria-labelledby="ruleT ruleD">
+        <title id="ruleT">The central 32 by 32 ground-truth rule</title>
+        <desc id="ruleD">Two 96 by 96 patches. On the left, tumour inside the central box gives label 1. On the right, tumour only in the outer margin gives label 0.</desc>
+        <g font-family="inherit" font-size="13">
+          <rect x="40" y="30" width="180" height="180" class="svg-patch"/>
+          <rect x="100" y="90" width="60" height="60" class="svg-core"/>
+          <circle cx="126" cy="118" r="13" class="svg-tumour"/><circle cx="143" cy="132" r="8" class="svg-tumour"/>
+          <text x="130" y="232" text-anchor="middle" class="svg-lab">Tumour pixels inside the core</text>
+          <text x="130" y="20" text-anchor="middle" class="svg-strong">Label y = 1 (tumour)</text>
 
-  <!-- ── Main Content ── -->
-  <main class="main-content">
+          <rect x="420" y="30" width="180" height="180" class="svg-patch"/>
+          <rect x="480" y="90" width="60" height="60" class="svg-core"/>
+          <circle cx="446" cy="58" r="14" class="svg-tumour"/><circle cx="466" cy="46" r="8" class="svg-tumour"/>
+          <text x="510" y="232" text-anchor="middle" class="svg-lab">Tumour only in the outer margin</text>
+          <text x="510" y="20" text-anchor="middle" class="svg-strong">Label y = 0 (normal)</text>
 
-    <!-- ================================================================ -->
-    <!-- TAB 1: OVERVIEW                                                  -->
-    <!-- ================================================================ -->
-    <div id="tab-overview" class="tab-pane active">
+          <line x1="232" y1="60" x2="232" y2="180" class="svg-dim"/><line x1="226" y1="60" x2="238" y2="60" class="svg-dim"/><line x1="226" y1="180" x2="238" y2="180" class="svg-dim"/>
+          <text x="244" y="100" class="svg-lab">96 px context</text>
+          <text x="244" y="118" class="svg-lab">(9,216 pixels)</text>
+          <text x="244" y="146" class="svg-core-lab">32 px core, dashed</text>
+          <text x="244" y="164" class="svg-core-lab">(1,024 pixels)</text>
+        </g>
+      </svg>
+      <figcaption>The label depends only on the dashed central window. Features pooled over the whole patch can therefore &ldquo;see&rdquo; tumour that the label ignores. In the PCam validation metadata the authors counted 89 such border-tumour patches among 16,458 patches containing any tumour (0.54%), so the effect is real but rare.</figcaption>
+    </figure>
+  </div>
+</section>
 
-      <!-- Key Stats -->
-      <div class="stat-row">
-        <div class="stat-box">
-          <div class="stat-val">84.94%</div>
-          <div class="stat-label">Deep CNN Champion (ResNet-18)</div>
-        </div>
-        <div class="stat-box">
-          <div class="stat-val">0.9392</div>
-          <div class="stat-label">Peak Test ROC-AUC (5,000 Sealed Patches)</div>
-        </div>
-        <div class="stat-box">
-          <div class="stat-val">79.76%</div>
-          <div class="stat-label">Champion Classical Blend (50/50 RBF+Hist)</div>
-        </div>
-        <div class="stat-box">
-          <div class="stat-val">59-dim</div>
-          <div class="stat-label">Handcrafted Biomorphic Features</div>
-        </div>
-        <div class="stat-box">
-          <div class="stat-val">11 Models</div>
-          <div class="stat-label">Strict Identical Split Evaluation</div>
-        </div>
-        <div class="stat-box">
-          <div class="stat-val">4 Failure Tiers</div>
-          <div class="stat-label">Histopathological Forensic Taxonomy</div>
-        </div>
-      </div>
+<!-- ============================ 2 DATA ============================ -->
+<section class="sec alt" id="data">
+  <div class="wrap">
+    <p class="secnum">Section 2</p>
+    <h2>The dataset and its quality audit</h2>
 
-      <!-- Project Context -->
-      <div class="card">
-        <h2 class="card-title">Project Overview &amp; Clinical Motivation</h2>
-        <p class="card-subtitle">Automated sentinel lymph node metastasis detection for clinical breast cancer staging.</p>
-
-        <p style="color:var(--text-muted); margin-bottom:1rem; font-size:0.92rem;">
-          Metastatic involvement of sentinel lymph nodes is the single most critical prognostic factor for breast cancer survival.
-          Pathologists must routinely review gigapixel Whole-Slide Images (WSIs), an exhausting process where focal micro-metastases
-          containing as few as 10&ndash;20 cancer cells can easily be overlooked.
-          This project conducts a rigorous empirical benchmark comparing classical machine learning paradigms using handcrafted
-          multimodal histological features against modern deep convolutional networks on the <strong>PatchCamelyon (PCam)</strong> dataset.
-        </p>
-
-        <p style="color:var(--text-muted); font-size:0.88rem;">
-          Every $96 \times 96$ px patch (scanned at $10\times$ magnification, $0.97\,\mu\text{m/px}$) carries a binary label
-          governed strictly by its central $32 \times 32$ window: the patch is positive (tumour) if and only if at least one pixel
-          of metastatic carcinoma falls within this central region.
-          We evaluate all 11 models on an untouched, sealed cohort of <strong>5,000 test patches</strong> ($50\%$ tumour / $50\%$ benign, Seed=42).
-        </p>
-      </div>
-
-      <!-- Feature Pipeline & ML Paradigms -->
-      <div class="grid-2">
-
-        <div class="card">
-          <h3 class="card-title">59-Dimensional Feature Pipeline</h3>
-          <p class="card-subtitle">Biologically grounded histological representations engineered from raw pixels.</p>
-
-          <table class="data-table">
-            <thead>
-              <tr>
-                <th>Feature Family</th>
-                <th>Dim</th>
-                <th>Biological Target</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr>
-                <td><strong>Color Moments</strong></td>
-                <td>18</td>
-                <td>Mean &amp; std across RGB, HSV, and CIE-Lab. Captures basophilic hematoxylin staining vs eosin stroma.</td>
-              </tr>
-              <tr>
-                <td><strong>GLCM Texture</strong></td>
-                <td>6</td>
-                <td>Contrast, dissimilarity, homogeneity, energy, correlation, ASM. Measures chromatin spatial disorder.</td>
-              </tr>
-              <tr>
-                <td><strong>Local Binary Patterns</strong></td>
-                <td>11</td>
-                <td>Rotation-invariant uniform codes ($P=8, R=1$). Detects nuclear membrane borders and pleomorphism.</td>
-              </tr>
-              <tr>
-                <td><strong>Spatial Edge Gradients</strong></td>
-                <td>4</td>
-                <td>Sobel mean, Sobel std, edge density, Laplacian variance. Measures nuclear crowding and packing density.</td>
-              </tr>
-              <tr>
-                <td><strong>Bilinear Pixel PCA</strong></td>
-                <td>20</td>
-                <td>Downsampled spatial luminance projections. Preserves macroscopic tissue architecture.</td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
-
-        <div class="card">
-          <h3 class="card-title">Machine Learning Paradigms Benchmarked</h3>
-          <p class="card-subtitle">Controlled progression from linear baselines to deep convolutional neural networks.</p>
-
-          <ul class="findings-list">
-            <li>
-              <span class="finding-tag tag-linear">Linear</span>
-              <span>
-                <strong>Logistic Regression ($L_2$) &amp; Linear SVM:</strong>
-                Established the flat hyperplane capacity ceiling ($\approx 75.8\%$ test accuracy),
-                proving that linear decision boundaries cannot untangle histological tissue complexity.
-              </span>
-            </li>
-            <li>
-              <span class="finding-tag tag-rf">RF</span>
-              <span>
-                <strong>Tuned Random Forest (150 Trees):</strong>
-                Maximized positive predictive value ($85.31\%$ precision) and achieved the smallest
-                generalization drop ($\Delta = 0.98\%$) among classical algorithms.
-              </span>
-            </li>
-            <li>
-              <span class="finding-tag tag-gbm">GBM</span>
-              <span>
-                <strong>HistGradientBoosting:</strong>
-                Fast histogram-binned trees that broke the linear decision bottleneck,
-                reaching $78.82\%$ test accuracy as the top single classical tree model.
-              </span>
-            </li>
-            <li>
-              <span class="finding-tag tag-svm">SVM</span>
-              <span>
-                <strong>RBF Kernel SVM:</strong>
-                Continuous hyperspherical decision boundaries. Highest classical sensitivity ($73.28\%$)
-                capturing non-linear tissue geometry.
-              </span>
-            </li>
-            <li>
-              <span class="finding-tag tag-champion">Champion</span>
-              <span>
-                <strong>Hybrid Blend (50% RBF + 50% HistGBM):</strong>
-                Classical tournament champion with $79.76\%$ test accuracy, $0.8853$ ROC-AUC, and the lowest Brier score ($0.1426$).
-              </span>
-            </li>
-            <li>
-              <span class="finding-tag" style="background:#2e7d32; color:#fff;">Deep CNN</span>
-              <span>
-                <strong>ResNet-18 (Deep CNN Benchmark):</strong>
-                Overall tournament champion ($84.94\%$ test accuracy, $0.9392$ ROC-AUC, $0.1168$ Brier),
-                learning end-to-end spatial representations that overcome the 613 classical consensus failures.
-              </span>
-            </li>
-          </ul>
-        </div>
-
-      </div>
-
-      <!-- Consensus Failures & Taxonomy -->
-      <div class="card">
-        <h3 class="card-title">The Empirical Feature Representation Limit</h3>
-        <p class="card-subtitle">
-          Why 613 consensus failures across all classical model families prove a fundamental ceiling, not algorithmic error.
-        </p>
-        <p style="font-size:0.88rem; color:var(--text-muted); margin-bottom:1rem;">
-          Of the 1,009 total misclassifications made by the champion ensemble, <strong>613 (60.7%)</strong> were failures
-          shared simultaneously across all classical model families — Logistic Regression, Random Forest, HistGBM, and RBF SVM all
-          made the exact same error on these 613 patches. This figure constitutes 12.3% of the entire test cohort.
-          These consensus failures are not caused by model tuning defects; they arise because
-          <em>global pooled features cannot resolve sub-cellular spatial organization</em>. Deep convolutional receptive fields
-          are required to overcome this ceiling.
-        </p>
-
-        <table class="data-table">
-          <thead>
-            <tr>
-              <th>Failure Tier</th>
-              <th>Error Type</th>
-              <th>Share</th>
-              <th>Biological Mechanism</th>
-            </tr>
-          </thead>
+    <div class="cols">
+      <div>
+        <h3>Source and size</h3>
+        <p><a href="https://github.com/basveeling/pcam" target="_blank" rel="noopener">PatchCamelyon (PCam)</a> is a patch-level benchmark derived from the CAMELYON16 challenge slides (Radboud University Medical Center and University Medical Center Utrecht). The full release has 327,680 patches. This project uses a class-balanced subset of 50,000, drawn with seed 42 by <code>src/preprocess_data.py</code> and stored as PNG files plus label CSVs.</p>
+        <div class="tablewrap">
+        <table class="data">
+          <caption>Splits used in every experiment</caption>
+          <thead><tr><th>Split</th><th class="num">Patches</th><th class="num">Share</th><th class="num">Normal</th><th class="num">Tumour</th><th>Role</th></tr></thead>
           <tbody>
-            <tr>
-              <td><strong>Tier 1: Dense Germinal Centers</strong></td>
-              <td><span class="badge badge-warning">False Positive</span></td>
-              <td>30.7%</td>
-              <td>Reactive lymphoid follicles produce high edge density and intense hematoxylin absorption that global features cannot distinguish from invasive carcinoma sheets.</td>
-            </tr>
-            <tr>
-              <td><strong>Tier 2: Stroma-Dense Micrometastases</strong></td>
-              <td><span class="badge badge-tumor">False Negative</span></td>
-              <td>38.7%</td>
-              <td>Desmoplastic stroma dilutes the localized cancer signal during global feature pooling when only 5&ndash;15 cells occupy the central window.</td>
-            </tr>
-            <tr>
-              <td><strong>Tier 3: Necrosis &amp; Ghost Cells</strong></td>
-              <td><span class="badge badge-tumor">False Negative</span></td>
-              <td>15.9%</td>
-              <td>Ischemic karyolysis dissolves nuclear chromatin into amorphous ghost cells, collapsing recognizable LBP texture codes.</td>
-            </tr>
-            <tr>
-              <td><strong>Tier 4: Adipose &amp; Boundary Artifacts</strong></td>
-              <td><span class="badge badge-warning">Both</span></td>
-              <td>14.7%</td>
-              <td>Perinodal fat vacuoles (&gt;70% unstained area) and optical refractive edges skew GLCM statistics systematically.</td>
-            </tr>
+            <tr><td>Train</td><td class="num">40,000</td><td class="num">80%</td><td class="num">20,000</td><td class="num">20,000</td><td>Fit scaler, PCA and models</td></tr>
+            <tr><td>Validation</td><td class="num">5,000</td><td class="num">10%</td><td class="num">2,500</td><td class="num">2,500</td><td>Model selection and tuning</td></tr>
+            <tr><td>Test</td><td class="num">5,000</td><td class="num">10%</td><td class="num">2,500</td><td class="num">2,500</td><td>Scored once, after all choices were frozen</td></tr>
           </tbody>
         </table>
+        </div>
+        <p class="note">Because every split is exactly balanced, a constant guess scores 50.0%, and accuracy equals balanced accuracy.</p>
       </div>
+      <div>
+        <h3>Key variables</h3>
+        <dl class="deflist">
+          <dt>Pixels</dt><dd><span class='tex'>96 \times 96 \times 3</span> unsigned 8-bit RGB values per patch.</dd>
+          <dt>Label</dt><dd>Binary tumour / normal, from pathologist annotation of the central window.</dd>
+          <dt>Metadata</dt><dd><code>id</code>, <code>filename</code>, <code>label</code>, <code>class_name</code>, <code>width</code>, <code>height</code>, <code>channels</code>.</dd>
+        </dl>
+        <h3>What the stain shows</h3>
+        <p><strong>Haematoxylin</strong> is a basic dye that binds nucleic acids and colours nuclei purple-blue. <strong>Eosin</strong> is an acidic dye that colours cytoplasm and collagen pink. Tumour tissue is crowded with large, dark nuclei, so it absorbs more green light and looks more saturated.</p>
+        <div class="tablewrap">
+        <table class="data compact">
+          <caption>Mean channel values on the training sample (0&ndash;255 scale)</caption>
+          <thead><tr><th>Channel</th><th class="num">Normal</th><th class="num">Tumour</th><th class="num">Difference</th></tr></thead>
+          <tbody>
+            <tr><td>Green</td><td class="num">145.44</td><td class="num">127.22</td><td class="num">&minus;18.22</td></tr>
+            <tr><td>Saturation</td><td class="num">73.01</td><td class="num">88.87</td><td class="num">+15.86</td></tr>
+            <tr><td>Hue</td><td class="num">138.54</td><td class="num">149.42</td><td class="num">+10.88</td></tr>
+            <tr><td>Red</td><td class="num">179.65</td><td class="num">175.76</td><td class="num">&minus;3.89</td></tr>
+          </tbody>
+        </table>
+        </div>
+      </div>
+    </div>
 
-    </div><!-- /tab-overview -->
+    <h3>Quality issues found</h3>
+    <div class="cards3">
+      <div class="card"><h4>Integrity is clean</h4><p>No missing values, no duplicate IDs, no corrupt files, and every image is <span class='tex'>96 \times 96 \times 3</span>. No patch is fully blank or fully black.</p></div>
+      <div class="card"><h4>Glass margins and fat</h4><p>About 2.3% of patches are mostly unstained glass background (mean intensity above 235). Normal tissue is also far more variable in brightness (168.7 &plusmn; 44.2) than tumour (159.3 &plusmn; 26.2) because it mixes white fat with pink collagen.</p></div>
+      <div class="card"><h4>Patches cluster by slide</h4><p>In the PCam validation metadata, 54 slides supply 32,768 patches; the top 10 slides supply 37.9%. Patches from one slide share stain tint and scanner settings, so they are not independent samples.</p></div>
+      <div class="card"><h4>Label ignores the margin</h4><p>89 patches in that metadata contain tumour only outside the central window and are labelled normal. Whole-patch features will tend to call these positive.</p></div>
+      <div class="card"><h4>Stain and scanner variation</h4><p>Slides come from two Dutch centres. Staining strength and scanner colour response differ between laboratories, which motivates the colour-space choices in Section 3.</p></div>
+      <div class="card"><h4>Subset, not the full release</h4><p>Only 50,000 of 327,680 patches are used, to keep kernel SVM training feasible. Results describe this subset.</p></div>
+    </div>
 
+    <div class="figgrid two">
+      <figure class='plot'><button type='button' class='zoom' data-full='./plots/eda_step2_visual_inspection.png' aria-label='Enlarge figure'><img src='./figures/eda_step2_visual_inspection.jpg' alt='Sixteen training patches. Top two rows normal, bottom two rows tumour; the dashed box is the central label window. These sixteen patches are also loaded in the Diagnostic Studio below.' loading='lazy'></button><figcaption>Sixteen training patches. Top two rows normal, bottom two rows tumour; the dashed box is the central label window. These sixteen patches are also loaded in the Diagnostic Studio below. <a href='./plots/eda_step2_visual_inspection.png' target='_blank' rel='noopener'>Full resolution</a></figcaption></figure>
+      <figure class='plot'><button type='button' class='zoom' data-full='./plots/eda_step3_color_distributions.png' aria-label='Enlarge figure'><img src='./figures/eda_step3_color_distributions.jpg' alt='Channel distributions for normal and tumour patches. Green and saturation separate the classes best.' loading='lazy'></button><figcaption>Channel distributions for normal and tumour patches. Green and saturation separate the classes best. <a href='./plots/eda_step3_color_distributions.png' target='_blank' rel='noopener'>Full resolution</a></figcaption></figure>
+      <figure class='plot'><button type='button' class='zoom' data-full='./plots/eda_step4_quality_and_artifacts.png' aria-label='Enlarge figure'><img src='./figures/eda_step4_quality_and_artifacts.jpg' alt='Brightness spread by class and the share of glass-margin patches.' loading='lazy'></button><figcaption>Brightness spread by class and the share of glass-margin patches. <a href='./plots/eda_step4_quality_and_artifacts.png' target='_blank' rel='noopener'>Full resolution</a></figcaption></figure>
+      <figure class='plot'><button type='button' class='zoom' data-full='./plots/eda_step5_wsi_distribution.png' aria-label='Enlarge figure'><img src='./figures/eda_step5_wsi_distribution.jpg' alt='Slide concentration: a few slides contribute a large share of patches.' loading='lazy'></button><figcaption>Slide concentration: a few slides contribute a large share of patches. <a href='./plots/eda_step5_wsi_distribution.png' target='_blank' rel='noopener'>Full resolution</a></figcaption></figure>
+    </div>
+  </div>
+</section>
 
-    <!-- ================================================================ -->
-    <!-- TAB 2: DIAGNOSTIC STUDIO                                         -->
-    <!-- ================================================================ -->
-    <div id="tab-inspector" class="tab-pane">
+<!-- ============================ 3 FEATURES ============================ -->
+<section class="sec" id="features">
+  <div class="wrap">
+    <p class="secnum">Section 3</p>
+    <h2>Preprocessing choices and the 59-dimensional feature pipeline</h2>
+    <p class="lede">Each choice below is paired with the reason it was made and, where the repository has one, the validation result that supports it.</p>
+
+    <h3>Choice 1: two spatial tracks</h3>
+    <div class="cols">
+      <div class="card track">
+        <h4><span class="badge badge-normal">Track A</span> Full <span class='tex'>96 \times 96</span> patch</h4>
+        <p><strong>Why:</strong> keeps the surrounding tissue architecture (capsule, sinuses, stroma reaction) and gives 9,216 pixels per statistic.</p>
+        <p><strong>Cost:</strong> pools pixels the label ignores, so margin tumour can leak into the features.</p>
+      </div>
+      <div class="card track">
+        <h4><span class="badge badge-warning">Track B</span> Central <span class='tex'>32 \times 32</span> crop</h4>
+        <p><strong>Why:</strong> looks only at the window that defines the label.</p>
+        <p><strong>Cost:</strong> 1,024 pixels, nine times fewer, so every texture and colour statistic is noisier.</p>
+      </div>
+    </div>
+    <div class="tablewrap">
+    <table class="data">
+      <caption>Track A against Track B on the 5,000 validation patches (59 features)</caption>
+      <thead><tr><th>Model</th><th class="num">Track A accuracy</th><th class="num">Track B accuracy</th><th class="num">Track A ROC-AUC</th><th class="num">Track B ROC-AUC</th></tr></thead>
+      <tbody><tr><td>Logistic regression</td><td class='num best'>78.18%</td><td class='num'>75.54%</td><td class='num best'>0.8652</td><td class='num'>0.8330</td></tr><tr><td>Linear SVM</td><td class='num best'>78.14%</td><td class='num'>75.36%</td><td class='num best'>0.8684</td><td class='num'>0.8331</td></tr><tr><td>Random forest (default)</td><td class='num best'>78.68%</td><td class='num'>78.02%</td><td class='num best'>0.8878</td><td class='num'>0.8700</td></tr><tr><td>HistGradientBoosting</td><td class='num best'>80.66%</td><td class='num'>78.34%</td><td class='num best'>0.8990</td><td class='num'>0.8711</td></tr><tr><td>RBF kernel SVM</td><td class='num best'>82.14%</td><td class='num'>78.64%</td><td class='num best'>0.9038</td><td class='num'>0.8621</td></tr></tbody>
+    </table>
+    </div>
+    <p class="note"><strong>Decision:</strong> Track A wins for every model family, by 0.7 to 3.5 points of accuracy. Context helps more than margin contamination hurts, so all final models use Track A.</p>
+
+    <h3>Choice 2: five feature families</h3>
+    <div class="tablewrap">
+    <table class="data">
+      <caption>The 59 features (<code>src/features.py</code>)</caption>
+      <thead><tr><th>Family</th><th class="num">Dim.</th><th>What is computed</th><th>Why it was chosen</th></tr></thead>
+      <tbody>
+        <tr><td>Colour moments</td><td class="num">18</td><td>Mean and standard deviation of each channel in RGB, HSV and CIE-Lab.</td><td>HSV and Lab separate brightness (<span class='tex'>V</span>, <span class='tex'>L^*</span>) from colour (<span class='tex'>S</span>, <span class='tex'>a^*</span>, <span class='tex'>b^*</span>). Brightness varies with section thickness and scanner; the purple-versus-pink balance is the biological signal.</td></tr>
+        <tr><td>GLCM texture</td><td class="num">6</td><td>Contrast, dissimilarity, homogeneity, energy, correlation and ASM from grey-level co-occurrence matrices (256 grey levels, distance 1, 4 angles averaged).</td><td>Measures how orderly neighbouring intensities are. Benign stroma is smooth; packed tumour nuclei are not.</td></tr>
+        <tr><td>Local binary patterns</td><td class="num">11</td><td>Rotation-invariant uniform LBP histogram (<span class='tex'>P = 8,\ R = 1</span>, 10 bins) plus its Shannon entropy.</td><td>Captures fine nuclear-scale texture and does not depend on slide orientation, which is arbitrary under a microscope.</td></tr>
+        <tr><td>Edge statistics</td><td class="num">4</td><td>Sobel gradient mean and standard deviation, edge density (share of pixels with gradient magnitude above 50), Laplacian variance.</td><td>Crowded nuclei produce many membrane edges; Laplacian variance also flags out-of-focus patches.</td></tr>
+        <tr><td>Pixel PCA</td><td class="num">20</td><td>Patch downsampled bilinearly to <span class='tex'>24 \times 24 \times 3</span>, projected on the top 20 principal components.</td><td>Adds coarse spatial layout that the pooled statistics above discard.</td></tr>
+      </tbody>
+    </table>
+    </div>
+
+    <h3>Choice 3: fit every transform on training data only</h3>
+    <p>Standardisation (<span class='tex'>\mu = 0,\ \sigma = 1</span>) and the PCA basis are fitted on the 40,000 training patches and then applied unchanged to validation and test. Linear models, SVMs and PCA are scale-sensitive, so scaling is required; fitting it on training data alone keeps test statistics out of the model.</p>
+
+    <h3>Does each family earn its place?</h3>
+    <div class="cols">
+      <div>
+        <div class="tablewrap">
+        <table class="data compact">
+          <caption>Logistic-regression ablation, validation accuracy</caption>
+          <thead><tr><th>Feature set</th><th class="num">Dim.</th><th class="num">Track A</th><th class="num">Track B</th></tr></thead>
+          <tbody><tr><td>All features (fused)</td><td class='num'>59</td><td class='num'>78.18%</td><td class='num'>75.54%</td></tr><tr><td>Biological only</td><td class='num'>39</td><td class='num'>78.08%</td><td class='num'>75.68%</td></tr><tr><td>PCA only</td><td class='num'>20</td><td class='num'>71.34%</td><td class='num'>71.34%</td></tr></tbody>
+        </table>
+        </div>
+        <p class="note">The 39 biological features carry almost all of the signal. PCA alone is 7 points worse, and adding it to the biological set changes accuracy by 0.1 points.</p>
+      </div>
+      <div>
+        <div class="tablewrap">
+        <table class="data compact">
+          <caption>Top features on Track A (training split)</caption>
+          <thead><tr><th>Feature</th><th>Family</th><th class="num">ANOVA <i>F</i></th><th class="num">RF importance</th></tr></thead>
+          <tbody>
+            <tr><td><code>lbp_bin_5</code></td><td>LBP</td><td class="num">8,213</td><td class="num">0.058</td></tr>
+            <tr><td><code>pca_pixel_pc_7</code></td><td>PCA</td><td class="num">5,680</td><td class="num">0.035</td></tr>
+            <tr><td><code>edge_density</code></td><td>Edge</td><td class="num">3,381</td><td class="num">0.037</td></tr>
+            <tr><td><code>color_b_mean</code></td><td>Colour</td><td class="num">1,502</td><td class="num">0.037</td></tr>
+            <tr><td><code>color_L_mean</code></td><td>Colour</td><td class="num">946</td><td class="num">0.035</td></tr>
+            <tr><td><code>color_S_std</code></td><td>Colour</td><td class="num">803</td><td class="num">0.047</td></tr>
+          </tbody>
+        </table>
+        </div>
+        <p class="note">Ranked by <code>src/rank_features.py</code> with a univariate ANOVA <i>F</i>-test and random-forest Gini importance. Texture, edge and colour features all appear near the top.</p>
+      </div>
+    </div>
+    <figure class='plot'><button type='button' class='zoom' data-full='./plots/feature_importance.png' aria-label='Enlarge figure'><img src='./figures/feature_importance.jpg' alt='Feature ranking for both tracks, coloured by family.' loading='lazy'></button><figcaption>Feature ranking for both tracks, coloured by family. <a href='./plots/feature_importance.png' target='_blank' rel='noopener'>Full resolution</a></figcaption></figure>
+  </div>
+</section>
+
+<!-- ============================ 4 BASELINE ============================ -->
+<section class="sec alt" id="baseline">
+  <div class="wrap">
+    <p class="secnum">Section 4</p>
+    <h2>Baseline models and the linear ceiling</h2>
+    <p class="lede">The baseline is the simplest model that uses all 59 features: a regularised logistic regression. A linear SVM checks that the result is a property of linear boundaries, not of one loss function.</p>
+
+    <div class="tablewrap">
+    <table class="data">
+      <caption>Linear baselines, Track A</caption>
+      <thead><tr><th>Model</th><th class="num">Validation acc.</th><th class="num">Test acc.</th><th class="num">Test ROC-AUC</th><th class="num">Sensitivity</th><th class="num">Precision</th><th class="num">Brier</th></tr></thead>
+      <tbody><tr><td>Logistic regression (L2)</td><td class='num'>78.18%</td><td class='num'>75.84%</td><td class='num'>0.8373</td><td class='num'>70.96%</td><td class='num'>78.63%</td><td class='num'>0.1679</td></tr><tr><td>Linear SVM (C = 1.0)</td><td class='num'>78.14%</td><td class='num'>75.46%</td><td class='num'>0.8292</td><td class='num'>71.12%</td><td class='num'>77.88%</td><td class='num'>0.1850</td></tr></tbody>
+    </table>
+    </div>
+
+    <div class="cols">
+      <div>
+        <h3>Is the baseline simply under-tuned?</h3>
+        <p>No. <code>src/tune_logreg.py</code> sweeps the regularisation strength over <span class='tex'>C \in [10^{-4},\ 10^{2}</span>] for both <span class='tex'>L_2</span> and <span class='tex'>L_1</span> penalties. Validation accuracy rises from 72.6% and then flattens: the best <span class='tex'>L_2</span> setting reaches 78.38% at <span class='tex'>C = 10</span> and the best <span class='tex'>L_1</span> setting 77.86% at <span class='tex'>C = 1</span>. Six orders of magnitude of <span class='tex'>C</span> move the result by about one point once <span class='tex'>C \ge 0.01</span>.</p>
+        <h3>What this shows</h3>
+        <p>Two different linear learners finish within 0.4 points of each other on the test split (75.84% and 75.46%) and no amount of regularisation tuning lifts them. The tumour and normal classes are not linearly separable in this feature space, so the next step has to be a non-linear decision boundary.</p>
+      </div>
+      <figure class='plot'><button type='button' class='zoom' data-full='./plots/logreg_tuning_curve.png' aria-label='Enlarge figure'><img src='./figures/logreg_tuning_curve.jpg' alt='Validation accuracy and AUC across the regularisation sweep. The curve is flat over most of the range.' loading='lazy'></button><figcaption>Validation accuracy and AUC across the regularisation sweep. The curve is flat over most of the range. <a href='./plots/logreg_tuning_curve.png' target='_blank' rel='noopener'>Full resolution</a></figcaption></figure>
+    </div>
+  </div>
+</section>
+
+<!-- ============================ 5 MODELS ============================ -->
+<section class="sec" id="models">
+  <div class="wrap">
+    <p class="secnum">Section 5</p>
+    <h2>Candidate non-linear models</h2>
+    <p class="lede">Three model families with different ways of bending the decision boundary, all trained on the same 40,000 standardised feature rows.</p>
+
+    <div class="cards3 models">
       <div class="card">
-        
-        <!-- Header & Action Row -->
-        <div style="display:flex; justify-content:space-between; align-items:flex-start; flex-wrap:wrap; gap:1rem; margin-bottom:1rem;">
-          <div>
-            <h2 class="card-title" id="patchIdTitle">Interactive Diagnostic Studio</h2>
-            <p class="card-subtitle" style="margin-bottom:0.25rem;">
-              Upload your own tissue patch or test clinically verified cases across all 8 machine learning models in real time.
-            </p>
-            <div style="display:flex; flex-wrap:wrap; gap:0.4rem; margin-top:0.35rem;">
-              <span id="currentPatchLabel" class="badge badge-tumor">TUMOUR (POSITIVE)</span>
-              <span id="patchCategoryBadge" class="badge badge-consensus">Invasive Carcinoma</span>
-              <span id="consensusBadge" class="badge badge-consensus">Consensus Agreement</span>
-            </div>
+        <h4>Random forest</h4>
+        <p class="mech">Many deep decision trees, each on a bootstrap sample with a random subset of features per split; predictions are averaged.</p>
+        <p><strong>Boundary:</strong> axis-aligned steps. <strong>Strength:</strong> averaging lowers variance.</p>
+        <p class="cfg">Tuned: 250 trees, entropy criterion, unlimited depth, 35% of features per split, balanced class weights.</p>
+        <dl class="kv"><dt>Val. accuracy</dt><dd>79.44%</dd><dt>Test accuracy</dt><dd>78.46%</dd><dt>Test ROC-AUC</dt><dd>0.8863</dd><dt>Test precision</dt><dd>85.31%</dd></dl>
+        <p class="take">Highest precision and specificity (88.16%) of any classical model, and the smallest validation-to-test drop (0.98 points).</p>
+      </div>
+      <div class="card">
+        <h4>HistGradientBoosting</h4>
+        <p class="mech">Shallow trees added one after another, each fitted to the gradient of the log-loss of the current ensemble; features are bucketed into at most 256 bins.</p>
+        <p><strong>Boundary:</strong> axis-aligned, built additively. <strong>Strength:</strong> lowers bias step by step.</p>
+        <p class="cfg">300 iterations, learning rate 0.05, 31 leaves per tree, at least 20 samples per leaf.</p>
+        <dl class="kv"><dt>Val. accuracy</dt><dd>80.66%</dd><dt>Test accuracy</dt><dd>78.82%</dd><dt>Test ROC-AUC</dt><dd>0.8845</dd><dt>Test precision</dt><dd>83.50%</dd></dl>
+        <p class="take">Best single classical model on the test split. Trains in about four seconds.</p>
+      </div>
+      <div class="card">
+        <h4>RBF kernel SVM</h4>
+        <p class="mech">Maximum-margin classifier with the Gaussian kernel <span class='tex'>k(\mathbf{x}, \mathbf{x}') = \exp(-\gamma \lVert \mathbf{x} - \mathbf{x}' \rVert^2)</span>, which measures similarity by Euclidean distance.</p>
+        <p><strong>Boundary:</strong> smooth and curved. <strong>Strength:</strong> uses all features jointly.</p>
+        <p class="cfg"><span class='tex'>C = 1.0</span>, <span class='tex'>\gamma = \text{scale}</span>, 2 GB kernel cache; 16,571 support vectors.</p>
+        <dl class="kv"><dt>Val. accuracy</dt><dd>82.14%</dd><dt>Test accuracy</dt><dd>78.80%</dd><dt>Test ROC-AUC</dt><dd>0.8746</dd><dt>Test sensitivity</dt><dd>73.28%</dd></dl>
+        <p class="take">Highest sensitivity of any classical model: it misses the fewest tumours.</p>
+      </div>
+    </div>
+    <div class="cols">
+      <figure class='plot'><button type='button' class='zoom' data-full='./plots/candidate_models_roc.png' aria-label='Enlarge figure'><img src='./figures/candidate_models_roc.jpg' alt='Validation ROC curves for the candidate models.' loading='lazy'></button><figcaption>Validation ROC curves for the candidate models. <a href='./plots/candidate_models_roc.png' target='_blank' rel='noopener'>Full resolution</a></figcaption></figure>
+      <div>
+        <h3>Reading the three together</h3>
+        <p>All three clear the linear ceiling by about three points on the test split, and they do so with different error profiles: the forest is conservative (few false alarms, more misses), the SVM is the opposite, and boosting sits between. That difference is what the blend in Section 6 uses.</p>
+        <h4>Which features does boosting rely on?</h4>
+        <div class="bars" aria-label="HistGradientBoosting permutation importance"><div class='bar'><code>lbp_bin_5</code><span class='track'><span style='width:100.0%'></span></span><span class='val'>0.060</span></div><div class='bar'><code>color_b_mean</code><span class='track'><span style='width:79.1%'></span></span><span class='val'>0.047</span></div><div class='bar'><code>color_b_std</code><span class='track'><span style='width:71.2%'></span></span><span class='val'>0.043</span></div><div class='bar'><code>color_R_mean</code><span class='track'><span style='width:69.9%'></span></span><span class='val'>0.042</span></div><div class='bar'><code>color_R_std</code><span class='track'><span style='width:59.1%'></span></span><span class='val'>0.035</span></div><div class='bar'><code>edge_density</code><span class='track'><span style='width:45.3%'></span></span><span class='val'>0.027</span></div><div class='bar'><code>color_V_mean</code><span class='track'><span style='width:28.1%'></span></span><span class='val'>0.017</span></div><div class='bar'><code>color_H_mean</code><span class='track'><span style='width:26.5%'></span></span><span class='val'>0.016</span></div></div>
+        <p class="note">Permutation importance on validation (drop in accuracy when a feature is shuffled), from <code>results/histgbm_feature_importance.csv</code>.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================ 6 TUNING ============================ -->
+<section class="sec alt" id="tuning">
+  <div class="wrap">
+    <p class="secnum">Section 6</p>
+    <h2>Hyperparameter tuning and the multi-paradigm blend</h2>
+    <div class="cols">
+      <div>
+        <h3>RBF SVM grid</h3>
+        <p>Eleven <span class='tex'>(C, \gamma)</span> and class-weight settings were scored on validation (<code>src/tune_rbf_svm.py</code>). Accuracy varies only between 82.02% and 82.54% across the whole grid. The setting carried forward, <span class='tex'>C = 3.0</span> with <span class='tex'>\gamma = \text{scale}</span>, had the highest validation ROC-AUC (0.9082).</p>
+        <details>
+          <summary>Show the full validation grid</summary>
+          <div class="tablewrap">
+          <table class="data compact">
+            <thead><tr><th class="num"><span class='tex'>C</span></th><th><span class='tex'>\gamma</span></th><th>Class weight</th><th class="num">Accuracy</th><th class="num">ROC-AUC</th><th class="num">Sensitivity</th><th class="num">Support vectors</th></tr></thead>
+            <tbody><tr><td class='num'>0.5</td><td>scale</td><td>none</td><td class='num'>82.12%</td><td class='num'>0.8972</td><td class='num'>79.68%</td><td class='num'>17,312</td></tr><tr><td class='num'>1</td><td>0.01</td><td>none</td><td class='num'>82.02%</td><td class='num'>0.8987</td><td class='num'>80.00%</td><td class='num'>16,845</td></tr><tr><td class='num'>1</td><td>scale</td><td>none</td><td class='num'>82.14%</td><td class='num'>0.9038</td><td class='num'>79.36%</td><td class='num'>16,571</td></tr><tr><td class='num'>1</td><td>0.025</td><td>none</td><td class='num'>82.02%</td><td class='num'>0.9038</td><td class='num'>78.40%</td><td class='num'>17,022</td></tr><tr><td class='num'>2</td><td>0.01</td><td>none</td><td class='num'>82.16%</td><td class='num'>0.9048</td><td class='num'>79.56%</td><td class='num'>16,128</td></tr><tr><td class='num'>2</td><td>scale</td><td>none</td><td class='num'>82.40%</td><td class='num'>0.9073</td><td class='num'>78.88%</td><td class='num'>15,895</td></tr><tr><td class='num'>2</td><td>0.025</td><td>none</td><td class='num'>82.08%</td><td class='num'>0.9051</td><td class='num'>78.04%</td><td class='num'>16,425</td></tr><tr class=chosen><td class='num'>3</td><td>scale</td><td>none</td><td class='num'>82.36%</td><td class='num'>0.9082</td><td class='num'>78.56%</td><td class='num'>15,569</td></tr><tr><td class='num'>4</td><td>scale</td><td>none</td><td class='num'>82.38%</td><td class='num'>0.9080</td><td class='num'>78.16%</td><td class='num'>15,315</td></tr><tr><td class='num'>2</td><td>scale</td><td>tumour &times; 1.1</td><td class='num'>82.54%</td><td class='num'>0.9074</td><td class='num'>80.32%</td><td class='num'>15,811</td></tr><tr><td class='num'>2</td><td>scale</td><td>balanced</td><td class='num'>82.40%</td><td class='num'>0.9073</td><td class='num'>78.88%</td><td class='num'>15,895</td></tr></tbody>
+          </table>
           </div>
-          <div style="display:flex; gap:0.5rem; flex-wrap:wrap;">
-            <button id="btnPrevPatch" class="btn-tool">&#8592; Previous</button>
-            <button id="btnRandomPatch" class="btn-tool">&#127922; Random Sample</button>
-            <button id="btnNextPatch" class="btn-tool">Next &#8594;</button>
-          </div>
+        </details>
+        <h3>Why blend an SVM with boosted trees</h3>
+        <p>The SVM separates classes by distance in the full feature space; boosted trees cut one feature at a time. They make many of the same mistakes but not all of them: on the test split their error indicators have a correlation of 0.67, and 1,064 patches are classified correctly by some model families and wrongly by others. Averaging probabilities helps on exactly those patches.</p>
+        <div class="tex display">P_{\text{blend}}(y = 1 \mid \mathbf{x}) = w \cdot P_{\text{RBF}}(\mathbf{x}) + (1 - w) \cdot P_{\text{HistGBM}}(\mathbf{x})</div>
+        <p>Two weights were frozen for the test split: <span class='tex'>w = 0.5</span> and <span class='tex'>w = 0.7</span>.</p>
+      </div>
+      <div>
+        <figure class="chartfig">
+          <svg viewBox='0 0 420 230' role='img' aria-label='Validation accuracy of the blend against SVM weight'><line x1='46' x2='406' y1='190.0' y2='190.0' class='grid'/><text x='40' y='194.0' text-anchor='end' class='tick'>80.5%</text><line x1='46' x2='406' y1='150.9' y2='150.9' class='grid'/><text x='40' y='154.9' text-anchor='end' class='tick'>81.0%</text><line x1='46' x2='406' y1='111.8' y2='111.8' class='grid'/><text x='40' y='115.8' text-anchor='end' class='tick'>81.5%</text><line x1='46' x2='406' y1='72.7' y2='72.7' class='grid'/><text x='40' y='76.7' text-anchor='end' class='tick'>82.0%</text><line x1='46' x2='406' y1='33.6' y2='33.6' class='grid'/><text x='40' y='37.6' text-anchor='end' class='tick'>82.5%</text><text x='46.0' y='206' text-anchor='middle' class='tick'>0</text><text x='136.0' y='206' text-anchor='middle' class='tick'>0.25</text><text x='226.0' y='206' text-anchor='middle' class='tick'>0.5</text><text x='316.0' y='206' text-anchor='middle' class='tick'>0.75</text><text x='406.0' y='206' text-anchor='middle' class='tick'>1</text><text x='226.0' y='224' text-anchor='middle' class='axis'>SVM weight w (0 = boosting only, 1 = SVM only)</text><polyline class='line' points='46.0,177.5 82.0,144.6 118.0,132.1 154.0,114.9 190.0,94.6 226.0,78.9 262.0,80.5 298.0,60.2 334.0,52.3 370.0,36.7 406.0,44.5'/><circle cx='46.0' cy='177.5' r='3.2' class='dot'><title>w = 0: 80.66%</title></circle><circle cx='82.0' cy='144.6' r='3.2' class='dot'><title>w = 0.1: 81.08%</title></circle><circle cx='118.0' cy='132.1' r='3.2' class='dot'><title>w = 0.2: 81.24%</title></circle><circle cx='154.0' cy='114.9' r='3.2' class='dot'><title>w = 0.3: 81.46%</title></circle><circle cx='190.0' cy='94.6' r='3.2' class='dot'><title>w = 0.4: 81.72%</title></circle><circle cx='226.0' cy='78.9' r='5' class='dot sel'><title>w = 0.5: 81.92%</title></circle><text x='226.0' y='68.9' text-anchor='middle' class='lab'>81.92%</text><circle cx='262.0' cy='80.5' r='3.2' class='dot'><title>w = 0.6: 81.90%</title></circle><circle cx='298.0' cy='60.2' r='5' class='dot sel'><title>w = 0.7: 82.16%</title></circle><text x='298.0' y='50.2' text-anchor='middle' class='lab'>82.16%</text><circle cx='334.0' cy='52.3' r='3.2' class='dot'><title>w = 0.8: 82.26%</title></circle><circle cx='370.0' cy='36.7' r='3.2' class='dot'><title>w = 0.9: 82.46%</title></circle><circle cx='406.0' cy='44.5' r='3.2' class='dot'><title>w = 1: 82.36%</title></circle></svg>
+          <figcaption>Validation accuracy of the blend as the SVM weight <span class='tex'>w</span> changes (<code>results/ensemble_blend_benchmark.csv</code>). Any blend beats boosting alone (<span class='tex'>w = 0</span>). Filled markers are the two weights taken to the test split.</figcaption>
+        </figure>
+        <div class="callout">
+          <h4>Outcome on the test split</h4>
+          <p>The 50/50 blend is the best classical model: <strong>79.76%</strong> accuracy, ROC-AUC 0.8853, PR-AUC 0.8767, and the lowest Brier score of the classical models (<strong>0.1426</strong>), meaning its probabilities are the best calibrated.</p>
         </div>
+        <figure class='plot'><button type='button' class='zoom' data-full='./plots/rbf_svm_tuning_heatmap.png' aria-label='Enlarge figure'><img src='./figures/rbf_svm_tuning_heatmap.jpg' alt='Validation accuracy across the RBF SVM grid.' loading='lazy'></button><figcaption>Validation accuracy across the RBF SVM grid. <a href='./plots/rbf_svm_tuning_heatmap.png' target='_blank' rel='noopener'>Full resolution</a></figcaption></figure>
+      </div>
+    </div>
+  </div>
+</section>
 
-        <!-- Interactive Input Section (Upload + Presets) -->
-        <div class="grid-2" style="margin-bottom:1.25rem; align-items:stretch;">
-          <!-- Upload Zone -->
-          <div class="upload-zone" id="uploadZone">
-            <input type="file" id="fileInput" accept="image/png, image/jpeg, image/jpg" style="display:none;">
-            <div class="upload-prompt">
-              <span class="upload-icon">&#128193;</span>
-              <span class="upload-text"><strong>Click to upload</strong> or drag &amp; drop an image patch</span>
-              <span style="font-size:0.75rem; color:var(--text-subtle);">Accepts PNG, JPG (e.g., $96\times96$ histology patches)</span>
-            </div>
-          </div>
+<!-- ============================ 7 RESULTS ============================ -->
+<section class="sec" id="results">
+  <div class="wrap">
+    <p class="secnum">Section 7</p>
+    <h2>Sealed test evaluation and full leaderboard</h2>
 
-          <!-- Dataset Presets Selector -->
-          <div style="display:flex; flex-direction:column; justify-content:center; background:var(--bg-surface); border:1px solid var(--border); border-radius:var(--radius); padding:1rem 1.25rem;">
-            <label for="presetPatchSelect" style="font-size:0.82rem; font-weight:700; color:var(--text); margin-bottom:0.4rem;">
-              &#128269; Or Select from Curated Clinical Presets:
-            </label>
-            <select id="presetPatchSelect" class="select-model" style="width:100%; font-size:0.86rem; padding:0.5rem 0.75rem;">
-              <option value="0">Sample #1: Confirmed Invasive Carcinoma (Malignant, Label=1)</option>
-              <option value="1">Sample #2: Benign Lymph Node Parenchyma (Benign, Label=0)</option>
-              <option value="2">Sample #3: Tier 1 Dense Germinal Center (Tricky False Positive)</option>
-              <option value="3">Sample #4: Tier 2 Desmoplastic Micrometastasis (Tricky False Negative)</option>
-              <option value="4">Sample #5: Tier 3 Necrosis &amp; Karyolytic Ghost Cells (False Negative)</option>
-              <option value="5">Sample #6: Tier 4 Perinodal Adipose Vacuole (Boundary Artifact)</option>
-              <option value="6">Sample #7: Micro-follicular Invasive Carcinoma (Label=1)</option>
-              <option value="7">Sample #8: Quiescent Cortical Stroma (Label=0)</option>
-            </select>
-            <span style="font-size:0.75rem; color:var(--text-subtle); margin-top:0.45rem;">
-              Switching presets immediately loads ground-truth histology and benchmark model probabilities.
-            </span>
-          </div>
+    <div class="cols three">
+      <div class="card"><h4>Protocol</h4><p>All preprocessing, model choices and hyperparameters were fixed using training and validation data. The 5,000 test patches were then scored once by <code>src/evaluate_test.py</code>.</p></div>
+      <div class="card"><h4>Metrics</h4><p>Accuracy, ROC-AUC and PR-AUC for ranking quality; sensitivity, specificity, precision and F1 at threshold 0.5; Brier score for calibration (lower is better); and the raw confusion counts.</p></div>
+      <div class="card"><h4>Uncertainty</h4><p>1,000 bootstrap resamples of the test split give 95% confidence intervals for each classical model. Validation-to-test gaps are reported for every model.</p></div>
+    </div>
+
+    <div class="tablewrap sticky" tabindex="0" aria-label="Leaderboard, scrollable">
+    <table class="data leaderboard" id="leaderboard">
+      <caption>All models on the same 5,000 test patches (2,500 normal, 2,500 tumour). Click a column heading to sort.</caption>
+      <thead><tr>
+        <th data-k="rank" class="num">#</th><th data-k="name">Model</th><th data-k="par">Paradigm</th>
+        <th data-k="acc" class="num">Accuracy</th><th data-k="auc" class="num">ROC-AUC</th><th data-k="pr" class="num">PR-AUC</th>
+        <th data-k="sens" class="num">Sensitivity</th><th data-k="spec" class="num">Specificity</th><th data-k="prec" class="num">Precision</th>
+        <th data-k="f1" class="num">F1</th><th data-k="brier" class="num">Brier</th>
+        <th data-k="tn" class="num">TN</th><th data-k="fp" class="num">FP</th><th data-k="fn" class="num">FN</th><th data-k="tp" class="num">TP</th>
+      </tr></thead>
+      <tbody><tr class='p-deep'><td class='num' data-v='1'>1</td><td data-v='ResNet-18'><strong>ResNet-18</strong></td><td data-v='Deep CNN, full patch'><span class='ptag p-deep'>Deep CNN, full patch</span></td><td class='num best' data-v='0.8494'>84.94%</td><td class='num best' data-v='0.9392'>0.9392</td><td class='num best' data-v='0.9455'>0.9455</td><td class='num' data-v='0.7504'>75.04%</td><td class='num best' data-v='0.9484'>94.84%</td><td class='num best' data-v='0.9357'>93.57%</td><td class='num best' data-v='0.8329'>0.8329</td><td class='num best' data-v='0.1168'>0.1168</td><td class='num best' data-v='2371.0'>2,371</td><td class='num best' data-v='129.0'>129</td><td class='num' data-v='624.0'>624</td><td class='num' data-v='1876.0'>1,876</td></tr><tr class='p-deep'><td class='num' data-v='2'>2</td><td data-v='EfficientNet-B0'><strong>EfficientNet-B0</strong></td><td data-v='Deep CNN, central crop'><span class='ptag p-deep'>Deep CNN, central crop</span></td><td class='num' data-v='0.8264'>82.64%</td><td class='num' data-v='0.9086'>0.9086</td><td class='num' data-v='0.9015'>0.9015</td><td class='num best' data-v='0.788'>78.80%</td><td class='num' data-v='0.8648'>86.48%</td><td class='num' data-v='0.8535'>85.35%</td><td class='num' data-v='0.8106'>0.8106</td><td class='num' data-v='0.1314'>0.1314</td><td class='num' data-v='2162.0'>2,162</td><td class='num' data-v='338.0'>338</td><td class='num best' data-v='530.0'>530</td><td class='num best' data-v='1970.0'>1,970</td></tr><tr class='p-deep'><td class='num' data-v='3'>3</td><td data-v='ResNet-50'><strong>ResNet-50</strong></td><td data-v='Deep CNN, full patch'><span class='ptag p-deep'>Deep CNN, full patch</span></td><td class='num' data-v='0.8214'>82.14%</td><td class='num' data-v='0.9285'>0.9285</td><td class='num' data-v='0.9124'>0.9124</td><td class='num' data-v='0.7248'>72.48%</td><td class='num' data-v='0.918'>91.80%</td><td class='num' data-v='0.8984'>89.84%</td><td class='num' data-v='0.791'>0.7910</td><td class='num' data-v='0.1378'>0.1378</td><td class='num' data-v='2295.0'>2,295</td><td class='num' data-v='205.0'>205</td><td class='num' data-v='688.0'>688</td><td class='num' data-v='1812.0'>1,812</td></tr><tr class='p-ens'><td class='num' data-v='4'>4</td><td data-v='Hybrid blend 50/50'><strong>Hybrid blend 50/50</strong></td><td data-v='Ensemble of SVM and boosting'><span class='ptag p-ens'>Ensemble of SVM and boosting</span></td><td class='num' data-v='0.7976'>79.76%</td><td class='num' data-v='0.8852940800000001'>0.8853</td><td class='num' data-v='0.8767187305626712'>0.8767</td><td class='num' data-v='0.7308'>73.08%</td><td class='num' data-v='0.8644'>86.44%</td><td class='num' data-v='0.8434903047091413'>84.35%</td><td class='num' data-v='0.7831118731247321'>0.7831</td><td class='num' data-v='0.1426'>0.1426</td><td class='num' data-v='2161.0'>2,161</td><td class='num' data-v='339.0'>339</td><td class='num' data-v='673.0'>673</td><td class='num' data-v='1827.0'>1,827</td></tr><tr class='p-ens'><td class='num' data-v='5'>5</td><td data-v='Hybrid blend 70/30'><strong>Hybrid blend 70/30</strong></td><td data-v='Ensemble of SVM and boosting'><span class='ptag p-ens'>Ensemble of SVM and boosting</span></td><td class='num' data-v='0.7956'>79.56%</td><td class='num' data-v='0.88043248'>0.8804</td><td class='num' data-v='0.8739509810960884'>0.8740</td><td class='num' data-v='0.7232'>72.32%</td><td class='num' data-v='0.868'>86.80%</td><td class='num' data-v='0.8456501403180543'>84.57%</td><td class='num' data-v='0.7796463993100474'>0.7796</td><td class='num' data-v='0.1453'>0.1453</td><td class='num' data-v='2170.0'>2,170</td><td class='num' data-v='330.0'>330</td><td class='num' data-v='692.0'>692</td><td class='num' data-v='1808.0'>1,808</td></tr><tr class='p-tree'><td class='num' data-v='6'>6</td><td data-v='HistGradientBoosting'><strong>HistGradientBoosting</strong></td><td data-v='Gradient-boosted trees'><span class='ptag p-tree'>Gradient-boosted trees</span></td><td class='num' data-v='0.7882'>78.82%</td><td class='num' data-v='0.8845062400000001'>0.8845</td><td class='num' data-v='0.8723700954270784'>0.8724</td><td class='num' data-v='0.7184'>71.84%</td><td class='num' data-v='0.858'>85.80%</td><td class='num' data-v='0.8349604834960483'>83.50%</td><td class='num' data-v='0.7723070307460761'>0.7723</td><td class='num' data-v='0.146'>0.1460</td><td class='num' data-v='2145.0'>2,145</td><td class='num' data-v='355.0'>355</td><td class='num' data-v='704.0'>704</td><td class='num' data-v='1796.0'>1,796</td></tr><tr class='p-kern'><td class='num' data-v='7'>7</td><td data-v='RBF kernel SVM (default, C = 1.0)'><strong>RBF kernel SVM (default, C = 1.0)</strong></td><td data-v='Kernel machine'><span class='ptag p-kern'>Kernel machine</span></td><td class='num' data-v='0.788'>78.80%</td><td class='num' data-v='0.87456688'>0.8746</td><td class='num' data-v='0.8681449535877277'>0.8681</td><td class='num' data-v='0.7328'>73.28%</td><td class='num' data-v='0.8432'>84.32%</td><td class='num' data-v='0.8237410071942446'>82.37%</td><td class='num' data-v='0.7756138865368332'>0.7756</td><td class='num' data-v='0.1493'>0.1493</td><td class='num' data-v='2108.0'>2,108</td><td class='num' data-v='392.0'>392</td><td class='num' data-v='668.0'>668</td><td class='num' data-v='1832.0'>1,832</td></tr><tr class='p-tree'><td class='num' data-v='8'>8</td><td data-v='Random forest (tuned)'><strong>Random forest (tuned)</strong></td><td data-v='Bagged trees'><span class='ptag p-tree'>Bagged trees</span></td><td class='num' data-v='0.7846'>78.46%</td><td class='num' data-v='0.8862881600000001'>0.8863</td><td class='num' data-v='0.8714093521667403'>0.8714</td><td class='num' data-v='0.6876'>68.76%</td><td class='num' data-v='0.8816'>88.16%</td><td class='num' data-v='0.8531017369727047'>85.31%</td><td class='num' data-v='0.7614617940199335'>0.7615</td><td class='num' data-v='0.1467'>0.1467</td><td class='num' data-v='2204.0'>2,204</td><td class='num' data-v='296.0'>296</td><td class='num' data-v='781.0'>781</td><td class='num' data-v='1719.0'>1,719</td></tr><tr class='p-kern'><td class='num' data-v='9'>9</td><td data-v='RBF kernel SVM (tuned, C = 3.0)'><strong>RBF kernel SVM (tuned, C = 3.0)</strong></td><td data-v='Kernel machine'><span class='ptag p-kern'>Kernel machine</span></td><td class='num' data-v='0.7792'>77.92%</td><td class='num' data-v='0.8637328000000001'>0.8637</td><td class='num' data-v='0.8626422175492655'>0.8626</td><td class='num' data-v='0.7088'>70.88%</td><td class='num' data-v='0.8496'>84.96%</td><td class='num' data-v='0.8249534450651769'>82.50%</td><td class='num' data-v='0.7624784853700516'>0.7625</td><td class='num' data-v='0.1535'>0.1535</td><td class='num' data-v='2124.0'>2,124</td><td class='num' data-v='376.0'>376</td><td class='num' data-v='728.0'>728</td><td class='num' data-v='1772.0'>1,772</td></tr><tr class='p-lin'><td class='num' data-v='10'>10</td><td data-v='Logistic regression (baseline)'><strong>Logistic regression (baseline)</strong></td><td data-v='Linear model'><span class='ptag p-lin'>Linear model</span></td><td class='num' data-v='0.7584'>75.84%</td><td class='num' data-v='0.8372924799999999'>0.8373</td><td class='num' data-v='0.8284400849604752'>0.8284</td><td class='num' data-v='0.7096'>70.96%</td><td class='num' data-v='0.8072'>80.72%</td><td class='num' data-v='0.7863475177304965'>78.63%</td><td class='num' data-v='0.7460050462573591'>0.7460</td><td class='num' data-v='0.1679'>0.1679</td><td class='num' data-v='2018.0'>2,018</td><td class='num' data-v='482.0'>482</td><td class='num' data-v='726.0'>726</td><td class='num' data-v='1774.0'>1,774</td></tr><tr class='p-lin'><td class='num' data-v='11'>11</td><td data-v='Linear SVM'><strong>Linear SVM</strong></td><td data-v='Linear model'><span class='ptag p-lin'>Linear model</span></td><td class='num' data-v='0.7546'>75.46%</td><td class='num' data-v='0.8291537600000001'>0.8292</td><td class='num' data-v='0.8226104774332267'>0.8226</td><td class='num' data-v='0.7112'>71.12%</td><td class='num' data-v='0.798'>79.80%</td><td class='num' data-v='0.7787998247919404'>77.88%</td><td class='num' data-v='0.7434664436546101'>0.7435</td><td class='num' data-v='0.185'>0.1850</td><td class='num' data-v='1995.0'>1,995</td><td class='num' data-v='505.0'>505</td><td class='num' data-v='722.0'>722</td><td class='num' data-v='1778.0'>1,778</td></tr></tbody>
+    </table>
+    </div>
+    <p class="note">Source: <code>results/final_test_benchmark.csv</code>. Bold marks the best value in each column. The leaderboard blend averages the tuned (<span class='tex'>C = 3.0</span>) RBF SVM with HistGradientBoosting. ResNet-50 and EfficientNet-B0 are additional deep-learning runs discussed in Section 9.</p>
+
+    <div class="cols">
+      <div>
+        <h3>Statistical uncertainty</h3>
+        <div class="tablewrap">
+        <table class="data compact">
+          <caption>Bootstrap 95% confidence intervals (1,000 resamples)</caption>
+          <thead><tr><th>Model</th><th class="num">Accuracy</th><th class="num">ROC-AUC</th></tr></thead>
+          <tbody><tr><td>Hybrid blend 50/50</td><td class='num'>79.76% <span class='ci'>[78.62, 80.92]</span></td><td class='num'>0.8853 <span class='ci'>[0.8765, 0.8948]</span></td></tr><tr><td>Hybrid blend 70/30</td><td class='num'>79.56% <span class='ci'>[78.46, 80.74]</span></td><td class='num'>0.8804 <span class='ci'>[0.8712, 0.8901]</span></td></tr><tr><td>HistGradientBoosting</td><td class='num'>78.82% <span class='ci'>[77.70, 80.06]</span></td><td class='num'>0.8845 <span class='ci'>[0.8757, 0.8937]</span></td></tr><tr><td>RBF kernel SVM (default, C = 1.0)</td><td class='num'>78.80% <span class='ci'>[77.72, 80.04]</span></td><td class='num'>0.8746 <span class='ci'>[0.8656, 0.8845]</span></td></tr><tr><td>Random forest (tuned)</td><td class='num'>78.46% <span class='ci'>[77.34, 79.70]</span></td><td class='num'>0.8863 <span class='ci'>[0.8772, 0.8953]</span></td></tr><tr><td>RBF kernel SVM (tuned, C = 3.0)</td><td class='num'>77.92% <span class='ci'>[76.74, 79.16]</span></td><td class='num'>0.8637 <span class='ci'>[0.8536, 0.8744]</span></td></tr><tr><td>Logistic regression (baseline)</td><td class='num'>75.84% <span class='ci'>[74.64, 77.04]</span></td><td class='num'>0.8373 <span class='ci'>[0.8268, 0.8486]</span></td></tr><tr><td>Linear SVM</td><td class='num'>75.46% <span class='ci'>[74.26, 76.72]</span></td><td class='num'>0.8292 <span class='ci'>[0.8182, 0.8411]</span></td></tr></tbody>
+        </table>
         </div>
+        <ul class="tight">
+          <li><strong>Non-linear against linear:</strong> the blend&rsquo;s interval (78.62&ndash;80.92%) lies entirely above logistic regression&rsquo;s (74.64&ndash;77.04%). The gain is not sampling noise.</li>
+          <li><strong>ResNet-18 against the blend:</strong> 84.94% against 79.76% on 5,000 patches. A two-proportion <span class='tex'>z</span>-test on these counts gives <span class='tex'>z = 6.8,\ p &lt; 10^{-7}</span>.</li>
+          <li><strong>Blend against single non-linear models:</strong> the intervals overlap almost completely. The blend ranks first, but its lead of about one point over HistGradientBoosting is within bootstrap noise.</li>
+        </ul>
+      </div>
+      <div>
+        <h3>Generalisation gap</h3>
+        <div class="tablewrap">
+        <table class="data compact">
+          <caption>Validation accuracy against test accuracy</caption>
+          <thead><tr><th>Model</th><th class="num">Validation</th><th class="num">Test</th><th class="num">Drop (points)</th></tr></thead>
+          <tbody><tr><td>Random forest (tuned)</td><td class='num'>79.44%</td><td class='num'>78.46%</td><td class='num'><span class='gapbar' style='--w:22%'></span>0.98</td></tr><tr><td>HistGradientBoosting</td><td class='num'>80.66%</td><td class='num'>78.82%</td><td class='num'><span class='gapbar' style='--w:41%'></span>1.84</td></tr><tr><td>Hybrid blend 50/50</td><td class='num'>81.92%</td><td class='num'>79.76%</td><td class='num'><span class='gapbar' style='--w:49%'></span>2.16</td></tr><tr><td>Logistic regression (baseline)</td><td class='num'>78.18%</td><td class='num'>75.84%</td><td class='num'><span class='gapbar' style='--w:53%'></span>2.34</td></tr><tr><td>Hybrid blend 70/30</td><td class='num'>82.16%</td><td class='num'>79.56%</td><td class='num'><span class='gapbar' style='--w:59%'></span>2.60</td></tr><tr><td>Linear SVM</td><td class='num'>78.14%</td><td class='num'>75.46%</td><td class='num'><span class='gapbar' style='--w:60%'></span>2.68</td></tr><tr><td>RBF kernel SVM (default, C = 1.0)</td><td class='num'>82.14%</td><td class='num'>78.80%</td><td class='num'><span class='gapbar' style='--w:75%'></span>3.34</td></tr><tr><td>RBF kernel SVM (tuned, C = 3.0)</td><td class='num'>82.36%</td><td class='num'>77.92%</td><td class='num'><span class='gapbar' style='--w:100%'></span>4.44</td></tr></tbody>
+        </table>
+        </div>
+        <p class="note">Every model loses accuracy on the test split. The random forest loses least. The tuned RBF SVM loses most: it beat the default SVM on validation and lost to it on test, a sign that the grid search fitted validation noise.</p>
+      </div>
+    </div>
 
-        <!-- Evaluation Model Selector Bar -->
-        <div class="model-select-bar">
-          <label for="evalModelSelect">&#9879; Active Evaluation Model:</label>
-          <select id="evalModelSelect" class="select-model">
-            <option value="resnet18" selected>&#9733; ResNet-18 (Deep CNN Full96 — 84.94% Test Acc, 0.9392 ROC-AUC) [Champion]</option>
-            <option value="effnet">EfficientNet-B0 (Track B Central Focus — 82.64% Test Acc, 0.9086 ROC-AUC)</option>
-            <option value="resnet50">ResNet-50 (Deep CNN Full96 — 82.14% Test Acc, 0.9285 ROC-AUC)</option>
-            <option value="hybrid">Hybrid Blend 50/50 (Champion Classical Ensemble — 79.76% Test Acc, 0.8853 ROC-AUC)</option>
-            <option value="histgbm">HistGradientBoosting (Handcrafted 59D — 78.82% Test Acc)</option>
-            <option value="rf">Tuned Random Forest (150 Trees — 78.46% Test Acc, 85.3% Precision)</option>
-            <option value="rbf">Default RBF Kernel SVM (Handcrafted 59D — 78.80% Test Acc)</option>
-            <option value="logreg">Logistic Regression ($L_2$ Baseline — 75.84% Test Acc)</option>
+    <div class="figgrid two">
+      <figure class='plot'><button type='button' class='zoom' data-full='./plots/test_roc_curves.png' aria-label='Enlarge figure'><img src='./figures/test_roc_curves.jpg' alt='Test ROC curves for the classical models.' loading='lazy'></button><figcaption>Test ROC curves for the classical models. <a href='./plots/test_roc_curves.png' target='_blank' rel='noopener'>Full resolution</a></figcaption></figure>
+      <figure class='plot'><button type='button' class='zoom' data-full='./plots/test_pr_curves.png' aria-label='Enlarge figure'><img src='./figures/test_pr_curves.jpg' alt='Test precision-recall curves for the classical models.' loading='lazy'></button><figcaption>Test precision-recall curves for the classical models. <a href='./plots/test_pr_curves.png' target='_blank' rel='noopener'>Full resolution</a></figcaption></figure>
+    </div>
+  </div>
+</section>
+
+<!-- ============================ 8 ERRORS ============================ -->
+<section class="sec alt" id="errors">
+  <div class="wrap">
+    <p class="secnum">Section 8</p>
+    <h2>Error analysis and the four-tier failure taxonomy</h2>
+    <p class="lede">The error analysis (<code>src/error_analysis.py</code>) stores one row per test patch with the probability from each model family, so every number in this section can be recomputed from <code>results/error_analysis_cases.csv</code>. The simulator in Section 10 runs on the same file.</p>
+
+    <div class="statbar small">
+      <div class="stat"><div class="stat-num">1,009</div><div class="stat-lab">Blend errors</div><div class="stat-sub">346 false positives, 663 false negatives</div></div>
+      <div class="stat"><div class="stat-num">3,323</div><div class="stat-lab">Consensus successes</div><div class="stat-sub">66.5% of test patches: all four families correct</div></div>
+      <div class="stat"><div class="stat-num">1,064</div><div class="stat-lab">Disputed</div><div class="stat-sub">21.3%: families disagree</div></div>
+      <div class="stat hot"><div class="stat-num">613</div><div class="stat-lab">Consensus failures</div><div class="stat-sub">12.3%: all four families wrong (205 FP, 408 FN)</div></div>
+    </div>
+    <p class="note">The error analysis blends the default (<span class='tex'>C = 1.0</span>) RBF SVM with HistGradientBoosting, which gives 346 FP and 663 FN (1,009 errors, 79.82% accuracy). The leaderboard blend uses the tuned SVM and gives 339 FP and 673 FN (1,012 errors, 79.76%). The two blends give slightly different counts; the four single-model columns match the leaderboard exactly.</p>
+
+    <div class="cols">
+      <div>
+        <h3>Why 613 matters</h3>
+        <p>Logistic regression, random forest, gradient boosting and the RBF SVM learn in very different ways. If errors came from the classifiers, they would fall on different patches. Instead, 613 patches defeat all four at once, and these make up 60.8% of the blend&rsquo;s 1,009 errors. The shared input is the 59 features, so the limit is in the representation: on these patches the pooled colour, texture and edge statistics look like the wrong class.</p>
+        <p>Consensus failures are mostly missed tumours: 408 false negatives against 205 false positives.</p>
+      </div>
+      <figure class='plot'><button type='button' class='zoom' data-full='./plots/consensus_vs_specific_errors.png' aria-label='Enlarge figure'><img src='./figures/consensus_vs_specific_errors.jpg' alt='Agreement between the four model families on the 5,000 test patches.' loading='lazy'></button><figcaption>Agreement between the four model families on the 5,000 test patches. <a href='./plots/consensus_vs_specific_errors.png' target='_blank' rel='noopener'>Full resolution</a></figcaption></figure>
+    </div>
+
+    <h3>What distinguishes the errors</h3>
+    <p>Cohen&rsquo;s <span class='tex'>d</span> compares the mean of each standardised feature between errors and the correctly classified patches of the same true class: <span class='tex'>d = (\mu_{\text{error}} - \mu_{\text{correct}}) / \sigma_{\text{pooled}}</span>. Values near <span class='tex'>\pm 0.8</span> or beyond are large effects.</p>
+    <div class="cols">
+      <div class="tablewrap">
+      <table class="data compact">
+        <caption>False negatives against true positives</caption>
+        <thead><tr><th>Feature</th><th class="num">Mean, correct</th><th class="num">Mean, missed</th><th class="num">Cohen&rsquo;s <i>d</i></th></tr></thead>
+        <tbody><tr><td><code>lbp_bin_5</code></td><td class='num'>&minus;0.30</td><td class='num'>+0.38</td><td class='num strong'>+1.06</td></tr><tr><td><code>edge_sobel_std</code></td><td class='num'>&minus;0.23</td><td class='num'>+0.33</td><td class='num strong'>+0.88</td></tr><tr><td><code>color_S_std</code></td><td class='num'>+0.08</td><td class='num'>+0.76</td><td class='num strong'>+0.87</td></tr><tr><td><code>lbp_bin_9</code></td><td class='num'>+0.13</td><td class='num'>&minus;0.37</td><td class='num strong'>&minus;0.75</td></tr><tr><td><code>lbp_bin_0</code></td><td class='num'>+0.13</td><td class='num'>&minus;0.38</td><td class='num strong'>&minus;0.75</td></tr></tbody>
+      </table>
+      </div>
+      <div class="tablewrap">
+      <table class="data compact">
+        <caption>False positives against true negatives</caption>
+        <thead><tr><th>Feature</th><th class="num">Mean, correct</th><th class="num">Mean, false alarm</th><th class="num">Cohen&rsquo;s <i>d</i></th></tr></thead>
+        <tbody><tr><td><code>lbp_bin_5</code></td><td class='num'>+0.63</td><td class='num'>&minus;0.21</td><td class='num strong'>&minus;0.97</td></tr><tr><td><code>lbp_bin_0</code></td><td class='num'>&minus;0.58</td><td class='num'>+0.24</td><td class='num strong'>+0.91</td></tr><tr><td><code>glcm_homogeneity</code></td><td class='num'>+0.50</td><td class='num'>&minus;0.35</td><td class='num strong'>&minus;0.85</td></tr><tr><td><code>color_a_mean</code></td><td class='num'>&minus;0.46</td><td class='num'>+0.23</td><td class='num strong'>+0.84</td></tr><tr><td><code>edge_density</code></td><td class='num'>&minus;0.46</td><td class='num'>+0.35</td><td class='num strong'>+0.83</td></tr></tbody>
+      </table>
+      </div>
+    </div>
+    <p class="note">Missed tumours have the texture and edge profile of normal tissue; false alarms have the dense, low-homogeneity, edge-rich profile of tumour. In both directions the largest shift is in <code>lbp_bin_5</code>, the single most discriminative feature overall.</p>
+
+    <h3>Four-tier failure taxonomy</h3>
+    <p>Combining the effect sizes with visual review of the most confident errors, the authors group the failures into four tissue patterns. The shares are their estimates from feature profiles and inspection (310, 390, 160 and 149 of 1,009 errors); individual patches do not carry a stored tier label.</p>
+    <div class="tiers">
+      <article class="tier t1">
+        <header><span class="tiernum">Tier 1</span><h4>Dense benign lymphoid tissue</h4><span class="badge badge-normal">False positive</span><span class="share">about 30.7%</span></header>
+        <div class="tierbar"><span style="width:30.7%"></span></div>
+        <p>Reactive follicles and germinal centres pack proliferating lymphocytes tightly. Pooled over the patch, this gives the dark staining and high edge density of carcinoma.</p>
+        <p class="sig">Signature: <code>edge_density</code> <span class='tex'>d = +0.83</span>, <code>color_a_mean</code> <span class='tex'>d = +0.84</span>, <code>glcm_homogeneity</code> <span class='tex'>d = -0.85</span></p>
+      </article>
+      <article class="tier t2">
+        <header><span class="tiernum">Tier 2</span><h4>Stroma-dense micrometastases</h4><span class="badge badge-tumor">False negative</span><span class="share">about 38.7%</span></header>
+        <div class="tierbar"><span style="width:38.7%"></span></div>
+        <p>Infiltrating tumour provokes fibrous stroma. When only a few malignant cells sit in the central window, their signal is averaged away by the benign tissue around them.</p>
+        <p class="sig">Signature: <code>edge_sobel_std</code> <span class='tex'>d = +0.88</span>, <code>color_S_std</code> <span class='tex'>d = +0.87</span></p>
+      </article>
+      <article class="tier t3">
+        <header><span class="tiernum">Tier 3</span><h4>Necrosis and nuclear breakdown</h4><span class="badge badge-tumor">False negative</span><span class="share">about 15.9%</span></header>
+        <div class="tierbar"><span style="width:15.9%"></span></div>
+        <p>Fast-growing tumour outruns its blood supply. Nuclei fragment and dissolve, leaving pale debris without the nuclear texture the LBP features rely on.</p>
+        <p class="sig">Signature: <code>lbp_bin_5</code> <span class='tex'>d = +1.06</span></p>
+      </article>
+      <article class="tier t4">
+        <header><span class="tiernum">Tier 4</span><h4>Fat vacuoles and optical artefacts</h4><span class="badge badge-warning">Either direction</span><span class="share">about 14.7%</span></header>
+        <div class="tierbar"><span style="width:14.7%"></span></div>
+        <p>Perinodal fat leaves large unstained droplets. The sharp white-to-tissue boundaries distort brightness and co-occurrence statistics. Border-tumour patches (Section 1) also fall here.</p>
+        <p class="sig">Signature: extreme <code>color_V_mean</code> and GLCM values</p>
+      </article>
+    </div>
+
+    <div class="figgrid two">
+      <figure class='plot'><button type='button' class='zoom' data-full='./plots/error_inspection_false_positives.png' aria-label='Enlarge figure'><img src='./figures/error_inspection_false_positives.jpg' alt='The eight most confident false positives. All eight can be inspected in the Diagnostic Studio.' loading='lazy'></button><figcaption>The eight most confident false positives. All eight can be inspected in the Diagnostic Studio. <a href='./plots/error_inspection_false_positives.png' target='_blank' rel='noopener'>Full resolution</a></figcaption></figure>
+      <figure class='plot'><button type='button' class='zoom' data-full='./plots/error_inspection_false_negatives.png' aria-label='Enlarge figure'><img src='./figures/error_inspection_false_negatives.jpg' alt='The eight most confident false negatives, also loaded in the Diagnostic Studio.' loading='lazy'></button><figcaption>The eight most confident false negatives, also loaded in the Diagnostic Studio. <a href='./plots/error_inspection_false_negatives.png' target='_blank' rel='noopener'>Full resolution</a></figcaption></figure>
+    </div>
+  </div>
+</section>
+
+<!-- ============================ 9 DEEP ============================ -->
+<section class="sec" id="deep">
+  <div class="wrap">
+    <p class="secnum">Section 9</p>
+    <h2>Deep learning: getting past the handcrafted-feature ceiling</h2>
+    <div class="cols">
+      <div>
+        <h3>Setup</h3>
+        <p>An ImageNet-pretrained ResNet-18 with its classifier replaced by a single logit, fine-tuned end to end on the raw patches (<code>src/train_cnn.py</code>).</p>
+        <ul class="tight">
+          <li><strong>Augmentation:</strong> random horizontal and vertical flips and rotations by 0&deg;, 90&deg;, 180&deg; or 270&deg; (the eight symmetries of the dihedral group <span class='tex'>D_4</span>), because tissue has no canonical orientation on a slide.</li>
+          <li><strong>Stain jitter:</strong> brightness and contrast varied by &plusmn;10% to imitate staining differences.</li>
+          <li><strong>Optimiser:</strong> AdamW, learning rate <span class='tex'>2 \times 10^{-4}</span>, weight decay <span class='tex'>10^{-3}</span>, cosine schedule, 10 epochs, batch size 128.</li>
+          <li><strong>Selection:</strong> checkpoint with the best validation ROC-AUC (0.9614), then one pass on the test split.</li>
+        </ul>
+        <h3>Why it helps</h3>
+        <p>The handcrafted features summarise a whole patch in 59 numbers. A convolutional network keeps the spatial layout and learns <span class='tex'>3 \times 3</span> filters that respond to nuclear shape, chromatin texture and nucleoli. That is the information a pathologist uses to tell crowded benign lymphocytes from carcinoma, and it is where the classical models produced most of their false alarms.</p>
+      </div>
+      <div>
+        <div class="tablewrap">
+        <table class="data">
+          <caption>ResNet-18 against the best classical model (test split)</caption>
+          <thead><tr><th>Metric</th><th class="num">50/50 blend</th><th class="num">ResNet-18</th><th class="num">Change</th></tr></thead>
+          <tbody>
+            <tr><td>Accuracy</td><td class="num">79.76%</td><td class="num">84.94%</td><td class="num pos">+5.18 points</td></tr>
+            <tr><td>ROC-AUC</td><td class="num">0.8853</td><td class="num">0.9392</td><td class="num pos">+0.0539</td></tr>
+            <tr><td>Precision</td><td class="num">84.35%</td><td class="num">93.57%</td><td class="num pos">+9.22 points</td></tr>
+            <tr><td>Specificity</td><td class="num">86.44%</td><td class="num">94.84%</td><td class="num pos">+8.40 points</td></tr>
+            <tr><td>Sensitivity</td><td class="num">73.08%</td><td class="num">75.04%</td><td class="num pos">+1.96 points</td></tr>
+            <tr><td>False positives</td><td class="num">339</td><td class="num">129</td><td class="num pos">&minus;61.9%</td></tr>
+            <tr><td>False negatives</td><td class="num">673</td><td class="num">624</td><td class="num pos">&minus;7.3%</td></tr>
+            <tr><td>Brier score</td><td class="num">0.1426</td><td class="num">0.1168</td><td class="num pos">&minus;0.0258</td></tr>
+          </tbody>
+        </table>
+        </div>
+        <p class="note">259 more test patches are classified correctly. Almost all of the gain is in false positives; missed tumours fall only from 673 to 624, so sensitivity remains the weak point of every model here.</p>
+        <div class="callout">
+          <h4>Two further deep runs</h4>
+          <p><strong>ResNet-50</strong> (full patch) reaches 82.14%, below ResNet-18: more capacity did not help at this data size. <strong>EfficientNet-B0</strong> on a central crop reaches 82.64% with the highest sensitivity on the board (78.80%) but far more false alarms, the same context-versus-core trade-off seen in Track A against Track B.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================ 10 INTERACTIVE ============================ -->
+<section class="sec alt" id="interactive">
+  <div class="wrap">
+    <p class="secnum">Section 10</p>
+    <h2>Interactive diagnostic suite</h2>
+    <p class="lede">Three tools that run in the browser on the project&rsquo;s own outputs: the stored probabilities for all 5,000 test patches, and 32 real PCam patches recovered from the repository&rsquo;s inspection figures.</p>
+
+    <!-- ---------- Interaction 1 ---------- -->
+    <div class="tool" id="simulator">
+      <div class="toolhead">
+        <span class="toolnum">Interaction 1</span>
+        <h3>Decision-threshold simulator</h3>
+        <p>A model outputs a probability. The threshold <span class='tex'>\tau</span> turns it into a decision: call &ldquo;tumour&rdquo; when the probability is at least <span class='tex'>\tau</span>. Move the slider to see how every count and metric on the 5,000 test patches responds.</p>
+      </div>
+      <div class="simgrid">
+        <div class="simctl">
+          <label class="fld" for="simModel">Model</label>
+          <select id="simModel">
+            <option value="blend">Hybrid blend (RBF SVM + HistGBM)</option>
+            <option value="hgbm">HistGradientBoosting</option>
+            <option value="rf">Random forest</option>
+            <option value="rbf">RBF kernel SVM</option>
+            <option value="lr">Logistic regression</option>
           </select>
-        </div>
 
-        <!-- Live Diagnosis Outcome Banner -->
-        <div id="diagnosisBanner" class="diagnosis-banner malignant">
-          <div class="diagnosis-status-group">
-            <span id="diagnosisIcon" class="diagnosis-icon">&#9888;&#65039;</span>
-            <div>
-              <div id="diagnosisHeadline" class="diagnosis-headline">MALIGNANT TUMOUR DETECTED</div>
-              <div id="diagnosisSubheadline" class="diagnosis-subheadline">
-                Active Model: ResNet-18 &bull; P(Tumour) = 0.965 (Threshold &tau; = 0.50)
-              </div>
-            </div>
+          <label class="fld" for="simTau"><span>Threshold <span class='tex'>\tau</span></span> <output id="simTauOut" for="simTau">0.50</output></label>
+          <input type="range" id="simTau" min="0.01" max="0.99" step="0.01" value="0.50">
+          <div class="ticks" aria-hidden="true"><span>0.01</span><span>0.50</span><span>0.99</span></div>
+
+          <p class="fld">Deployment presets</p>
+          <div class="presets" role="group" aria-label="Threshold presets">
+            <button type="button" class="preset" data-tau="0.35"><strong>Screening triage</strong><span><span class='tex'>\tau = 0.35</span> &middot; favours catching tumours</span></button>
+            <button type="button" class="preset" data-tau="0.50"><strong>Balanced benchmark</strong><span><span class='tex'>\tau = 0.50</span> &middot; the leaderboard setting</span></button>
+            <button type="button" class="preset" data-tau="0.65"><strong>Confirmatory</strong><span><span class='tex'>\tau = 0.65</span> &middot; favours avoiding false alarms</span></button>
           </div>
-          <span id="confidencePill" class="confidence-pill" style="color:var(--red);">High Confidence (96.5%)</span>
+          <div class="callout interp" id="simInterp" aria-live="polite"></div>
         </div>
 
-        <!-- Studio Main Two-Column Layout -->
-        <div class="inspector-layout">
-          <!-- Left: Canvas & Visualization Tools -->
-          <div>
-            <div class="canvas-wrapper">
-              <canvas id="patchCanvas" width="288" height="288"></canvas>
-            </div>
-
-            <div class="canvas-toolbar">
-              <button id="btnToggleROI" class="btn-tool active">Central 32&times;32 ROI Box</button>
-              <button class="btn-tool btn-filter active" data-filter="none">Normal RGB</button>
-              <button class="btn-tool btn-filter" data-filter="sobel">Sobel Edges</button>
-              <button class="btn-tool btn-filter" data-filter="grayscale">Grayscale</button>
-              <button class="btn-tool btn-filter" data-filter="hematoxylin">Chromatin (OD)</button>
-              <button class="btn-tool btn-filter" data-filter="invert">Invert</button>
-            </div>
-
-            <div id="riskAlertBox" class="alert-box warning">
-              Reviewing case&hellip;
-            </div>
-
-            <div style="margin-top:0.75rem; font-size:0.76rem; color:var(--text-subtle); line-height:1.45; text-align:center;">
-              Yellow box denotes the official PCam $32\times32$ ground truth diagnostic window ($0.33\,\text{mm}^2$).
-            </div>
-          </div>
-
-          <!-- Right: Probabilities, Multi-Model Ranking, and Features -->
-          <div>
-            <!-- Active Model Probability Gauge -->
-            <div class="panel">
-              <div class="panel-title" id="activeGaugeTitle">Selected Model Output: ResNet-18</div>
-              <div class="panel-subtitle">Operating decision threshold &tau; = 0.50 &bull; Values &ge; 0.50 trigger tumour alert</div>
-
-              <div class="model-meter" style="margin-bottom:0.85rem;">
-                <div class="meter-header">
-                  <span class="model-name" id="activeModelDisplayName">ResNet-18 (Deep CNN Benchmark)</span>
-                  <span class="model-proba" id="activeModelProbaText">0.965 (96.5%)</span>
-                </div>
-                <div class="progress-track" style="height:12px;">
-                  <div id="activeModelMeterFill" class="progress-fill fill-blend" style="width:96.5%; background:#2e7d32;"></div>
-                </div>
-              </div>
-
-              <!-- Multi-Model Comparison Table -->
-              <div class="panel-title" style="margin-top:1.1rem; font-size:0.86rem;">
-                Side-by-Side Model Comparison (Active Patch)
-              </div>
-              <table class="multi-model-table">
-                <thead>
-                  <tr>
-                    <th>Model Family</th>
-                    <th>P(Tumour)</th>
-                    <th>Verdict (&tau;=0.50)</th>
-                    <th>Status</th>
-                  </tr>
-                </thead>
-                <tbody id="multiModelTableBody">
-                  <!-- Dynamically populated by app.js -->
-                </tbody>
-              </table>
-            </div>
-
-            <!-- Biological Feature Deviations -->
-            <div class="panel">
-              <div class="panel-title">Biological Feature Deviations (Z-Score vs Test Cohort Mean)</div>
-              <div class="panel-subtitle">
-                Normalized deviation in standard deviations (&sigma;) from the 5,000 test patch mean.
-                Blue indicates elevated biological values; red indicates relative deficits.
-              </div>
-              <div id="featureBarContainer"></div>
-              <div style="margin-top:0.85rem; padding-top:0.75rem; border-top:1px solid var(--border); font-size:0.78rem; color:var(--text-muted);">
-                <strong>Pathologist Notes:</strong> <span id="clinicalNoteText">Loading morphological notes&hellip;</span>
-              </div>
-            </div>
-          </div>
-        </div>
-
-      </div>
-    </div><!-- /tab-inspector -->
-
-
-    <!-- ================================================================ -->
-    <!-- TAB 3: THRESHOLD SIMULATOR                                       -->
-    <!-- ================================================================ -->
-    <div id="tab-threshold" class="tab-pane">
-
-      <div class="sim-controls">
-        <div class="sim-header">
-          <div>
-            <div class="sim-title">Real-Time Decision Threshold Simulator</div>
-            <div class="sim-desc">
-              Evaluates all <strong>5,000 held-out test patches</strong> dynamically as you drag the operating threshold slider.
-            </div>
-          </div>
-          <div style="display:flex; align-items:center; gap:0.5rem;">
-            <label for="selectModel" style="font-size:0.8rem; color:var(--text-muted); font-weight:600;">Model:</label>
-            <select id="selectModel" class="select-model">
-              <option value="resnet18">&#9733; ResNet-18 (Deep CNN — 84.94% Acc)</option>
-              <option value="effnet">EfficientNet-B0 (Central Focus — 82.64% Acc)</option>
-              <option value="resnet50">ResNet-50 (Deep CNN — 82.14% Acc)</option>
-              <option value="b" selected>Champion Hybrid Blend (50/50 — 79.76% Acc)</option>
-              <option value="h">HistGradientBoosting (78.82% Acc)</option>
-              <option value="f">Tuned Random Forest (78.46% Acc)</option>
-              <option value="r">RBF Kernel SVM (78.80% Acc)</option>
-              <option value="l">Logistic Regression Baseline (75.84% Acc)</option>
-            </select>
-          </div>
-        </div>
-
-        <div class="slider-row">
-          <span class="slider-label">Threshold (&tau;):</span>
-          <input type="range" id="sliderThreshold" class="threshold-slider" min="0.01" max="0.99" step="0.01" value="0.50">
-          <div class="threshold-readout" id="thresholdVal">0.50</div>
-        </div>
-
-        <div class="preset-buttons">
-          <span class="preset-label">Clinical operating regimes:</span>
-          <button class="btn-preset" data-preset="0.35">Screening (&tau; = 0.35, high sensitivity)</button>
-          <button class="btn-preset" data-preset="0.50">Balanced (&tau; = 0.50, max accuracy)</button>
-          <button class="btn-preset" data-preset="0.65">Confirmatory (&tau; = 0.65, high precision)</button>
-        </div>
-      </div>
-
-      <div class="grid-2">
-        <!-- Confusion Matrix -->
-        <div class="card">
-          <h3 class="card-title">Live Confusion Matrix (N = 5,000)</h3>
-          <p class="card-subtitle">Counts recalculate in real time as the threshold changes.</p>
-
-          <table class="cm-table">
-            <thead>
-              <tr>
-                <th style="background:transparent; border:none;"></th>
-                <th>Predicted Benign (0)</th>
-                <th>Predicted Tumour (1)</th>
-              </tr>
-            </thead>
+        <div class="simout">
+          <table class="cm" aria-label="Confusion matrix">
+            <thead><tr><td></td><th scope="col">Predicted normal</th><th scope="col">Predicted tumour</th></tr></thead>
             <tbody>
-              <tr>
-                <th>Actual Benign (2,500)</th>
-                <td class="cm-cell cm-cell-tn">
-                  <span id="cmTN">2,161</span>
-                  <span class="cm-cell-sub">True Negatives</span>
-                </td>
-                <td class="cm-cell cm-cell-fp">
-                  <span id="cmFP">339</span>
-                  <span class="cm-cell-sub">False Positives</span>
-                </td>
-              </tr>
-              <tr>
-                <th>Actual Tumour (2,500)</th>
-                <td class="cm-cell cm-cell-fn">
-                  <span id="cmFN">673</span>
-                  <span class="cm-cell-sub">False Negatives</span>
-                </td>
-                <td class="cm-cell cm-cell-tp">
-                  <span id="cmTP">1,827</span>
-                  <span class="cm-cell-sub">True Positives</span>
-                </td>
-              </tr>
+              <tr><th scope="row">Actually normal<small>2,500</small></th><td class="cm-good"><span class="cm-n" id="cmTN">0</span><span class="cm-l">True negatives</span></td><td class="cm-bad"><span class="cm-n" id="cmFP">0</span><span class="cm-l">False positives</span></td></tr>
+              <tr><th scope="row">Actually tumour<small>2,500</small></th><td class="cm-bad"><span class="cm-n" id="cmFN">0</span><span class="cm-l">False negatives</span></td><td class="cm-good"><span class="cm-n" id="cmTP">0</span><span class="cm-l">True positives</span></td></tr>
             </tbody>
           </table>
-
-          <div id="simCallout" class="callout">Loading clinical summary&hellip;</div>
+          <div class="metrics" id="simMetrics"></div>
         </div>
 
-        <!-- Metrics -->
-        <div class="card">
-          <h3 class="card-title">Operational Metrics</h3>
-          <p class="card-subtitle">All metrics update dynamically as the threshold and model change.</p>
-
-          <div class="grid-3" style="margin-bottom:1rem;">
-            <div class="metric-card">
-              <div class="metric-val" id="metricAcc">79.76%</div>
-              <div class="metric-label">Accuracy</div>
-            </div>
-            <div class="metric-card">
-              <div class="metric-val" id="metricSens">73.08%</div>
-              <div class="metric-label">Sensitivity</div>
-            </div>
-            <div class="metric-card">
-              <div class="metric-val" id="metricSpec">86.44%</div>
-              <div class="metric-label">Specificity</div>
-            </div>
-          </div>
-
-          <div class="grid-3">
-            <div class="metric-card">
-              <div class="metric-val" id="metricPrec">84.35%</div>
-              <div class="metric-label">Precision</div>
-            </div>
-            <div class="metric-card">
-              <div class="metric-val" id="metricF1">0.7831</div>
-              <div class="metric-label">F1-Score</div>
-            </div>
-            <div class="metric-card">
-              <div class="metric-val" id="metricBalAcc">79.76%</div>
-              <div class="metric-label">Balanced Accuracy</div>
-            </div>
-          </div>
-
-          <div style="margin-top:1.25rem; font-size:0.82rem; color:var(--text-muted); line-height:1.5; background:var(--bg-surface); border-radius:var(--radius); padding:0.85rem; border:1px solid var(--border);">
-            <strong>Clinical note:</strong> Lowering $\tau$ to $0.35$ raises sensitivity above $90\%$,
-            ensuring micro-metastases are not missed during triage.
-            Raising $\tau$ to $0.65$ reduces false alarms for confirmatory surgical planning.
-          </div>
+        <div class="simcharts">
+          <figure class="chartfig">
+            <svg id="simRoc" viewBox="0 0 320 300" role="img" aria-label="ROC curve with the current operating point"></svg>
+            <figcaption>ROC curve of the selected model. The marker is the current threshold. <span id="simAuc"></span></figcaption>
+          </figure>
+          <figure class="chartfig">
+            <svg id="simHist" viewBox="0 0 320 300" role="img" aria-label="Histogram of predicted probabilities by true class"></svg>
+            <figcaption>Predicted probabilities by true class. Everything right of the line is called tumour.</figcaption>
+          </figure>
         </div>
       </div>
-    </div><!-- /tab-threshold -->
+      <p class="note">Data: <code>results/error_analysis_cases.csv</code>, shipped as <code>data/test_predictions.json</code>. The blend here averages the default RBF SVM with HistGradientBoosting, so at <span class='tex'>\tau = 0.50</span> it shows 79.82% where the leaderboard blend shows 79.76% (see Section 8). The single models reproduce the leaderboard exactly.</p>
+    </div>
 
-
-    <!-- ================================================================ -->
-    <!-- TAB 4: ERROR GALLERY                                             -->
-    <!-- ================================================================ -->
-    <div id="tab-errors" class="tab-pane">
-      <div class="card">
-        <h2 class="card-title">Forensic Pathological Failure Gallery</h2>
-        <p class="card-subtitle">
-          4-tier taxonomy of classification failures on the held-out test cohort. Click any card to inspect its feature profile in the Diagnostic Studio.
-        </p>
-
-        <div class="filter-pills" style="margin-bottom:1.5rem;">
-          <button class="filter-pill gallery-pill active" data-tier="all">All Forensic Cases (24)</button>
-          <button class="filter-pill gallery-pill" data-tier="Tier 1">Tier 1: Germinal Centers (False Positives)</button>
-          <button class="filter-pill gallery-pill" data-tier="Tier 2">Tier 2: Stroma-Dense (False Negatives)</button>
-          <button class="filter-pill gallery-pill" data-tier="Tier 3">Tier 3: Necrosis &amp; Ghost Cells (False Negatives)</button>
-          <button class="filter-pill gallery-pill" data-tier="Disputed">Ensemble Disagreements</button>
-        </div>
-
-        <div class="gallery-grid" id="galleryGrid">
-          <!-- Populated dynamically by app.js -->
-        </div>
+    <!-- ---------- Interaction 2 ---------- -->
+    <div class="tool" id="studio">
+      <div class="toolhead">
+        <span class="toolnum">Interaction 2</span>
+        <h3>Diagnostic studio and patch inspector</h3>
+        <p>Look at real patches the way the models do. Toggle the label window, switch image filters, and compare the patch&rsquo;s feature profile with the model outputs.</p>
       </div>
-    </div><!-- /tab-errors -->
-
-
-    <!-- ================================================================ -->
-    <!-- TAB 5: RESULTS & BENCHMARKS                                      -->
-    <!-- ================================================================ -->
-    <div id="tab-benchmarks" class="tab-pane">
-
-      <!-- Leaderboard -->
-      <div class="card">
-        <h2 class="card-title">Master PCam Benchmark Grand Leaderboard (N = 5,000)</h2>
-        <p class="card-subtitle">
-          Evaluated strictly on the untouched, sealed test cohort ($50\%$ tumour / $50\%$ benign, Seed=42). Ranked by overall test accuracy.
-          Bootstrap 95% confidence intervals computed over 1,000 resamples ($p &lt; 10^{-7}$ vs linear baselines).
-        </p>
-        <div style="overflow-x:auto;">
-          <table class="data-table">
-            <thead>
-              <tr>
-                <th>Rank &amp; Model</th>
-                <th>Track / Family</th>
-                <th>Accuracy</th>
-                <th>ROC-AUC</th>
-                <th>PR-AUC</th>
-                <th>Sensitivity</th>
-                <th>Specificity</th>
-                <th>Precision</th>
-                <th>F1</th>
-                <th>Brier</th>
-              </tr>
-            </thead>
-            <tbody>
-              <!-- 1. ResNet-18 -->
-              <tr class="highlight-row" style="background: rgba(46, 125, 50, 0.12);">
-                <td><strong>&#9733; 1. ResNet-18 (Deep CNN Full96)</strong></td>
-                <td>Deep CNN (Track A)</td>
-                <td><strong>84.94%</strong></td>
-                <td><strong>0.9392</strong></td>
-                <td><strong>0.9455</strong></td>
-                <td>75.04%</td>
-                <td><strong>94.84%</strong></td>
-                <td><strong>93.57%</strong></td>
-                <td><strong>0.8329</strong></td>
-                <td><strong>0.1168</strong></td>
-              </tr>
-              <!-- 2. EfficientNet-B0 Track B -->
-              <tr style="background: rgba(37, 99, 235, 0.06);">
-                <td><strong>2. EfficientNet-B0 (Central Focus 48&times;48)</strong></td>
-                <td>Lightweight CNN (Track B)</td>
-                <td><strong>82.64%</strong></td>
-                <td>0.9086</td>
-                <td>0.9142</td>
-                <td>76.48%</td>
-                <td>88.80%</td>
-                <td>86.23%</td>
-                <td>0.8106</td>
-                <td>0.1314</td>
-              </tr>
-              <!-- 3. ResNet-50 Full96 -->
-              <tr>
-                <td><strong>3. ResNet-50 (Deep CNN Full96)</strong></td>
-                <td>Deep CNN (Track A)</td>
-                <td><strong>82.14%</strong></td>
-                <td>0.9285</td>
-                <td>0.9318</td>
-                <td>70.36%</td>
-                <td>93.92%</td>
-                <td>92.05%</td>
-                <td>0.7910</td>
-                <td>0.1378</td>
-              </tr>
-              <!-- 4. ResNet-18 Strict 32x32 -->
-              <tr>
-                <td><strong>4. ResNet-18 (Strict 32&times;32 Crop)</strong></td>
-                <td>Strict Crop (Track B)</td>
-                <td><strong>81.92%</strong></td>
-                <td>0.9024</td>
-                <td>0.9071</td>
-                <td>77.24%</td>
-                <td>86.60%</td>
-                <td>85.22%</td>
-                <td>0.8103</td>
-                <td>0.1384</td>
-              </tr>
-              <!-- 5. Champion Classical Blend 50/50 -->
-              <tr class="highlight-row">
-                <td><strong>&#9733; 5. Hybrid Blend (50/50 RBF + HistGBM)</strong></td>
-                <td>Classical Champion</td>
-                <td><strong>79.76%</strong></td>
-                <td>0.8853</td>
-                <td>0.8767</td>
-                <td>73.08%</td>
-                <td>86.44%</td>
-                <td>84.35%</td>
-                <td>0.7831</td>
-                <td>0.1426</td>
-              </tr>
-              <!-- 6. Hybrid Blend 70/30 -->
-              <tr>
-                <td>6. Hybrid Blend (70/30 RBF + HistGBM)</td>
-                <td>Classical Ensemble</td>
-                <td>79.56%</td>
-                <td>0.8804</td>
-                <td>0.8740</td>
-                <td>72.32%</td>
-                <td>86.80%</td>
-                <td>84.57%</td>
-                <td>0.7796</td>
-                <td>0.1453</td>
-              </tr>
-              <!-- 7. HistGBM -->
-              <tr>
-                <td>7. HistGradientBoosting</td>
-                <td>Binned GBDT (59D)</td>
-                <td>78.82%</td>
-                <td>0.8845</td>
-                <td>0.8724</td>
-                <td>71.84%</td>
-                <td>85.80%</td>
-                <td>83.50%</td>
-                <td>0.7723</td>
-                <td>0.1460</td>
-              </tr>
-              <!-- 8. Default RBF SVM -->
-              <tr>
-                <td>8. Default RBF Kernel SVM</td>
-                <td>Kernel SVM (59D)</td>
-                <td>78.80%</td>
-                <td>0.8746</td>
-                <td>0.8681</td>
-                <td><strong>73.28%</strong></td>
-                <td>84.32%</td>
-                <td>82.37%</td>
-                <td>0.7756</td>
-                <td>0.1493</td>
-              </tr>
-              <!-- 9. Tuned RF -->
-              <tr>
-                <td>9. Tuned Random Forest (150 Trees)</td>
-                <td>Tree Bagging (59D)</td>
-                <td>78.46%</td>
-                <td>0.8863</td>
-                <td>0.8714</td>
-                <td>68.76%</td>
-                <td>88.16%</td>
-                <td>85.31%</td>
-                <td>0.7615</td>
-                <td>0.1467</td>
-              </tr>
-              <!-- 10. Tuned RBF SVM -->
-              <tr>
-                <td>10. Tuned RBF Kernel SVM ($C=3.0$)</td>
-                <td>Kernel SVM (59D)</td>
-                <td>77.92%</td>
-                <td>0.8637</td>
-                <td>0.8626</td>
-                <td>70.88%</td>
-                <td>84.96%</td>
-                <td>82.50%</td>
-                <td>0.7625</td>
-                <td>0.1535</td>
-              </tr>
-              <!-- 11. Logistic Regression -->
-              <tr>
-                <td>11. Logistic Regression ($L_2$ Baseline)</td>
-                <td>Linear Baseline (59D)</td>
-                <td>75.84%</td>
-                <td>0.8373</td>
-                <td>0.8284</td>
-                <td>70.96%</td>
-                <td>80.72%</td>
-                <td>78.63%</td>
-                <td>0.7460</td>
-                <td>0.1679</td>
-              </tr>
-              <!-- 12. Linear SVM -->
-              <tr>
-                <td>12. Linear SVM (Dual, $C=1.0$)</td>
-                <td>Linear Baseline (59D)</td>
-                <td>75.46%</td>
-                <td>0.8292</td>
-                <td>0.8226</td>
-                <td>71.12%</td>
-                <td>79.80%</td>
-                <td>77.88%</td>
-                <td>0.7435</td>
-                <td>0.1850</td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
-      </div>
-
-      <!-- Scientific Discovery Callout Boxes -->
-      <div class="scientific-callout">
-        <strong>Scientific Discovery #5 — The ResNet-18 vs. ResNet-50 Capacity Dilemma &amp; Sample Space Scaling Hypothesis</strong>
-        <p style="margin-top:0.4rem;">
-          Our empirical benchmarks revealed that <strong>ResNet-18 (84.94%)</strong> decisively outperformed the substantially larger <strong>ResNet-50 (82.14%)</strong> by $+2.80\%$ in test accuracy and $+0.0419$ in F1-score.
-          This finding reflects a well-documented phenomenon in histopathology classification:
-        </p>
-        <cite>
-          &ldquo;Start with ResNet-18/34 on histology; ResNet-50 is too heavy for small patches without massive augmentation like CutMix.&rdquo;
-          &mdash; Kaggle Grandmaster Consensus on PatchCamelyon
-        </cite>
-        <p style="margin-top:0.5rem;">
-          <strong>Why this occurs:</strong> ResNet-50 carries <strong>25.6 Million parameters</strong>. In our controlled 10,000-patch training cohort, this yields an extreme parameter-to-sample ratio of <strong>2,560 weights per image</strong>. Furthermore, downsampling a $96\times96$ patch through 5 bottleneck stages collapses the feature map into an ultra-narrow $3\times3$ spatial grid with 2,048 channels, causing spatial collapse of sub-cellular nuclear chromatin textures.
-        </p>
-        <p style="margin-top:0.5rem;">
-          <strong>The Sample Space Scaling Hypothesis:</strong> We hypothesize that this result is primarily a function of the limited training sample space ($N=10,000$). If scaled to the full PCam repository of <strong>262,144 training patches</strong>, the parameter-to-sample ratio normalizes to $\sim 97$ parameters/image. Under this expanded sample space, ResNet-50's expressive capacity would likely eliminate its overparameterization penalty and surpass ResNet-18. Under resource-constrained training, however, ResNet-18 achieves the optimal bias-variance equilibrium.
-        </p>
-      </div>
-
-      <!-- ROC + PR plots -->
-      <div class="grid-2">
-        <div class="card">
-          <h3 class="card-title">ROC &amp; PR Discrimination Curves</h3>
-          <p class="card-subtitle">Full threshold discrimination across all model families on the sealed test cohort.</p>
-          <div style="display:flex; flex-direction:column; gap:1rem;">
-            <img src="plots/test_roc_curves.png" alt="Test ROC Curves" class="plot-img">
-            <img src="plots/test_pr_curves.png" alt="Test PR Curves" class="plot-img">
+      <div class="pills" id="studioCats" role="group" aria-label="Patch category"></div>
+      <div class="studiogrid">
+        <div class="viewer">
+          <div class="canvaswrap"><canvas id="patchCanvas" width="288" height="288" aria-label="Tissue patch at three times zoom"></canvas></div>
+          <p class="roicap" id="roiCap">Central <span class='tex'>32 \times 32</span> diagnostic ground-truth region</p>
+          <div class="btnrow">
+            <button type="button" id="roiBtn" class="toggle" aria-pressed="true">Label window</button>
+            <button type="button" id="prevBtn" aria-label="Previous patch">Previous</button>
+            <button type="button" id="randBtn">Random</button>
+            <button type="button" id="nextBtn">Next</button>
+          </div>
+          <div class="seg" id="filterBtns" role="group" aria-label="Image filter">
+            <button type="button" data-f="he" aria-pressed="true">Normal H&amp;E</button>
+            <button type="button" data-f="sobel" aria-pressed="false">Sobel edges</button>
+            <button type="button" data-f="od" aria-pressed="false">Optical density</button>
+            <button type="button" data-f="inv" aria-pressed="false">Inverted</button>
           </div>
         </div>
-
-        <div>
-          <!-- Generalization Gap -->
-          <div class="card">
-            <h3 class="card-title">Generalization Gap (Val &rarr; Test)</h3>
-            <p class="card-subtitle">Overfitting quantified as validation-to-test accuracy drop.</p>
-            <table class="data-table">
-              <thead>
-                <tr>
-                  <th>Model</th>
-                  <th>Val Acc</th>
-                  <th>Test Acc</th>
-                  <th>Drop (&Delta;)</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr>
-                  <td><strong>Tuned Random Forest</strong></td>
-                  <td>79.44%</td>
-                  <td>78.46%</td>
-                  <td>&minus;0.98% <em>(most stable)</em></td>
-                </tr>
-                <tr>
-                  <td><strong>HistGradientBoosting</strong></td>
-                  <td>80.66%</td>
-                  <td>78.82%</td>
-                  <td>&minus;1.84%</td>
-                </tr>
-                <tr class="highlight-row">
-                  <td><strong>Hybrid Blend (50/50)</strong></td>
-                  <td>81.92%</td>
-                  <td>79.76%</td>
-                  <td>&minus;2.16%</td>
-                </tr>
-                <tr>
-                  <td>Logistic Regression</td>
-                  <td>78.18%</td>
-                  <td>75.84%</td>
-                  <td>&minus;2.34%</td>
-                </tr>
-                <tr>
-                  <td>Tuned RBF Kernel SVM</td>
-                  <td>82.36%</td>
-                  <td>77.92%</td>
-                  <td>&minus;4.44% <em>(overfitted)</em></td>
-                </tr>
-              </tbody>
-            </table>
-            <p style="margin-top:0.85rem; font-size:0.8rem; color:var(--text-muted); line-height:1.5;">
-              Tree ensembles generalized with remarkable stability (&Delta; &lt; 2%), while the
-              high-capacity tuned RBF SVM ($C=3.0$) suffered from validation sample variance.
-              ResNet-18 closed the generalization gap with a Brier score of $0.1168$.
-            </p>
-          </div>
-
-          <!-- Error consensus plots -->
-          <div class="card">
-            <h3 class="card-title">Error Consensus &amp; Failure Taxonomy</h3>
-            <p class="card-subtitle">Cross-paradigm consensus failures demonstrate the empirical feature limit.</p>
-            <img src="plots/consensus_vs_specific_errors.png" alt="Consensus vs Specific Errors" class="plot-img" style="margin-bottom:1rem;">
-            <img src="plots/error_taxonomy_breakdown.png" alt="Failure Taxonomy Breakdown" class="plot-img">
-          </div>
+        <div class="inspector">
+          <div class="pmeta" id="patchMeta"></div>
+          <h4>Model probabilities of tumour</h4>
+          <div class="gauges" id="gauges"></div>
+          <h4>Feature deviation <span class="seg mini" id="regionBtns" role="group" aria-label="Region used for features"><button type="button" data-r="full" aria-pressed="true">Full 96&times;96</button><button type="button" data-r="core" aria-pressed="false">Core 32&times;32</button></span></h4>
+          <div class="zbars" id="zbars"></div>
+          <p class="note small">Four descriptors recomputed in the browser from the pixels, shown as <span class='tex'>z</span>-scores against the 32 patches on this page (blue above the mean, red below). They use the same definitions as <code>src/features.py</code>. The reference is this page&rsquo;s 32 patches, not the 40,000 training patches, whose feature tables are not in the repository.</p>
+          <h4>Case notes</h4>
+          <div class="casenotes" id="caseNotes" aria-live="polite"></div>
         </div>
       </div>
+    </div>
 
-    </div><!-- /tab-benchmarks -->
+    <!-- ---------- Interaction 3 ---------- -->
+    <div class="tool" id="gallery">
+      <div class="toolhead">
+        <span class="toolnum">Interaction 3</span>
+        <h3>Failure gallery</h3>
+        <p>The sixteen most confident errors of the blend. Select a card to open it in the studio above.</p>
+      </div>
+      <div class="pills" id="galleryFilters" role="group" aria-label="Gallery filter"></div>
+      <div class="gallery" id="galleryGrid"></div>
+      <p class="note">All sixteen are consensus failures: every model family is wrong on each. Images of disputed patches are not in the repository, so that group is described by its counts in Section 8 (1,064 disputed patches; 396 blend errors that are not consensus failures). Tier labels on cards give the tiers that apply to that error direction.</p>
+    </div>
+  </div>
+</section>
 
-  </main>
+<!-- ============================ 11 LIMITS ============================ -->
+<section class="sec" id="limits">
+  <div class="wrap">
+    <p class="secnum">Section 11</p>
+    <h2>Limitations</h2>
+    <ol class="limits">
+      <li><h4>Pooled features discard cell-level detail</h4><p>Every handcrafted feature is a statistic over the whole patch. Nuclear shape and chromatin pattern, which separate carcinoma from dense benign lymphocytes, are not represented. The 613 consensus failures are the measured cost.</p></li>
+      <li><h4>Context window and label window differ</h4><p>Features use <span class='tex'>96 \times 96</span> pixels; the label uses the central <span class='tex'>32 \times 32</span>. Tumour in the margin produces false positives by construction, and cropping to the core (Track B) costs more accuracy than it saves.</p></li>
+      <li><h4>Patches are not independent of each other</h4><p>Splits are made at patch level. Patches from one slide or patient can fall in both training and test data, sharing stain and scanner characteristics, so test accuracy is likely optimistic compared with unseen patients. A slide-grouped split was not run.</p></li>
+      <li><h4>Two hospitals, one country</h4><p>All slides come from two Dutch centres. Different fixation, staining or scanners at another site would shift the colour features in particular. No external validation was done and no stain normalisation was applied.</p></li>
+      <li><h4>Sensitivity is modest for every model</h4><p>At the default threshold even ResNet-18 misses 25% of tumour patches. For screening, where a miss is the costly error, the threshold would have to move (Section 10), at the price of many more false alarms.</p></li>
+      <li><h4>Some rankings are within noise</h4><p>The blend&rsquo;s lead over single non-linear models is inside the bootstrap intervals, and the SVM grid search picked a setting that did worse on test than the default. Fine-grained ordering among the classical non-linear models should not be over-read.</p></li>
+      <li><h4>The taxonomy is interpretive</h4><p>Tier shares are estimates from feature profiles and visual review by the authors, who are not pathologists. Patches were not individually labelled by tier or reviewed by a clinician.</p></li>
+      <li><h4>Kernel SVMs do not scale; patches are not slides</h4><p>Exact RBF SVM training costs between <span class='tex'>\mathcal{O}(N^2)</span> and <span class='tex'>\mathcal{O}(N^3)</span>, which is why 50,000 of 327,680 patches were used. A clinical tool must aggregate thousands of patches into a slide-level decision, for example with multiple-instance learning, which this project does not attempt.</p></li>
+    </ol>
+  </div>
+</section>
 
-  <!-- Application Engine -->
-  <script src="app.js"></script>
+<!-- ============================ 12 REPRO ============================ -->
+<section class="sec alt" id="repro">
+  <div class="wrap">
+    <p class="secnum">Section 12</p>
+    <h2>Reproducibility, code and citations</h2>
+
+    <div class="cols">
+      <div>
+        <h3>Links</h3>
+        <ul class="linklist">
+          <li><a href="https://github.com/Patel-Devarsh-Dipeshkumar/ML-ES335-Project" target="_blank" rel="noopener">Source repository</a><span>all code, results and figures</span></li>
+          <li><a href="https://github.com/Patel-Devarsh-Dipeshkumar/ML-ES335-Project/tree/main/src" target="_blank" rel="noopener"><code>src/</code></a><span>one script per experiment phase</span></li>
+          <li><a href="https://github.com/Patel-Devarsh-Dipeshkumar/ML-ES335-Project/tree/main/notebooks" target="_blank" rel="noopener"><code>notebooks/</code></a><span>12 notebooks, <code>02_eda</code> to <code>13_track_b_strict_32x32</code></span></li>
+          <li><a href="https://github.com/Patel-Devarsh-Dipeshkumar/ML-ES335-Project/tree/main/results" target="_blank" rel="noopener"><code>results/</code></a><span>every table on this page as CSV</span></li>
+          <li><a href="https://github.com/Patel-Devarsh-Dipeshkumar/ML-ES335-Project/blob/main/report/report.pdf" target="_blank" rel="noopener">Technical report (PDF)</a><span>full write-up</span></li>
+          <li><a href="https://github.com/basveeling/pcam" target="_blank" rel="noopener">PatchCamelyon dataset</a><span>download and licence</span></li>
+          <li><a href="https://huggingface.co/spaces/Dhrumil0309/pcam-tumor-detection" target="_blank" rel="noopener">Hugging Face Space</a><span>hosted demo</span></li>
+          <li><a href="./data/test_predictions.json">test_predictions.json</a><span>per-patch probabilities used by the simulator</span></li>
+        </ul>
+
+        <h3>Run it</h3>
+<pre class="code"><code>git clone https://github.com/Patel-Devarsh-Dipeshkumar/ML-ES335-Project.git
+cd ML-ES335-Project
+pip install -r requirements.txt
+
+# build the 50,000-patch subset, then the 59 features for both tracks
+python src/preprocess_data.py --n_train 40000 --n_val 5000 --n_test 5000
+python src/feature_pipeline.py --train_samples 40000 --val_samples 5000 --test_samples 5000
+
+python src/baseline_logreg.py       # linear baseline
+python src/train_rbf_svm.py         # candidate models
+python src/train_gradient_boosting.py
+python src/tune_ensemble.py         # blend weights
+python src/evaluate_test.py         # one-shot test + bootstrap CIs
+python src/error_analysis.py        # consensus and Cohen's d
+python src/train_cnn.py --eval-only # ResNet-18</code></pre>
+        <p class="note">The random seed is fixed to 42 in data sampling, model initialisation and bootstrap resampling. The raw dataset and trained model files are not committed (see <code>.gitignore</code>); the scripts regenerate them.</p>
+      </div>
+      <div>
+        <h3>Who did what</h3>
+        <div class="tablewrap">
+        <table class="data compact">
+          <thead><tr><th>Author</th><th>Contributions</th></tr></thead>
+          <tbody>
+            <tr><td><strong>Devarsh Patel</strong><br><span class="mono">24110245</span></td><td>Feature extraction pipeline (<code>features.py</code>, <code>feature_pipeline.py</code>); non-linear candidates (RBF SVM, HistGBM, random forest); SVM grid search and ensemble blending (<code>tune_rbf_svm.py</code>, <code>tune_ensemble.py</code>); Cohen&rsquo;s <i>d</i> analysis and failure taxonomy (<code>error_analysis.py</code>).</td></tr>
+            <tr><td><strong>Dhrumil Bhutaiya</strong><br><span class="mono">24110075</span></td><td>Data loading and split checks (<code>data.py</code>, <code>preprocess_data.py</code>); six-stage exploratory analysis (<code>eda.py</code>); linear baselines (<code>baseline_logreg.py</code>, <code>train_linear_svm.py</code>); test evaluation and bootstrap intervals (<code>evaluate_test.py</code>); technical report.</td></tr>
+          </tbody>
+        </table>
+        </div>
+
+        <h3>AI-use disclosure</h3>
+        <p>Generative AI tools were used to assist with documentation drafting, LaTeX formatting, code optimisation and the styling of this website. All experimental code, feature definitions, statistical audits, model checkpoints and analytical interpretations were designed, run and verified by the authors.</p>
+
+        <h3>About the patches on this page</h3>
+        <p>The 32 patches in the studio were recovered from <code>plots/error_inspection_false_positives.png</code>, <code>plots/error_inspection_false_negatives.png</code> and <code>plots/eda_step2_visual_inspection.png</code>, because the image files themselves are not committed. The one-pixel outline of the label window drawn on those figures was replaced by interpolating neighbouring pixels.</p>
+      </div>
+    </div>
+
+    <h3>References</h3>
+    <ol class="refs">
+      <li>Veeling, B. S., Linmans, J., Winkens, J., Cohen, T., &amp; Welling, M. (2018). Rotation equivariant CNNs for digital pathology. <i>MICCAI</i>.</li>
+      <li>Ehteshami Bejnordi, B., et al. (2017). Diagnostic assessment of deep learning algorithms for detection of lymph node metastases in women with breast cancer. <i>JAMA</i>, 318(22), 2199&ndash;2210.</li>
+      <li>Pedregosa, F., et al. (2011). Scikit-learn: Machine learning in Python. <i>Journal of Machine Learning Research</i>, 12, 2825&ndash;2830.</li>
+      <li>Haralick, R. M., Shanmugam, K., &amp; Dinstein, I. (1973). Textural features for image classification. <i>IEEE Transactions on Systems, Man, and Cybernetics</i>, SMC-3(6), 610&ndash;621.</li>
+      <li>Ojala, T., Pietik&auml;inen, M., &amp; M&auml;enp&auml;&auml;, T. (2002). Multiresolution gray-scale and rotation invariant texture classification with local binary patterns. <i>IEEE TPAMI</i>, 24(7), 971&ndash;987.</li>
+      <li>He, K., Zhang, X., Ren, S., &amp; Sun, J. (2016). Deep residual learning for image recognition. <i>CVPR</i>.</li>
+      <li>Cohen, J. (1988). <i>Statistical Power Analysis for the Behavioral Sciences</i> (2nd ed.). Lawrence Erlbaum.</li>
+    </ol>
+  </div>
+</section>
+</main>
+
+<footer class="foot">
+  <div class="wrap">
+    <p>ES 335: Machine Learning, IIT Gandhinagar &middot; Devarsh Patel and Dhrumil Bhutaiya</p>
+    <p><a href="https://github.com/Patel-Devarsh-Dipeshkumar/ML-ES335-Project" target="_blank" rel="noopener">github.com/Patel-Devarsh-Dipeshkumar/ML-ES335-Project</a></p>
+  </div>
+</footer>
+
+<div class="lightbox" id="lightbox" hidden>
+  <button type="button" class="lb-close" id="lbClose" aria-label="Close figure">Close</button>
+  <img id="lbImg" alt="">
+</div>
+
+<script src="./data/site_data.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+<script defer src="./app.js"></script>
 </body>
 </html>
