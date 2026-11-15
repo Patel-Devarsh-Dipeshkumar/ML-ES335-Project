@@ -98,8 +98,8 @@ code { background: var(--surface-2); border: 1px solid var(--border); border-rad
 /* ---------- hero ---------- */
 .hero { padding: 56px 0 44px; border-bottom: 1px solid var(--border); background: linear-gradient(180deg, var(--surface) 0%, var(--bg) 100%); }
 .kicker { margin: 0 0 14px; font-size: 13px; letter-spacing: .04em; text-transform: uppercase; color: var(--accent); font-weight: 650; }
-h1 { font-size: clamp(28px, 4.2vw, 44px); line-height: 1.14; letter-spacing: -.02em; margin: 0 0 14px; max-width: 22ch; text-wrap: balance; font-weight: 720; }
-.subtitle { font-size: clamp(16px, 1.7vw, 19px); color: var(--muted); max-width: 62ch; margin: 0 0 22px; }
+h1 { font-size: clamp(28px, 4.2vw, 44px); line-height: 1.14; letter-spacing: -.02em; margin: 0 0 14px; max-width: 100%; text-wrap: balance; font-weight: 720; }
+.subtitle { font-size: clamp(16px, 1.7vw, 19px); color: var(--muted); max-width: 100%; margin: 0 0 22px; }
 .authors { list-style: none; padding: 0; margin: 0 0 22px; display: flex; flex-wrap: wrap; gap: 6px 28px; font-size: 14.500px; }
 .authors .mono { color: var(--faint); margin: 0 6px; }
 .linkrow { display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 34px; }
@@ -134,7 +134,7 @@ h2 { font-size: clamp(23px, 2.8vw, 30px); line-height: 1.2; letter-spacing: -.01
 h3 { font-size: 18px; margin: 28px 0 8px; letter-spacing: -.005em; }
 h4 { font-size: 15px; margin: 0 0 6px; }
 p { margin: 0 0 12px; }
-.lede { font-size: 17px; color: var(--muted); max-width: 72ch; margin-bottom: 18px; }
+.lede { font-size: 17px; color: var(--muted); max-width: 100%; margin-bottom: 18px; }
 .note { font-size: 14px; color: var(--muted); margin-top: 10px; }
 .note.small { font-size: 13px; }
 .question { font-size: 17px; border-left: 3px solid var(--accent); padding: 4px 0 4px 14px; color: var(--text); }
@@ -259,7 +259,7 @@ figure.plot img { display: block; width: 100%; height: auto; }
 
 /* ---------- interactive tools ---------- */
 .tool { border: 1px solid var(--border-strong); border-radius: 10px; background: var(--bg); padding: 22px; margin: 22px 0; box-shadow: var(--shadow); }
-.toolhead { max-width: 78ch; margin-bottom: 14px; }
+.toolhead { max-width: 100%; margin-bottom: 14px; }
 .toolhead h3 { margin: 2px 0 6px; font-size: 21px; }
 .toolhead p { color: var(--muted); margin: 0; font-size: 15px; }
 .toolnum { font-family: var(--mono); font-size: 12px; letter-spacing: .08em; text-transform: uppercase; color: var(--accent); font-weight: 700; }

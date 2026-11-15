@@ -9,7 +9,7 @@
 Course project for **ES 335: Machine Learning** at the **Indian Institute of Technology Gandhinagar (IITGN)**.
 
 * **Devarsh Patel** (Roll No: 24110245) — `devarsh.patel@iitgn.ac.in`
-* **Dhrumil Bhutaiya** (Roll No: 24110075) — `dhrumil.bhutaiya@iitgn.ac.in`
+* **Dhrumil Bhutaiya** (Roll No: 24110075) — `24110075@iitgn.ac.in`
 
 > 📖 **Comprehensive Project Synthesis & Viva Guide:** See [`COMPLETE_PROJECT_SYNTHESIS_AND_INSIGHTS.md`](COMPLETE_PROJECT_SYNTHESIS_AND_INSIGHTS.md) for the complete 30+ page technical reference, theoretical proofs, and presentation talking points.  
 > 📝 **Technical Journey & Engineering Sagas:** See [`CHAT_CONVERSATION_AND_PROJECT_SUMMARY.md`](CHAT_CONVERSATION_AND_PROJECT_SUMMARY.md) for the hardware migration, problem-solving record, and complete benchmark timeline.  

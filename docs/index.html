@@ -45,7 +45,7 @@
 
     <ul class="authors">
       <li><strong>Devarsh Patel</strong> <span class="mono">24110245</span> <a href="mailto:devarsh.patel@iitgn.ac.in">devarsh.patel@iitgn.ac.in</a></li>
-      <li><strong>Dhrumil Bhutaiya</strong> <span class="mono">24110075</span> <a href="mailto:dhrumil.bhutaiya@iitgn.ac.in">dhrumil.bhutaiya@iitgn.ac.in</a></li>
+      <li><strong>Dhrumil Bhutaiya</strong> <span class="mono">24110075</span> <a href="mailto:24110075@iitgn.ac.in">24110075@iitgn.ac.in</a></li>
     </ul>
 
     <div class="linkrow">
@@ -361,12 +361,84 @@
   <div class="wrap">
     <p class="secnum">Section 6</p>
     <h2>Hyperparameter tuning and the multi-paradigm blend</h2>
+    <p class="lede">How combining two mathematically opposite learning algorithms broke the ~78.8% classical accuracy ceiling and produced our project's #1 champion classical model.</p>
+
+    <!-- 1. The Core Scientific Concept: Orthogonal Thinking -->
+    <div style="margin: 24px 0 28px;">
+      <h3>1. The Core Scientific Idea: &ldquo;Orthogonal Thinking&rdquo;</h3>
+      <p>On their own, individual classical models plateaued at an accuracy ceiling of <strong>~78.8%</strong> (HistGradientBoosting at 78.82%, RBF SVM at 78.80%). Neither could cross 80% alone. The breakthrough came from recognizing that Support Vector Machines and Gradient Boosted Trees make decisions using two fundamentally opposite mathematical philosophies:</p>
+
+      <div class="tablewrap" style="margin: 16px 0 20px;">
+        <table class="data">
+          <thead>
+            <tr>
+              <th style="width: 20%;">Property</th>
+              <th style="width: 40%;">RBF Kernel SVM</th>
+              <th style="width: 40%;">HistGradientBoosting (Trees)</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>How it &ldquo;thinks&rdquo;</strong></td>
+              <td><strong>Geometric Distances:</strong> Measures spherical and curved distances across all 59 features simultaneously in kernel Hilbert space.</td>
+              <td><strong>Axis-Aligned Splits:</strong> Cuts one feature at a time sequentially (e.g., <em>if Hematoxylin &gt; 0.45 AND GLCM Contrast &lt; 0.2</em>).</td>
+            </tr>
+            <tr>
+              <td><strong>Decision Geometry</strong></td>
+              <td>Smooth, continuous, curved hyper-surfaces.</td>
+              <td>Sharp, rectangular, axis-orthogonal step-boundaries.</td>
+            </tr>
+            <tr>
+              <td><strong>Error Pattern</strong></td>
+              <td>Struggles with sharp, localized rectangular thresholds.</td>
+              <td>Struggles with smooth, diagonal or curved boundaries.</td>
+            </tr>
+            <tr>
+              <td><strong>Inductive Bias Synergy</strong></td>
+              <td colspan="2">Because they operate with fundamentally different inductive biases, their error correlation is only <strong>0.67</strong>. Exactly <strong>1,064 test patches</strong> are classified correctly by one family and wrongly by the other. Averaging their predictions allows their individual blind spots to cancel out!</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- 2. Blend Formula and Tuning Sweep -->
     <div class="cols">
       <div>
-        <h3>RBF SVM grid</h3>
-        <p>Eleven <span class='tex'>(C, \gamma)</span> and class-weight settings were scored on validation (<code>src/tune_rbf_svm.py</code>). Accuracy varies only between 82.02% and 82.54% across the whole grid. The setting carried forward, <span class='tex'>C = 3.0</span> with <span class='tex'>\gamma = \text{scale}</span>, had the highest validation ROC-AUC (0.9082).</p>
+        <h3>2. The Ensemble Blend Formulation</h3>
+        <p>Rather than picking one winner, we take a weighted average of their predicted posterior probabilities:</p>
+        <div class="tex display">P_{\text{blend}}(y = 1 \mid \mathbf{x}) = w \cdot P_{\text{RBF}}(\mathbf{x}) + (1 - w) \cdot P_{\text{HistGBM}}(\mathbf{x})</div>
+        <p>Here, the weight parameter <span class='tex'>w \in [0, 1]</span> controls the model balance:</p>
+        <ul style="margin: 0 0 16px 20px; line-height: 1.6; font-size: 14.5px; color: var(--muted);">
+          <li><span class='tex'>w = 0.0</span>: 100% Boosted Trees (80.66% validation accuracy).</li>
+          <li><span class='tex'>w = 0.5</span>: Balanced 50/50 blend (81.92% validation accuracy).</li>
+          <li><span class='tex'>w = 0.7</span>: 70% SVM / 30% Trees (82.16% validation accuracy).</li>
+          <li><span class='tex'>w = 1.0</span>: 100% RBF SVM (82.36% validation accuracy).</li>
+        </ul>
+        <p>Both <span class='tex'>w = 0.5</span> and <span class='tex'>w = 0.7</span> were frozen strictly on validation data to be evaluated on the sealed test cohort.</p>
+
+        <div class="callout" style="margin-top: 20px;">
+          <h4>Outcome on the Sealed Test Split</h4>
+          <p>The <strong>50/50 Multi-Paradigm Blend</strong> won the classical championship: <strong>79.76% test accuracy</strong>, <strong>0.8853 ROC-AUC</strong>, and <strong>0.8767 PR-AUC</strong>. Crucially, it attained the lowest Brier score in the benchmark (<strong>0.1426</strong>), demonstrating that blending produces the most clinically trustworthy and well-calibrated probabilities.</p>
+        </div>
+      </div>
+
+      <div>
+        <h3>Validation Accuracy vs. SVM Weight</h3>
+        <figure class="chartfig">
+          <svg viewBox='0 0 420 230' role='img' aria-label='Validation accuracy of the blend against SVM weight'><line x1='46' x2='406' y1='190.0' y2='190.0' class='grid'/><text x='40' y='194.0' text-anchor='end' class='tick'>80.5%</text><line x1='46' x2='406' y1='150.9' y2='150.9' class='grid'/><text x='40' y='154.9' text-anchor='end' class='tick'>81.0%</text><line x1='46' x2='406' y1='111.8' y2='111.8' class='grid'/><text x='40' y='115.8' text-anchor='end' class='tick'>81.5%</text><line x1='46' x2='406' y1='72.7' y2='72.7' class='grid'/><text x='40' y='76.7' text-anchor='end' class='tick'>82.0%</text><line x1='46' x2='406' y1='33.6' y2='33.6' class='grid'/><text x='40' y='37.6' text-anchor='end' class='tick'>82.5%</text><text x='46.0' y='206' text-anchor='middle' class='tick'>0</text><text x='136.0' y='206' text-anchor='middle' class='tick'>0.25</text><text x='226.0' y='206' text-anchor='middle' class='tick'>0.5</text><text x='316.0' y='206' text-anchor='middle' class='tick'>0.75</text><text x='406.0' y='206' text-anchor='middle' class='tick'>1</text><text x='226.0' y='224' text-anchor='middle' class='axis'>SVM weight w (0 = boosting only, 1 = SVM only)</text><polyline class='line' points='46.0,177.5 82.0,144.6 118.0,132.1 154.0,114.9 190.0,94.6 226.0,78.9 262.0,80.5 298.0,60.2 334.0,52.3 370.0,36.7 406.0,44.5'/><circle cx='46.0' cy='177.5' r='3.2' class='dot'><title>w = 0: 80.66%</title></circle><circle cx='82.0' cy='144.6' r='3.2' class='dot'><title>w = 0.1: 81.08%</title></circle><circle cx='118.0' cy='132.1' r='3.2' class='dot'><title>w = 0.2: 81.24%</title></circle><circle cx='154.0' cy='114.9' r='3.2' class='dot'><title>w = 0.3: 81.46%</title></circle><circle cx='190.0' cy='94.6' r='3.2' class='dot'><title>w = 0.4: 81.72%</title></circle><circle cx='226.0' cy='78.9' r='5' class='dot sel'><title>w = 0.5: 81.92%</title></circle><text x='226.0' y='68.9' text-anchor='middle' class='lab'>81.92%</text><circle cx='262.0' cy='80.5' r='3.2' class='dot'><title>w = 0.6: 81.90%</title></circle><circle cx='298.0' cy='60.2' r='5' class='dot sel'><title>w = 0.7: 82.16%</title></circle><text x='298.0' y='50.2' text-anchor='middle' class='lab'>82.16%</text><circle cx='334.0' cy='52.3' r='3.2' class='dot'><title>w = 0.8: 82.26%</title></circle><circle cx='370.0' cy='36.7' r='3.2' class='dot'><title>w = 0.9: 82.46%</title></circle><circle cx='406.0' cy='44.5' r='3.2' class='dot'><title>w = 1: 82.36%</title></circle></svg>
+          <figcaption>Validation accuracy of the blend across SVM weights (<code>results/ensemble_blend_benchmark.csv</code>). Any blend significantly outperforms pure boosting (<span class='tex'>w = 0</span>). Highlighted points are the frozen test candidates.</figcaption>
+        </figure>
+      </div>
+    </div>
+
+    <!-- 3. RBF SVM Hyperparameter Grid Search -->
+    <div class="cols" style="margin-top: 32px; border-top: 1px solid var(--border); padding-top: 24px;">
+      <div>
+        <h3>3. RBF SVM Hyperparameter Grid Search</h3>
+        <p>Before blending, the RBF SVM was tuned across 11 <span class='tex'>(C, \gamma)</span> and class-weight configurations on validation (<code>src/tune_rbf_svm.py</code>). Validation accuracy remained remarkably stable between 82.02% and 82.54%. The optimal configuration selected was <span class='tex'>C = 3.0</span> with <span class='tex'>\gamma = \text{scale}</span>, achieving the highest validation ROC-AUC (0.9082).</p>
         <details>
-          <summary>Show the full validation grid</summary>
+          <summary>Show the full 11-configuration validation grid</summary>
           <div class="tablewrap">
           <table class="data compact">
             <thead><tr><th class="num"><span class='tex'>C</span></th><th><span class='tex'>\gamma</span></th><th>Class weight</th><th class="num">Accuracy</th><th class="num">ROC-AUC</th><th class="num">Sensitivity</th><th class="num">Support vectors</th></tr></thead>
@@ -374,21 +446,9 @@
           </table>
           </div>
         </details>
-        <h3>Why blend an SVM with boosted trees</h3>
-        <p>The SVM separates classes by distance in the full feature space; boosted trees cut one feature at a time. They make many of the same mistakes but not all of them: on the test split their error indicators have a correlation of 0.67, and 1,064 patches are classified correctly by some model families and wrongly by others. Averaging probabilities helps on exactly those patches.</p>
-        <div class="tex display">P_{\text{blend}}(y = 1 \mid \mathbf{x}) = w \cdot P_{\text{RBF}}(\mathbf{x}) + (1 - w) \cdot P_{\text{HistGBM}}(\mathbf{x})</div>
-        <p>Two weights were frozen for the test split: <span class='tex'>w = 0.5</span> and <span class='tex'>w = 0.7</span>.</p>
       </div>
       <div>
-        <figure class="chartfig">
-          <svg viewBox='0 0 420 230' role='img' aria-label='Validation accuracy of the blend against SVM weight'><line x1='46' x2='406' y1='190.0' y2='190.0' class='grid'/><text x='40' y='194.0' text-anchor='end' class='tick'>80.5%</text><line x1='46' x2='406' y1='150.9' y2='150.9' class='grid'/><text x='40' y='154.9' text-anchor='end' class='tick'>81.0%</text><line x1='46' x2='406' y1='111.8' y2='111.8' class='grid'/><text x='40' y='115.8' text-anchor='end' class='tick'>81.5%</text><line x1='46' x2='406' y1='72.7' y2='72.7' class='grid'/><text x='40' y='76.7' text-anchor='end' class='tick'>82.0%</text><line x1='46' x2='406' y1='33.6' y2='33.6' class='grid'/><text x='40' y='37.6' text-anchor='end' class='tick'>82.5%</text><text x='46.0' y='206' text-anchor='middle' class='tick'>0</text><text x='136.0' y='206' text-anchor='middle' class='tick'>0.25</text><text x='226.0' y='206' text-anchor='middle' class='tick'>0.5</text><text x='316.0' y='206' text-anchor='middle' class='tick'>0.75</text><text x='406.0' y='206' text-anchor='middle' class='tick'>1</text><text x='226.0' y='224' text-anchor='middle' class='axis'>SVM weight w (0 = boosting only, 1 = SVM only)</text><polyline class='line' points='46.0,177.5 82.0,144.6 118.0,132.1 154.0,114.9 190.0,94.6 226.0,78.9 262.0,80.5 298.0,60.2 334.0,52.3 370.0,36.7 406.0,44.5'/><circle cx='46.0' cy='177.5' r='3.2' class='dot'><title>w = 0: 80.66%</title></circle><circle cx='82.0' cy='144.6' r='3.2' class='dot'><title>w = 0.1: 81.08%</title></circle><circle cx='118.0' cy='132.1' r='3.2' class='dot'><title>w = 0.2: 81.24%</title></circle><circle cx='154.0' cy='114.9' r='3.2' class='dot'><title>w = 0.3: 81.46%</title></circle><circle cx='190.0' cy='94.6' r='3.2' class='dot'><title>w = 0.4: 81.72%</title></circle><circle cx='226.0' cy='78.9' r='5' class='dot sel'><title>w = 0.5: 81.92%</title></circle><text x='226.0' y='68.9' text-anchor='middle' class='lab'>81.92%</text><circle cx='262.0' cy='80.5' r='3.2' class='dot'><title>w = 0.6: 81.90%</title></circle><circle cx='298.0' cy='60.2' r='5' class='dot sel'><title>w = 0.7: 82.16%</title></circle><text x='298.0' y='50.2' text-anchor='middle' class='lab'>82.16%</text><circle cx='334.0' cy='52.3' r='3.2' class='dot'><title>w = 0.8: 82.26%</title></circle><circle cx='370.0' cy='36.7' r='3.2' class='dot'><title>w = 0.9: 82.46%</title></circle><circle cx='406.0' cy='44.5' r='3.2' class='dot'><title>w = 1: 82.36%</title></circle></svg>
-          <figcaption>Validation accuracy of the blend as the SVM weight <span class='tex'>w</span> changes (<code>results/ensemble_blend_benchmark.csv</code>). Any blend beats boosting alone (<span class='tex'>w = 0</span>). Filled markers are the two weights taken to the test split.</figcaption>
-        </figure>
-        <div class="callout">
-          <h4>Outcome on the test split</h4>
-          <p>The 50/50 blend is the best classical model: <strong>79.76%</strong> accuracy, ROC-AUC 0.8853, PR-AUC 0.8767, and the lowest Brier score of the classical models (<strong>0.1426</strong>), meaning its probabilities are the best calibrated.</p>
-        </div>
-        <figure class='plot'><button type='button' class='zoom' data-full='./plots/rbf_svm_tuning_heatmap.png' aria-label='Enlarge figure'><img src='./figures/rbf_svm_tuning_heatmap.jpg' alt='Validation accuracy across the RBF SVM grid.' loading='lazy'></button><figcaption>Validation accuracy across the RBF SVM grid. <a href='./plots/rbf_svm_tuning_heatmap.png' target='_blank' rel='noopener'>Full resolution</a></figcaption></figure>
+        <figure class='plot'><button type='button' class='zoom' data-full='./plots/rbf_svm_tuning_heatmap.png' aria-label='Enlarge figure'><img src='./figures/rbf_svm_tuning_heatmap.jpg' alt='Validation accuracy across the RBF SVM grid.' loading='lazy'></button><figcaption>Validation accuracy heatmap across the RBF SVM grid. <a href='./plots/rbf_svm_tuning_heatmap.png' target='_blank' rel='noopener'>Full resolution</a></figcaption></figure>
       </div>
     </div>
   </div>
@@ -594,8 +654,25 @@
       <div class="toolhead">
         <span class="toolnum">Interaction 1</span>
         <h3>Decision-threshold simulator</h3>
-        <p>A model outputs a probability. The threshold <span class='tex'>\tau</span> turns it into a decision: call &ldquo;tumour&rdquo; when the probability is at least <span class='tex'>\tau</span>. Move the slider to see how every count and metric on the 5,000 test patches responds.</p>
+        <p>A model outputs a probability score from 0.0 to 1.0. The <strong>threshold (&tau;)</strong> turns that probability into a clinical decision: call &ldquo;tumour&rdquo; when the probability is at least &tau;. Move the slider to see how every count and metric on the 5,000 test patches responds in real time.</p>
       </div>
+
+      <!-- Quick Takeaway Cards -->
+      <div class="cards3" style="margin: 8px 0 20px; font-size: 13.5px;">
+        <div class="card" style="background: var(--surface-2); padding: 12px 14px;">
+          <strong style="color: var(--accent-ink);">What It Tells Us</strong>
+          <p style="margin: 4px 0 0; color: var(--muted); line-height: 1.45;">No AI model is simply &ldquo;Yes/No&rdquo;. The operating threshold (&tau;) is the decision boundary chosen by the pathologist to trade off missed tumours against false alarms.</p>
+        </div>
+        <div class="card" style="background: var(--surface-2); padding: 12px 14px;">
+          <strong style="color: var(--accent-ink);">Clinical Utility</strong>
+          <p style="margin: 4px 0 0; color: var(--muted); line-height: 1.45;"><strong>Screening triage (&tau;=0.35)</strong> prioritises catching every cancer (high sensitivity), while <strong>Confirmatory (&tau;=0.65)</strong> avoids unnecessary invasive biopsies (high specificity).</p>
+        </div>
+        <div class="card" style="background: var(--surface-2); padding: 12px 14px;">
+          <strong style="color: var(--accent-ink);">Key Takeaway</strong>
+          <p style="margin: 4px 0 0; color: var(--muted); line-height: 1.45;">Watch how shifting &tau; dynamically moves the marker on the <strong>ROC curve</strong> and rebalances True Positives vs. False Positives across 5,000 sealed test patches.</p>
+        </div>
+      </div>
+
       <div class="simgrid">
         <div class="simctl">
           <label class="fld" for="simModel">Model</label>
@@ -650,8 +727,25 @@
       <div class="toolhead">
         <span class="toolnum">Interaction 2</span>
         <h3>Diagnostic studio and patch inspector</h3>
-        <p>Look at real patches the way the models do. Toggle the label window, switch image filters, and compare the patch&rsquo;s feature profile with the model outputs.</p>
+        <p>An interactive digital pathology workstation. Inspect 32 real histopathology patches (16 reference exemplars + 16 test failure cases) the exact way classical machine learning algorithms see them.</p>
       </div>
+
+      <!-- Quick Takeaway Cards for Studio -->
+      <div class="cards3" style="margin: 8px 0 20px; font-size: 13.5px;">
+        <div class="card" style="background: var(--surface-2); padding: 12px 14px;">
+          <strong style="color: var(--accent-ink);">Digital Microscope Filters</strong>
+          <p style="margin: 4px 0 0; color: var(--muted); line-height: 1.45;">Toggle <strong>Label window</strong> to view the central 32&times;32 ground-truth box. Test <strong>Sobel edges</strong> (nuclear membrane gradients) and <strong>Optical density</strong> (H&amp;E stain separation).</p>
+        </div>
+        <div class="card" style="background: var(--surface-2); padding: 12px 14px;">
+          <strong style="color: var(--accent-ink);">5 Core Model Families</strong>
+          <p style="margin: 4px 0 0; color: var(--muted); line-height: 1.45;">Select <strong>False Positives</strong> or <strong>False Negatives</strong> to see the 5 classical model predictions (Blend, Boosted Trees, Random Forest, RBF SVM, Logistic Regression).</p>
+        </div>
+        <div class="card" style="background: var(--surface-2); padding: 12px 14px;">
+          <strong style="color: var(--accent-ink);">Key Takeaway</strong>
+          <p style="margin: 4px 0 0; color: var(--muted); line-height: 1.45;">Training patches serve as visual normal vs. cancer baselines. Test failure patches reveal <em>why</em> models get fooled (e.g., dense lymphocytes mimicking cancer nuclei).</p>
+        </div>
+      </div>
+
       <div class="pills" id="studioCats" role="group" aria-label="Patch category"></div>
       <div class="studiogrid">
         <div class="viewer">

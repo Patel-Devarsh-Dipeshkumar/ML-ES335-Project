@@ -492,7 +492,7 @@
       }).join('');
       requestAnimationFrame(function () { requestAnimationFrame(function () { $$('.g-fill', gz).forEach(function (e) { e.style.width = e.dataset.w + '%'; }); }); });
     } else {
-      gz.innerHTML = '<div class="gnone">No stored predictions for training exemplars. Choose a false positive or false negative to see the five model outputs.</div>';
+      gz.innerHTML = '<div class="gnone" style="padding: 12px 14px; background: var(--surface-2); border-radius: var(--radius); border-left: 3px solid var(--accent);"><strong style="color:var(--accent-ink)">Reference Training Exemplar</strong><div style="font-size: 13px; margin-top: 4px; color: var(--muted); line-height: 1.5;">This patch is from the training set (used to train the algorithms and illustrate baseline tissue morphology). In rigorous ML evaluation, prediction probabilities are computed strictly on the held-out test split. <strong>Select &ldquo;False positives&rdquo; or &ldquo;False negatives&rdquo; above to inspect the 5 model prediction outputs!</strong></div></div>';
     }
     updateZ();
     $('#caseNotes').innerHTML = caseNotes(p).map(function (t) { return '<p>' + t + '</p>'; }).join('');
