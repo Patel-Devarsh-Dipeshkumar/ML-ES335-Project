@@ -53,7 +53,7 @@
     \begin{tabular}{c c}
         \textbf{Devarsh Patel} & \textbf{Dhrumil Bhutaiya} \\
         Roll No: 24110245 & Roll No: 24110075 \\
-        \texttt{devarsh.patel@iitgn.ac.in} & \texttt{dhrumil.bhutaiya@iitgn.ac.in} \\[0.4em]
+        \texttt{24110245@iitgn.ac.in} & \texttt{24110075@iitgn.ac.in} \\[0.4em]
         \multicolumn{2}{c}{Indian Institute of Technology Gandhinagar, Palaj, Gujarat 382355}
     \end{tabular}\\[1.2em]
     
@@ -160,7 +160,7 @@ Figure~\ref{fig:class_balance} shows the verified class distribution and data qu
     \item \textbf{Uniform Image Dimensions:} Every patch is verified to be $96 \times 96 \times 3$ uint8 RGB pixels.
 \end{itemize}
 
-Having a balanced training set is crucial: it prevents models from developing a lazy bias toward predicting the majority class and guarantees that a dummy chance classifier achieves exactly 50\% accuracy.
+Having a balanced training set makes evaluation straightforward: it prevents models from developing a bias toward predicting a majority class, ensuring that a random guessing baseline achieves exactly 50\% accuracy.
 
 \begin{figure}[H]
     \centering
@@ -428,6 +428,7 @@ Before training classifiers, we executed a dual-method statistical audit (\textt
 \small
 \caption{Top 10 Most Discriminative Engineered Features for Track A (Full 96x96, $N=40,000$).}
 \label{tab:top_features}
+\resizebox{\textwidth}{!}{%
 \begin{tabular}{@{}clllcc@{}}
 \toprule
 \textbf{Rank} & \textbf{Feature Name} & \textbf{Family} & \textbf{Biological Interpretation} & \textbf{ANOVA $F$} & \textbf{RF Imp.} \\
@@ -443,7 +444,8 @@ Before training classifiers, we executed a dual-method statistical audit (\textt
 \#9 & \texttt{color\_L\_mean}    & Color Moments     & Lightness decrease from cellular density  & 946.49  & 0.0345 \\
 \#10 & \texttt{color\_R\_mean}   & Color Moments     & Red channel absorption                   & 170.02  & 0.0341 \\
 \bottomrule
-\end{tabular}
+\end{tabular}%
+}
 \end{table}
 
 \begin{table}[H]
@@ -451,6 +453,7 @@ Before training classifiers, we executed a dual-method statistical audit (\textt
 \small
 \caption{Top 5 Most Discriminative Features for Track B (Crop 32x32 Core, $N=40,000$).}
 \label{tab:top_features_crop}
+\resizebox{\textwidth}{!}{%
 \begin{tabular}{@{}clllcc@{}}
 \toprule
 \textbf{Rank} & \textbf{Feature Name} & \textbf{Family} & \textbf{Biological Interpretation} & \textbf{ANOVA $F$} & \textbf{RF Imp.} \\
@@ -461,7 +464,8 @@ Before training classifiers, we executed a dual-method statistical audit (\textt
 \#4 & \texttt{color\_V\_mean}    & Color Moments   & Dense hyperchromatic nuclear darkening   & 110.30  & 0.0478 \\
 \#5 & \texttt{color\_b\_mean}    & Color Moments   & Blue--yellow Eosin counter-stain axis     & 1502.09 & 0.0453 \\
 \bottomrule
-\end{tabular}
+\end{tabular}%
+}
 \end{table}
 
 \noindent\textbf{Key Analytical Findings from the Feature Audit:}
@@ -506,6 +510,7 @@ To scientifically determine whether full tissue context (Track A) or central dia
 \small
 \caption{Baseline Logistic Regression Benchmark Leaderboard on Validation Split ($N = 5,000$).}
 \label{tab:baseline_leaderboard}
+\resizebox{\textwidth}{!}{%
 \begin{tabular}{@{}llccccccc@{}}
 \toprule
 \textbf{Rank} & \textbf{Model \& Track} & \textbf{Dims} & \textbf{Accuracy} & \textbf{ROC-AUC} & \textbf{Sensitivity} & \textbf{Precision} & \textbf{F1-Score} & \textbf{Train Time} \\
@@ -517,7 +522,8 @@ To scientifically determine whether full tissue context (Track A) or central dia
 \#5          & Track A (Full 96) --- PCA Only           & 20          & 71.34\%          & 0.7965          & 67.08\%          & 73.33\%          & 0.7006          & 0.02s \\
 \#6          & Track B (Crop 32) --- PCA Only           & 20          & 71.34\%          & 0.7835          & 68.08\%          & 72.83\%          & 0.7037          & 0.02s \\
 \bottomrule
-\end{tabular}
+\end{tabular}%
+}
 \end{table}
 
 \begin{figure}[H]
@@ -557,6 +563,7 @@ Because Logistic Regression weights are strictly linear, each coefficient $w_j$ 
 \small
 \caption{Top Learned Weights from Maximum Likelihood Estimation (Track A, $N=40,000$).}
 \label{tab:learned_weights}
+\resizebox{\textwidth}{!}{%
 \begin{tabular}{@{}llccl@{}}
 \toprule
 \textbf{Direction} & \textbf{Feature Name} & \textbf{Family} & \textbf{Weight ($w$)} & \textbf{Pathological Clinical Meaning} \\
@@ -573,7 +580,8 @@ Because Logistic Regression weights are strictly linear, each coefficient $w_j$ 
                      & \texttt{edge\_sobel\_mean}  & Edge Sharpness & \textbf{--2.9402} & Baseline edge gradient normalization factor \\
                      & \texttt{color\_B\_std}      & Color Moments  & \textbf{--2.9312} & Consistent dye illumination in non-malignant tissue \\
 \bottomrule
-\end{tabular}
+\end{tabular}%
+}
 \end{table}
 
 \subsection{Empirical Capacity Ceiling Audit: Regularization Sweep}
@@ -584,6 +592,7 @@ To investigate whether the baseline accuracy of $\sim 78.2\%$ could be elevated 
 \small
 \caption{Systematic Hyperparameter Grid Search: Regularization Parameter $C$ vs. Performance ($N=40,000$).}
 \label{tab:tuning_grid}
+\resizebox{\textwidth}{!}{%
 \begin{tabular}{@{}lcccccc@{}}
 \toprule
 \textbf{Penalty} & \textbf{Inverse Reg. $C$} & \textbf{Train Accuracy} & \textbf{Validation Accuracy} & \textbf{Validation ROC-AUC} & \textbf{Active Features} & \textbf{Time} \\
@@ -603,7 +612,8 @@ $L_1$ (Lasso) & $0.1000$ & 80.99\% & 77.78\% & 0.8605 & 49 / 59 & 10.86s \\
 $L_1$ (Lasso) & $1.0000$ & 81.24\% & 77.86\% & 0.8630 & 58 / 59 & 9.93s \\
 $L_1$ (Lasso) & $10.0000$ & 81.25\% & 77.82\% & 0.8632 & 59 / 59 & 10.40s \\
 \bottomrule
-\end{tabular}
+\end{tabular}%
+}
 \end{table}
 
 \begin{figure}[H]
@@ -691,6 +701,7 @@ Table~\ref{tab:candidate_benchmark} presents the comprehensive benchmark results
 \small
 \caption{Official Candidate Models Benchmark Leaderboard (5,000 Validation Patches).}
 \label{tab:candidate_benchmark}
+\resizebox{\textwidth}{!}{%
 \begin{tabular}{@{}lccccccr@{}}
 \toprule
 \textbf{Model Architecture} & \textbf{Track} & \textbf{Acc (\%)} & \textbf{ROC-AUC} & \textbf{Sens (\%)} & \textbf{Prec (\%)} & \textbf{F1} & \textbf{Time} \\
@@ -707,7 +718,8 @@ Random Forest & Track B (32) & 78.02\% & 0.8700 & 72.72\% & 81.34\% & 0.7679 & 1
 Linear SVM & Track B (32) & 75.36\% & 0.8331 & 75.00\% & 75.54\% & 0.7527 & 4.71s \\
 Logistic Regression & Track B (32) & 75.54\% & 0.8330 & 74.88\% & 75.88\% & 0.7538 & 0.92s \\
 \bottomrule
-\end{tabular}
+\end{tabular}%
+}
 \end{table}
 
 \begin{figure}[H]
@@ -772,6 +784,7 @@ To determine which histological features drove HistGradientBoosting's prediction
 \small
 \caption{Top 8 Permutation Feature Importances for HistGradientBoosting (Track A).}
 \label{tab:perm_importance}
+\resizebox{\textwidth}{!}{%
 \begin{tabular}{@{}llccp{5.5cm}@{}}
 \toprule
 \textbf{Rank} & \textbf{Feature Name} & \textbf{Importance Drop} & \textbf{Std Dev} & \textbf{Biological / Diagnostic Significance} \\
@@ -785,7 +798,8 @@ To determine which histological features drove HistGradientBoosting's prediction
 7 & \texttt{color\_V\_mean} & 0.0169 & $\pm 0.0020$ & Overall HSV brightness/illumination level \\
 8 & \texttt{lbp\_bin\_4} & 0.0157 & $\pm 0.0019$ & Intermediate textural uniformity across tissue \\
 \bottomrule
-\end{tabular}
+\end{tabular}%
+}
 \end{table}
 
 \subsection{The Multi-Metric Evaluation Dilemma: Why RBF Kernel SVM is Declared the Benchmark Champion}
@@ -802,6 +816,7 @@ The answer rests on the fundamental trade-off between Precision, Sensitivity (Re
     \small
     \caption{Diagnostic Error Breakdown across Candidate Models on 5,000 Validation Patches.}
     \label{tab:diagnostic_breakdown}
+    \resizebox{\textwidth}{!}{%
     \begin{tabular}{@{}lcccccr@{}}
     \toprule
     \textbf{Architecture} & \textbf{Precision} & \textbf{Sensitivity} & \textbf{TP (Caught)} & \textbf{FN (Missed Tumors)} & \textbf{FP} & \textbf{Total Errors} \\
@@ -810,18 +825,19 @@ The answer rests on the fundamental trade-off between Precision, Sensitivity (Re
     HistGradientBoosting & 85.02\% & 74.44\% & 1,861 & \textbf{639 missed} & 328 & 967 errors \\
     \textbf{RBF Kernel SVM (Winner)} & 84.03\% & \textbf{79.36\%} & \textbf{1,984} & \textbf{516 missed} & 377 & \textbf{893 errors} \\
     \bottomrule
-    \end{tabular}
+    \end{tabular}%
+    }
     \end{table}
 
-    Random Forest gained its $+1.70\%$ precision advantage through extreme conservatism: independent bagging trees vote cautiously, refusing to call a patch malignant unless certainty is overwhelming. The consequence of this conservatism is catastrophic: Random Forest missed \textbf{734 metastatic tumor patches} ($29.36\%$ false negative rate). In contrast, RBF Kernel SVM caught \textbf{1,984 true tumors}---detecting $\mathbf{+218}$ more malignancies than Random Forest and $\mathbf{+123}$ more than HistGradientBoosting, cutting total classification errors to a benchmark-low $893$.
+    Random Forest gained its $+1.70\%$ precision advantage through extreme conservatism: independent bagging trees vote cautiously, refusing to call a patch malignant unless certainty is high across most trees. As a direct result of this conservatism, Random Forest missed \textbf{734 metastatic tumor patches} ($29.36\%$ false negative rate). In contrast, RBF Kernel SVM caught \textbf{1,984 true tumors}---detecting $\mathbf{+218}$ more malignancies than Random Forest and $\mathbf{+123}$ more than HistGradientBoosting, cutting total classification errors to a benchmark-low $893$.
 
     \item \textbf{Clinical Asymmetry of Diagnostic Errors:}
     In computational pathology, false positives and false negatives carry drastically asymmetric clinical costs:
     \begin{itemize}[noitemsep]
-        \item \textit{False Positive (Type I Error):} Normal tissue is flagged as suspicious. The clinical impact is minimal: a secondary pathologist spends 15 seconds inspecting the high-power field, or an additional immunohistochemical (IHC) stain is ordered. The patient is unharmed.
-        \item \textit{False Negative (Type II Error):} Metastatic cancer in a sentinel lymph node is missed entirely. The patient is falsely declared cancer-free, curative adjuvant chemotherapy or radiotherapy is withheld, and micrometastases progress into fatal systemic Stage~IV disease.
+        \item \textit{False Positive (Type I Error):} Normal tissue is flagged as suspicious. The clinical impact is minimal: a pathologist spends a few moments inspecting the high-power field, or an additional immunohistochemical (IHC) stain is ordered. The patient is unharmed.
+        \item \textit{False Negative (Type II Error):} Metastatic cancer in a sentinel lymph node is missed entirely. The patient is falsely declared cancer-free, curative adjuvant chemotherapy or radiotherapy is withheld, and micrometastases progress into fatal systemic disease.
     \end{itemize}
-    Consequently, in oncology screening, \textbf{Sensitivity is paramount}. Sacrificing nearly $9\%$ in Sensitivity to gain $1.7\%$ in Precision represents an unacceptable clinical trade-off.
+    Consequently, in oncology screening, \textbf{catching every possible tumor (Sensitivity) takes clear precedence}. Sacrificing nearly $9\%$ in Sensitivity to gain $1.7\%$ in Precision represents an unacceptable clinical trade-off.
 
     \item \textbf{Harmonic Synthesis: The $F_1$-Score:}
     To evaluate models without favoring either metric arbitrarily, the harmonic mean ($F_1 = 2 \cdot \frac{P \cdot R}{P + R}$) penalizes extreme imbalances between precision and recall. RBF Kernel SVM dominates all candidate models with an $F_1$-score of $\mathbf{0.8163}$, compared to $0.7938$ for HistGradientBoosting and $0.7746$ for Tuned Random Forest.
@@ -858,7 +874,8 @@ Table~\ref{tab:rbf_tuning_grid} presents the empirical results across the 11-con
 \small
 \caption{Systematic Validation Grid Search Results for RBF Kernel SVM (N=40,000 Train, 5,000 Val).}
 \label{tab:rbf_tuning_grid}
-\begin{tabular}{@{}ccccccccccr@{}}
+\resizebox{\textwidth}{!}{%
+\begin{tabular}{@{}cccccccccc@{}}
 \toprule
 $C$ & $\gamma$ & Class Weight & Acc (\%) & ROC-AUC & Sens (\%) & Prec (\%) & $F_1$ & SVs & Time (s) \\
 \midrule
@@ -874,7 +891,8 @@ $C$ & $\gamma$ & Class Weight & Acc (\%) & ROC-AUC & Sens (\%) & Prec (\%) & $F_
 1.0 & 0.010 & None & 82.02\% & 0.8987 & 80.00\% & 83.37\% & 0.8165 & 16,845 & 86.0s \\
 0.5 & scale & None & 82.12\% & 0.8972 & 79.68\% & 83.77\% & 0.8167 & 17,312 & 87.7s \\
 \bottomrule
-\end{tabular}
+\end{tabular}%
+}
 \end{table}
 
 \begin{figure}[H]
@@ -902,6 +920,7 @@ where $\sigma(z) = \frac{1}{1 + e^{-z}}$ represents Platt logistic calibration o
 \small
 \caption{Multi-Paradigm Ensemble Blending Performance across Weights $w_{\text{RBF}} \in [0.0, 1.0]$.}
 \label{tab:ensemble_blend}
+\resizebox{\textwidth}{!}{%
 \begin{tabular}{@{}cccccccc@{}}
 \toprule
 $w_{\text{RBF}}$ & $w_{\text{HGBM}}$ & Acc (\%) & ROC-AUC & Rank-AUC & Sens (\%) & Prec (\%) & $F_1$ \\
@@ -969,6 +988,7 @@ Table~\ref{tab:final_test_benchmark} presents the official test evaluation metri
 \small
 \caption{Official Final Test Benchmark Leaderboard on Untouched Test Cohort (N=5,000 Patches).}
 \label{tab:final_test_benchmark}
+\resizebox{\textwidth}{!}{%
 \begin{tabular}{@{}lcccccccc@{}}
 \toprule
 \textbf{Model Architecture} & \textbf{Acc (\%)} & \textbf{ROC-AUC} & \textbf{PR-AUC} & \textbf{Sens (\%)} & \textbf{Prec (\%)} & \textbf{Spec (\%)} & \textbf{$F_1$} & \textbf{Brier} \\
@@ -982,7 +1002,8 @@ Tuned RBF Kernel SVM & 77.92\% & 0.8637 & 0.8626 & 70.88\% & 82.50\% & 84.96\% &
 Logistic Regression (Baseline) & 75.84\% & 0.8373 & 0.8284 & 70.96\% & 78.63\% & 80.72\% & 0.7460 & 0.1679 \\
 Linear SVM & 75.46\% & 0.8292 & 0.8226 & 71.12\% & 77.88\% & 79.80\% & 0.7435 & 0.1850 \\
 \bottomrule
-\end{tabular}
+\end{tabular}%
+}
 \end{table}
 
 \begin{figure}[H]
@@ -1035,6 +1056,7 @@ To quantify sample variance and establish rigorous statistical bounds, we perfor
 \small
 \caption{Empirical 95\% Bootstrap Confidence Intervals on Test Set (1,000 Resamples).}
 \label{tab:test_ci}
+\resizebox{\textwidth}{!}{%
 \begin{tabular}{@{}lcccc@{}}
 \toprule
 \textbf{Model Architecture} & \textbf{Accuracy [95\% CI]} & \textbf{ROC-AUC [95\% CI]} & \textbf{Sensitivity [95\% CI]} & \textbf{Precision [95\% CI]} \\
@@ -1047,7 +1069,8 @@ Tuned RBF Kernel SVM & 77.92\% [76.74\%, 79.16\%] & 0.8637 [0.8536, 0.8744] & 70
 Logistic Regression Baseline & 75.84\% [74.64\%, 77.04\%] & 0.8373 [0.8268, 0.8486] & 70.96\% [69.12\%, 72.73\%] & 78.63\% [76.99\%, 80.26\%] \\
 Linear SVM & 75.46\% [74.26\%, 76.72\%] & 0.8292 [0.8182, 0.8411] & 71.12\% [69.29\%, 72.83\%] & 77.88\% [76.24\%, 79.52\%] \\
 \bottomrule
-\end{tabular}
+\end{tabular}%
+}
 \end{table}
 
 \begin{figure}[H]
@@ -1136,6 +1159,7 @@ Table~\ref{tab:error_feature_discrepancy} contrasts the leading biological drive
 \small
 \caption{Leading Biological Feature Discrepancies Driving Diagnostic Failures (Cohen's $d$).}
 \label{tab:error_feature_discrepancy}
+\resizebox{\textwidth}{!}{%
 \begin{tabular}{@{}llccp{5.5cm}@{}}
 \toprule
 \textbf{Error Type} & \textbf{Feature} & \textbf{Mean (Correct)} & \textbf{Mean (Error)} & \textbf{Cohen's $d$ / Pathological Mechanism} \\
@@ -1151,7 +1175,8 @@ Table~\ref{tab:error_feature_discrepancy} contrasts the leading biological drive
 & \texttt{edge\_density} & -0.4604 & +0.3528 & $d = +0.83$: Hyper-dense nuclear membrane crowding in follicles \\
 & \texttt{color\_a\_mean} & -0.4617 & +0.2337 & $d = +0.84$: Intense dark purple hematoxylin dye absorption \\
 \bottomrule
-\end{tabular}
+\end{tabular}%
+}
 \end{table}
 
 \subsection{Visual Inspection of Extreme Misclassifications}
@@ -1211,6 +1236,7 @@ Table~\ref{tab:clinical_thresholds} evaluates the performance of our champion Hy
 \small
 \caption{Operational Clinical Performance of the Champion Hybrid Blend Across Decision Thresholds.}
 \label{tab:clinical_thresholds}
+\resizebox{\textwidth}{!}{%
 \begin{tabular}{@{}lccccccc@{}}
 \toprule
 \textbf{Clinical Regime} & \textbf{Threshold ($\tau$)} & \textbf{Accuracy} & \textbf{Sensitivity} & \textbf{Specificity} & \textbf{Precision} & \textbf{F1-Score} & \textbf{Clinical Purpose} \\
@@ -1219,7 +1245,8 @@ Table~\ref{tab:clinical_thresholds} evaluates the performance of our champion Hy
 \textbf{Balanced Benchmark}        & $\tau = 0.50$ & $\mathbf{79.76\%}$ & $73.08\%$ & $86.44\%$ & $84.35\%$ & $\mathbf{0.7831}$ & Standard accuracy and F1 maximizer \\
 \textbf{High-Precision Confirmatory}& $\tau = 0.65$ & $75.36\%$ & $57.76\%$ & $\mathbf{92.96\%}$ & $\mathbf{89.14\%}$ & $0.7008$ & Surgical alert (slashes false alarms to 176) \\
 \bottomrule
-\end{tabular}
+\end{tabular}%
+}
 \end{table}
 
 \begin{enumerate}[leftmargin=*]
@@ -1294,6 +1321,7 @@ The best checkpoint selected via validation ROC-AUC ($0.9614$) was evaluated str
 \small
 \caption{Sealed Test Cohort Benchmark (N = 5,000): Classical Machine Learning vs. Deep Learning (ResNet-18).}
 \label{tab:cnn_vs_classical}
+\resizebox{\textwidth}{!}{%
 \begin{tabular}{@{}llcccccccc@{}}
 \toprule
 \textbf{Rank} & \textbf{Model Architecture} & \textbf{Accuracy} & \textbf{ROC-AUC} & \textbf{PR-AUC} & \textbf{Sens (\%)} & \textbf{Spec (\%)} & \textbf{Prec (\%)} & \textbf{F1-Score} & \textbf{Brier} \\
@@ -1308,7 +1336,8 @@ The best checkpoint selected via validation ROC-AUC ($0.9614$) was evaluated str
 8 & Logistic Regression Baseline & 75.84\% & 0.8373 & 0.8284 & 70.96\% & 80.72\% & 78.63\% & 0.7460 & 0.1679 \\
 9 & Linear SVM (Dual $C=1.0$) & 75.46\% & 0.8292 & 0.8226 & 71.12\% & 79.80\% & 77.88\% & 0.7435 & 0.1850 \\
 \bottomrule
-\end{tabular}
+\end{tabular}%
+}
 \end{table}
 
 \subsubsection{Clinical Diagnostic Interpretation of the Gains}
@@ -1322,43 +1351,10 @@ The experimental results demonstrate a decisive breakthrough across every quanti
 
 
 % ----------------------------------------------------------------------
-% SECTION 13: SUMMARY OF TEAM CONTRIBUTIONS & REPRODUCIBILITY AUDIT
+% SECTION 13: REPRODUCIBILITY GUARANTEE
 % ----------------------------------------------------------------------
-\section{Summary of Team Contributions \& Reproducibility Audit}
+\section{Reproducibility Guarantee}
 
-\subsection{Collaborative Division of Labor}
-This project was planned, executed, and documented jointly by two team members for the ES 335 Machine Learning course. Table~\ref{tab:team_contributions} outlines the specific individual contributions.
-
-\begin{table}[H]
-\centering
-\small
-\caption{Modular Division of Labor and Engineering Contributions.}
-\label{tab:team_contributions}
-\begin{tabular}{@{}llp{8.5cm}@{}}
-\toprule
-\textbf{Team Member} & \textbf{Roll Number} & \textbf{Primary Engineering Contributions} \\
-\midrule
-\textbf{Devarsh Patel} & 24110245 & 
-\begin{itemize}[noitemsep,leftmargin=*]
-    \item Designed and implemented the 59-dimensional multimodal feature extraction pipeline (\texttt{src/features.py}, \texttt{src/feature\_pipeline.py}).
-    \item Formulated the candidate non-linear model experiments (RBF Kernel SVM, HistGradientBoosting, Random Forest).
-    \item Conducted validation hyperparameter grid searches and multi-paradigm ensemble blending (\texttt{src/tune\_rbf\_svm.py}, \texttt{src/tune\_ensemble.py}).
-    \item Executed statistical feature discrepancy calculations (Cohen's $d$) and formulated the 4-tier pathological failure taxonomy (\texttt{src/error\_analysis.py}).
-\end{itemize} \\
-\midrule
-\textbf{Dhrumil Bhutaiya} & 24110075 & 
-\begin{itemize}[noitemsep,leftmargin=*]
-    \item Implemented data loading, verification, and train/val/test balance checks (\texttt{src/data.py}, \texttt{src/preprocess\_data.py}).
-    \item Executed exploratory data analysis across 6 comprehensive analytical stages and generated publication plots (\texttt{src/eda.py}, \texttt{02\_eda.ipynb}).
-    \item Established the baseline Logistic Regression and Linear SVM capacity ceiling benchmarks (\texttt{src/baseline\_logreg.py}, \texttt{src/train\_linear\_svm.py}).
-    \item Built the sealed one-shot test evaluation harness and 1,000-resample bootstrap confidence intervals (\texttt{src/evaluate\_test.py}).
-    \item Led technical report structuring, milestone progress tracking (\texttt{src/tracker.py}), and cross-verification.
-\end{itemize} \\
-\bottomrule
-\end{tabular}
-\end{table}
-
-\subsection{Reproducibility Guarantee}
 Every phase of this project is fully deterministic and reproducible:
 \begin{itemize}[noitemsep]
     \item \textbf{Global Random Seed:} Fixed to $42$ across all data loaders, model initializations, and bootstrap resampling routines.
@@ -1370,11 +1366,11 @@ Every phase of this project is fully deterministic and reproducible:
 % SECTION 14: CONCLUSION
 % ----------------------------------------------------------------------
 \section{Conclusion}
-This study presented a rigorous, zero-leakage benchmark of classical, non-linear, and ensemble machine learning approaches for metastatic tumor detection on the PatchCamelyon dataset ($N=50,000$). By engineering a 59-dimensional multimodal representation combining color moments, GLCM texture, Local Binary Patterns, Sobel edge gradients, and bilinear PCA, we systematically mapped the capacity transition from linear models ($75.84\%$ test accuracy) to tree-based ensembles ($78.82\%$ accuracy, $85.31\%$ precision) and RBF kernel SVMs ($78.80\%$ accuracy, $73.28\%$ sensitivity).
+This study evaluated classical, non-linear, and ensemble machine learning approaches for metastatic tumor detection on the PatchCamelyon dataset ($N=50,000$). By extracting a 59-dimensional multimodal feature set combining color moments, GLCM texture, Local Binary Patterns, Sobel edge gradients, and bilinear PCA, we mapped how model capacity scales from linear baselines ($75.84\%$ test accuracy) to tree-based ensembles ($78.82\%$ accuracy, $85.31\%$ precision) and RBF kernel SVMs ($78.80\%$ accuracy, $73.28\%$ sensitivity).
 
-Our champion \textbf{Hybrid Multi-Paradigm Blend} (50\% RBF SVM + 50\% HistGBM) achieved the highest overall test performance: **$79.76\%$ Test Accuracy, $0.8853$ ROC-AUC, $0.8767$ PR-AUC, and $0.1426$ Brier calibration score**, confirmed via 1,000-resample bootstrap 95\% confidence intervals ($p < 10^{-7}$). 
+Our champion \textbf{Hybrid Multi-Paradigm Blend} (50\% RBF SVM + 50\% HistGBM) achieved the highest overall test performance: \textbf{$79.76\%$ test accuracy, $0.8853$ ROC-AUC, $0.8767$ PR-AUC, and a Brier calibration score of $0.1426$}, validated across 1,000 bootstrap resamples ($p < 10^{-7}$).
 
-Crucially, our forensic autopsy on $1,009$ misclassifications uncovered that $613$ errors are consensus failures shared across all model families simultaneously. This establishes the empirical capacity ceiling of hand-engineered global features on PCam, providing a clear scientific rationale for the necessity of localized receptive fields in Deep Convolutional Neural Networks as the next clinical milestone.
+Looking closely at the $1,009$ misclassifications on the held-out test set, we found that $613$ errors ($12.3\%$ of all test samples) are consensus failures shared across every classical model family. This marks the practical limit of global handcrafted features on this task, showing clearly why localized, multi-scale receptive fields from deep convolutional architectures like ResNet-18 ($84.94\%$ accuracy, $0.9392$ ROC-AUC) are needed to resolve complex, overlapping tissue morphologies.
 
 % ----------------------------------------------------------------------
 % REFERENCES

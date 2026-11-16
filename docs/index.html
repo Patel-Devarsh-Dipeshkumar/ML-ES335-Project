@@ -44,7 +44,7 @@
     <p class="subtitle">Controlled benchmark of classical descriptors, multi-paradigm ensembles, and ResNet-18 on PatchCamelyon (PCam)</p>
 
     <ul class="authors">
-      <li><strong>Devarsh Patel</strong> <span class="mono">24110245</span> <a href="mailto:devarsh.patel@iitgn.ac.in">devarsh.patel@iitgn.ac.in</a></li>
+      <li><strong>Devarsh Patel</strong> <span class="mono">24110245</span> <a href="mailto:24110245@iitgn.ac.in">24110245@iitgn.ac.in</a></li>
       <li><strong>Dhrumil Bhutaiya</strong> <span class="mono">24110075</span> <a href="mailto:24110075@iitgn.ac.in">24110075@iitgn.ac.in</a></li>
     </ul>
 
@@ -929,17 +929,6 @@ python src/train_cnn.py --eval-only # ResNet-18</code></pre>
         <p class="note">The random seed is fixed to 42 in data sampling, model initialisation and bootstrap resampling. The raw dataset and trained model files are not committed (see <code>.gitignore</code>); the scripts regenerate them.</p>
       </div>
       <div>
-        <h3>Who did what</h3>
-        <div class="tablewrap">
-        <table class="data compact">
-          <thead><tr><th>Author</th><th>Contributions</th></tr></thead>
-          <tbody>
-            <tr><td><strong>Devarsh Patel</strong><br><span class="mono">24110245</span></td><td>Feature extraction pipeline (<code>features.py</code>, <code>feature_pipeline.py</code>); non-linear candidates (RBF SVM, HistGBM, random forest); SVM grid search and ensemble blending (<code>tune_rbf_svm.py</code>, <code>tune_ensemble.py</code>); Cohen&rsquo;s <i>d</i> analysis and failure taxonomy (<code>error_analysis.py</code>).</td></tr>
-            <tr><td><strong>Dhrumil Bhutaiya</strong><br><span class="mono">24110075</span></td><td>Data loading and split checks (<code>data.py</code>, <code>preprocess_data.py</code>); six-stage exploratory analysis (<code>eda.py</code>); linear baselines (<code>baseline_logreg.py</code>, <code>train_linear_svm.py</code>); test evaluation and bootstrap intervals (<code>evaluate_test.py</code>); technical report.</td></tr>
-          </tbody>
-        </table>
-        </div>
-
         <h3>AI-use disclosure</h3>
         <p>Generative AI tools were used to assist with documentation drafting, LaTeX formatting, code optimisation and the styling of this website. All experimental code, feature definitions, statistical audits, model checkpoints and analytical interpretations were designed, run and verified by the authors.</p>
 

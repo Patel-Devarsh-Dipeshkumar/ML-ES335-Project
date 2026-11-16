@@ -8,7 +8,7 @@
 
 Course project for **ES 335: Machine Learning** at the **Indian Institute of Technology Gandhinagar (IITGN)**.
 
-* **Devarsh Patel** (Roll No: 24110245) — `devarsh.patel@iitgn.ac.in`
+* **Devarsh Patel** (Roll No: 24110245) — `24110245@iitgn.ac.in`
 * **Dhrumil Bhutaiya** (Roll No: 24110075) — `24110075@iitgn.ac.in`
 
 > 📖 **Comprehensive Project Synthesis & Viva Guide:** See [`COMPLETE_PROJECT_SYNTHESIS_AND_INSIGHTS.md`](COMPLETE_PROJECT_SYNTHESIS_AND_INSIGHTS.md) for the complete 30+ page technical reference, theoretical proofs, and presentation talking points.  
@@ -283,7 +283,7 @@ Evaluate deeper capacity scaling and spatial cropping:
 
 ---
 
-## Authors & Contributions
+## Authors
 
-* **Devarsh Patel** (24110245) &mdash; Multimodal Feature Pipeline Architecture, Candidate Model Optimization (RBF SVM, HistGBM), Multi-Paradigm Ensemble Blending, Cohen's d Feature Discrepancy & Pathological Taxonomy.
-* **Dhrumil Bhutaiya** (24110075) &mdash; Exploratory Data Analysis, Baseline Linear Capacity Ceiling, Sealed Test Evaluation Harness, Bootstrap Confidence Intervals, Progress Tracking & Technical Report.
+* **Devarsh Patel** (Roll No: 24110245) — `24110245@iitgn.ac.in`
+* **Dhrumil Bhutaiya** (Roll No: 24110075) — `24110075@iitgn.ac.in`
