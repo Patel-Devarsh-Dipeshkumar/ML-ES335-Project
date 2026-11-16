@@ -4,7 +4,7 @@
 **Institution:** Indian Institute of Technology Gandhinagar (IITGN)  
 **Authors:** Devarsh Patel (24110245) & Dhrumil Bhutaiya (24110075)  
 **Project:** Automated Metastatic Breast Cancer Tumour Detection on PatchCamelyon (PCam) Histopathology  
-**Deployment:** [Hugging Face Space: pcam-tumor-detection](https://huggingface.co/spaces/Dhrumil0309/pcam-tumor-detection)  
+**Deployment:** [GitHub Pages Live Portal](https://patel-devarsh-dipeshkumar.github.io/ML-ES335-Project/)  
 **Document Generated:** November 15, 2026  
 
 ---

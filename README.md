@@ -4,7 +4,7 @@
 [![Institute: IIT Gandhinagar](https://img.shields.io/badge/IIT%20Gandhinagar-Palaj%2C%20Gujarat-orange.svg)](https://www.iitgn.ac.in/)
 [![Dataset: PatchCamelyon](https://img.shields.io/badge/Dataset-PatchCamelyon%20(PCam)-green.svg)](https://github.com/basveeling/pcam)
 [![Python: 3.10+](https://img.shields.io/badge/Python-3.10%2B-brightgreen.svg)](https://www.python.org/)
-[![Deployment: Hugging Face](https://img.shields.io/badge/Live%20Demo-Hugging%20Face%20Spaces-yellow.svg)](https://huggingface.co/spaces/Dhrumil0309/pcam-tumor-detection)
+[![Website: GitHub Pages](https://img.shields.io/badge/Live%20Portal-GitHub%20Pages-blue.svg)](https://patel-devarsh-dipeshkumar.github.io/ML-ES335-Project/)
 
 Course project for **ES 335: Machine Learning** at the **Indian Institute of Technology Gandhinagar (IITGN)**.
 
@@ -13,7 +13,7 @@ Course project for **ES 335: Machine Learning** at the **Indian Institute of Tec
 
 > 📖 **Comprehensive Project Synthesis & Viva Guide:** See [`COMPLETE_PROJECT_SYNTHESIS_AND_INSIGHTS.md`](COMPLETE_PROJECT_SYNTHESIS_AND_INSIGHTS.md) for the complete 30+ page technical reference, theoretical proofs, and presentation talking points.  
 > 📝 **Technical Journey & Engineering Sagas:** See [`CHAT_CONVERSATION_AND_PROJECT_SUMMARY.md`](CHAT_CONVERSATION_AND_PROJECT_SUMMARY.md) for the hardware migration, problem-solving record, and complete benchmark timeline.  
-> 🌐 **Interactive Web Portal:** Live on [Hugging Face Spaces](https://huggingface.co/spaces/Dhrumil0309/pcam-tumor-detection) and available locally in `docs/index.html`.
+> 🌐 **Interactive Web Portal:** Live on [GitHub Pages](https://patel-devarsh-dipeshkumar.github.io/ML-ES335-Project/) and available locally in `docs/index.html`.
 
 ---
 
