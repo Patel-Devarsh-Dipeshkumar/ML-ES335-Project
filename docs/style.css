@@ -264,6 +264,29 @@ figure.plot img { display: block; width: 100%; height: auto; }
 .toolhead p { color: var(--muted); margin: 0; font-size: 15px; }
 .toolnum { font-family: var(--mono); font-size: 12px; letter-spacing: .08em; text-transform: uppercase; color: var(--accent); font-weight: 700; }
 
+/* ---------- Model Architecture & Mathematics Lab ---------- */
+.explorertop { display: flex; flex-wrap: wrap; gap: 14px; align-items: center; justify-content: space-between; margin-bottom: 18px; padding-bottom: 14px; border-bottom: 1px solid var(--border); }
+.explorertop .fld-inline { display: flex; align-items: center; gap: 10px; font-weight: 600; font-size: 14px; }
+.explorertop select { padding: 8px 14px; border-radius: 6px; border: 1px solid var(--border-strong); background: var(--bg); color: var(--text); font-weight: 600; font-size: 14px; cursor: pointer; }
+.exploregrid { display: grid; grid-template-columns: minmax(360px, 480px) minmax(0, 1fr); gap: 24px; align-items: start; }
+@media (max-width: 900px) { .exploregrid { grid-template-columns: 1fr; } }
+.explorecanvaswrap { width: 100%; border: 1px solid var(--border-strong); border-radius: 8px; background: var(--surface); padding: 12px; display: flex; flex-direction: column; align-items: center; box-shadow: inset 0 2px 4px rgba(0,0,0,0.02); }
+#exploreCanvas { width: 100%; max-width: 456px; height: 320px; border-radius: 4px; display: block; background: var(--bg); }
+.exploremetrics { width: 100%; margin-top: 10px; font-family: var(--mono); font-size: 12px; display: flex; flex-wrap: wrap; gap: 6px 14px; justify-content: center; color: var(--accent-ink); font-weight: 600; }
+.explorecaption { font-size: 13px; color: var(--muted); margin-top: 8px; text-align: center; }
+.explorectrls { background: var(--surface-2); border: 1px solid var(--border); border-radius: 8px; padding: 14px 16px; margin-bottom: 14px; }
+.explorectrls .ctrl-row { display: flex; flex-direction: column; gap: 6px; margin-bottom: 12px; }
+.explorectrls .ctrl-row:last-child { margin-bottom: 0; }
+.explorectrls .ctrl-label { display: flex; justify-content: space-between; font-size: 13px; font-weight: 600; color: var(--text); }
+.explorectrls input[type=range] { width: 100%; accent-color: var(--accent); }
+.explorebtnrow { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 10px; }
+.exploreeqs { background: var(--surface); border: 1px solid var(--border); border-left: 3px solid var(--accent); border-radius: var(--radius); padding: 14px 16px; margin-bottom: 14px; }
+.exploreeqs h4 { margin: 0 0 8px; font-size: 14.5px; color: var(--accent-ink); }
+.exploreeqs .tex { font-size: 13.5px; }
+.exploretheory { font-size: 13.5px; color: var(--muted); line-height: 1.5; }
+.exploretheory ul { margin: 6px 0 0 18px; padding: 0; }
+.exploretheory li { margin-bottom: 4px; }
+
 button, select, input { font: inherit; color: inherit; }
 .tool button, .pills button { border: 1px solid var(--border-strong); background: var(--bg); border-radius: 6px; padding: 7px 12px; font-size: 13.500px; font-weight: 600; cursor: pointer; }
 .tool button:hover, .pills button:hover { border-color: var(--accent); }
@@ -408,3 +431,135 @@ pre.code code { background: none; border: 0; padding: 0; color: inherit; font-si
   .sec { padding: 24px 0; }
   .tablewrap.sticky { max-height: none; }
 }
+
+/* ---------- Live FastAPI Upload & Random PCam Sampler ---------- */
+.live-studio-bar {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 16px;
+  align-items: stretch;
+  margin: 0 0 18px;
+  padding: 14px 16px;
+  border: 1px solid var(--border-strong);
+  border-radius: var(--radius);
+  background: var(--surface);
+}
+
+.live-dropzone {
+  border: 2px dashed var(--border-strong);
+  border-radius: var(--radius);
+  background: var(--bg);
+  padding: 12px 16px;
+  cursor: pointer;
+  transition: border-color 0.18s ease, background-color 0.18s ease;
+  display: flex;
+  align-items: center;
+}
+
+.live-dropzone:hover,
+.live-dropzone.dragover {
+  border-color: var(--accent);
+  background: var(--accent-soft);
+}
+
+.live-drop-content {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.live-drop-content .live-icon {
+  color: var(--accent);
+  flex-shrink: 0;
+}
+
+.live-drop-content strong {
+  display: block;
+  font-size: 14px;
+  color: var(--text);
+}
+
+.live-drop-content span {
+  display: block;
+  font-size: 12.5px;
+  color: var(--muted);
+}
+
+.live-actions {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: flex-end;
+  gap: 8px;
+}
+
+.api-cfg {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  font-size: 12px;
+  color: var(--muted);
+  font-family: var(--mono);
+}
+
+.api-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--faint);
+  display: inline-block;
+}
+
+.api-dot.online {
+  background: #16a34a;
+  box-shadow: 0 0 0 3px rgba(22, 163, 74, 0.2);
+}
+
+.api-dot.offline {
+  background: #d97706;
+}
+
+.tool .api-url-btn {
+  padding: 2px 7px;
+  font-size: 11px;
+  border-radius: 4px;
+}
+
+.gauge.resnet-highlight {
+  background: var(--accent-soft);
+  padding: 6px 8px;
+  border-radius: 6px;
+  border: 1px solid color-mix(in srgb, var(--accent) 30%, transparent);
+  font-weight: 650;
+}
+
+@media (max-width: 780px) {
+  .live-studio-bar {
+    grid-template-columns: 1fr;
+  }
+  .live-actions {
+    align-items: stretch;
+  }
+}
+
+/* ---------- Interaction 1 Lab Polish ---------- */
+#exploreCanvas {
+  user-select: none;
+  -webkit-user-select: none;
+  touch-action: manipulation;
+  border: 1px solid var(--border);
+  transition: border-color 0.2s ease;
+}
+#exploreCanvas:hover {
+  border-color: var(--accent);
+}
+.exploremetrics span {
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+  padding: 3px 9px;
+  border-radius: 999px;
+  font-size: 11.5px;
+  color: var(--text);
+}
+
+

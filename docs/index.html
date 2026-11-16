@@ -647,12 +647,64 @@
   <div class="wrap">
     <p class="secnum">Section 10</p>
     <h2>Interactive diagnostic suite</h2>
-    <p class="lede">Three tools that run in the browser on the project&rsquo;s own outputs: the stored probabilities for all 5,000 test patches, and 32 real PCam patches recovered from the repository&rsquo;s inspection figures.</p>
+    <p class="lede">Four interactive tools that run in the browser on the project&rsquo;s own outputs: the inner mathematical mechanics and decision geometry of all 11 benchmarked architectures, the stored clinical threshold simulation across all 5,000 test patches, and 32 real PCam patches recovered from the repository&rsquo;s inspection figures.</p>
 
-    <!-- ---------- Interaction 1 ---------- -->
-    <div class="tool" id="simulator">
+    <!-- ---------- Interaction 1: Model Mechanism & Mathematics Lab ---------- -->
+    <div class="tool" id="modelExplorer">
       <div class="toolhead">
         <span class="toolnum">Interaction 1</span>
+        <h3>Model Architecture &amp; Mathematical Mechanism Lab</h3>
+        <p>Explore how each of the 11 benchmarked model paradigms works mathematically. Select any model from the dropdown to interact with its decision boundary, adjust its hyperparameters (&lambda;, C, &gamma;, B, &eta;, &phi;), inspect its equations, and observe how its internal geometry separates cancer from normal tissue.</p>
+      </div>
+
+      <div class="explorertop">
+        <div class="fld-inline">
+          <label for="exploreModelSelect">Select Model Architecture:</label>
+          <select id="exploreModelSelect">
+            <option value="pca">1. Bilinear Pixel PCA (Eigenvector Decomposition)</option>
+            <option value="logreg">2. Logistic Regression (Linear Sigmoid &amp; L2 Penalty)</option>
+            <option value="linsvm">3. Linear SVM (Maximum Margin Hyperplane)</option>
+            <option value="rbfsvm">4. RBF Kernel SVM (Non-linear Gaussian Hilbert Space)</option>
+            <option value="rf">5. Random Forest (Bagging &amp; Subspace Sampling)</option>
+            <option value="histgbm">6. HistGradientBoosting (Sequential Residual Boosting)</option>
+            <option value="blend">7. Multi-Paradigm Blend (Convex Probability Fusion)</option>
+            <option value="resnet18">8. ResNet-18 (Deep Residual Identity Highway)</option>
+            <option value="effnet">9. EfficientNet-B0 (Compound Scaling &amp; MBConv SE)</option>
+            <option value="resnet50">10. ResNet-50 (3-Stage Bottleneck Compression)</option>
+            <option value="spatial">11. Spatial Focus (Track A Full 96 vs Track B Crop 32)</option>
+          </select>
+        </div>
+        <div id="exploreQuickBadge" class="badge badge-normal" style="font-size: 13px; padding: 6px 12px;">Unsupervised Feature Reduction</div>
+      </div>
+
+      <div class="exploregrid">
+        <!-- Left: Interactive Canvas & Metrics -->
+        <div>
+          <div class="explorecanvaswrap">
+            <canvas id="exploreCanvas" width="460" height="320"></canvas>
+            <div class="exploremetrics" id="exploreMetrics"></div>
+            <div class="explorecaption" id="exploreCaption"></div>
+          </div>
+        </div>
+
+        <!-- Right: Controls, Equations, & Theoretical Mechanics -->
+        <div>
+          <!-- Dynamic Controls -->
+          <div class="explorectrls" id="exploreCtrls"></div>
+
+          <!-- Mathematical Formulations -->
+          <div class="exploreeqs" id="exploreEqs"></div>
+
+          <!-- Algorithmic Intuition & Mechanics -->
+          <div class="exploretheory" id="exploreTheory"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ---------- Interaction 2 ---------- -->
+    <div class="tool" id="simulator">
+      <div class="toolhead">
+        <span class="toolnum">Interaction 2</span>
         <h3>Decision-threshold simulator</h3>
         <p>A model outputs a probability score from 0.0 to 1.0. The <strong>threshold (&tau;)</strong> turns that probability into a clinical decision: call &ldquo;tumour&rdquo; when the probability is at least &tau;. Move the slider to see how every count and metric on the 5,000 test patches responds in real time.</p>
       </div>
@@ -722,10 +774,10 @@
       <p class="note">Data: <code>results/error_analysis_cases.csv</code>, shipped as <code>data/test_predictions.json</code>. The blend here averages the default RBF SVM with HistGradientBoosting, so at <span class='tex'>\tau = 0.50</span> it shows 79.82% where the leaderboard blend shows 79.76% (see Section 8). The single models reproduce the leaderboard exactly.</p>
     </div>
 
-    <!-- ---------- Interaction 2 ---------- -->
+    <!-- ---------- Interaction 3 ---------- -->
     <div class="tool" id="studio">
       <div class="toolhead">
-        <span class="toolnum">Interaction 2</span>
+        <span class="toolnum">Interaction 3</span>
         <h3>Diagnostic studio and patch inspector</h3>
         <p>An interactive digital pathology workstation. Inspect 32 real histopathology patches (16 reference exemplars + 16 test failure cases) the exact way classical machine learning algorithms see them.</p>
       </div>
@@ -743,6 +795,35 @@
         <div class="card" style="background: var(--surface-2); padding: 12px 14px;">
           <strong style="color: var(--accent-ink);">Key Takeaway</strong>
           <p style="margin: 4px 0 0; color: var(--muted); line-height: 1.45;">Training patches serve as visual normal vs. cancer baselines. Test failure patches reveal <em>why</em> models get fooled (e.g., dense lymphocytes mimicking cancer nuclei).</p>
+        </div>
+      </div>
+
+      <!-- Live Backend Inference & Custom Tissue Upload Panel -->
+      <div class="live-studio-bar" id="liveStudioBar">
+        <div class="live-dropzone" id="patchDropzone" tabindex="0" role="button" aria-label="Upload custom histopathology tissue patch">
+          <input type="file" id="patchFileInput" accept="image/png,image/jpeg,image/webp,image/tiff" hidden>
+          <div class="live-drop-content">
+            <svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true" class="live-icon">
+              <path fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" d="M12 16V4m0 0L8 8m4-4l4 4M4 17v2a1 1 0 001 1h14a1 1 0 001-1v-2"/>
+            </svg>
+            <div>
+              <strong>Upload Custom Tissue Image (Drag &amp; Drop or Click)</strong>
+              <span>Accepts PNG, JPG, TIFF &middot; Auto-resizes to 96&times;96 &amp; analyzes central 32&times;32 core</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="live-actions">
+          <button type="button" class="btn primary" id="liveRandomPatchBtn">
+            <svg viewBox="0 0 16 16" width="15" height="15" aria-hidden="true"><path fill="currentColor" d="M11.5 1a.5.5 0 0 1 .35.15l2.5 2.5a.5.5 0 0 1 0 .7l-2.5 2.5a.5.5 0 0 1-.85-.35V4.5H9.4a2.5 2.5 0 0 0-2.24 1.38L4.92 10.36A3.5 3.5 0 0 1 1.79 12H1a.5.5 0 0 1 0-1h.79a2.5 2.5 0 0 0 2.24-1.38l2.24-4.48A3.5 3.5 0 0 1 9.4 3.5h1.6V1.5a.5.5 0 0 1 .5-.5z"/></svg>
+            Random Patch from PCam Dataset
+          </button>
+
+          <div class="api-cfg">
+            <span class="api-dot" id="apiStatusDot" title="Checking backend status..."></span>
+            <span id="apiStatusText">API: Checking...</span>
+            <button type="button" class="api-url-btn" id="apiConfigBtn" title="Configure FastAPI Backend URL">Endpoint</button>
+          </div>
         </div>
       </div>
 
@@ -777,10 +858,10 @@
       </div>
     </div>
 
-    <!-- ---------- Interaction 3 ---------- -->
+    <!-- ---------- Interaction 4 ---------- -->
     <div class="tool" id="gallery">
       <div class="toolhead">
-        <span class="toolnum">Interaction 3</span>
+        <span class="toolnum">Interaction 4</span>
         <h3>Failure gallery</h3>
         <p>The sixteen most confident errors of the blend. Select a card to open it in the studio above.</p>
       </div>
@@ -896,5 +977,6 @@ python src/train_cnn.py --eval-only # ResNet-18</code></pre>
 <script src="./data/site_data.js"></script>
 <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
 <script defer src="./app.js"></script>
+<script defer src="./explorer.js"></script>
 </body>
 </html>
