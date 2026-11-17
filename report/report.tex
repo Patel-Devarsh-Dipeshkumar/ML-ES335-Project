@@ -1365,6 +1365,90 @@ Every phase of this project is fully deterministic and reproducible:
 % ----------------------------------------------------------------------
 % SECTION 14: CONCLUSION
 % ----------------------------------------------------------------------
+
+% ----------------------------------------------------------------------
+% SECTION 14: INDIVIDUAL CONTRIBUTIONS, METHODOLOGICAL DEFENSE & REASONING ON CHANGES
+% ----------------------------------------------------------------------
+\section{Individual Contributions, Methodological Defense \& Reasoning on Changes}
+\label{sec:contributions}
+
+In accordance with the ES~335 project evaluation criteria, this section provides an individual accounting of each author's primary technical ownership, key methodological choices, evaluation findings, identified limitations, and mechanistic reasoning regarding proposed system modifications.
+
+\subsection{Devarsh Patel (Roll No: 24110245)}
+
+\subsubsection{1. Primary Technical Ownership \& Implementation}
+\begin{itemize}[noitemsep]
+    \item \textbf{Multimodal Feature Pipeline:} Formulated and implemented the 59-dimensional multimodal feature extraction engine (\texttt{src/features.py} and \texttt{src/feature\_pipeline.py}), including color moments across RGB, HSV, and CIE-Lab spaces, Haralick GLCM spatial textures, uniform Local Binary Patterns ($\text{LBP}_{8,1}^{u2}$), Sobel edge sharpness, and randomized PCA projections.
+    \item \textbf{Zero-Leakage Preprocessing Protocol:} Designed and verified the dataset standardization pipeline, guaranteeing that all \texttt{StandardScaler} and PCA basis transformations were fitted strictly on the $40,000$-sample training split without statistical leakage into validation or test partitions.
+    \item \textbf{Linear \& Kernel Machine Development:} Implemented the primary linear baseline (Logistic Regression MLE solver) and both Support Vector Machine architectures (Linear SVM with hinge loss and Non-Linear RBF Kernel SVM).
+    \item \textbf{Hyperparameter Grid Optimization:} Designed and executed the 2D grid search over soft-margin penalty $C \in [0.5, 4.0]$ and Gaussian bandwidth $\gamma$, as well as cost-sensitive class re-weighting strategies.
+\end{itemize}
+
+\subsubsection{2. Key Methodological Choices \& Technical Defense}
+\begin{itemize}[leftmargin=*]
+    \item \textbf{Dual-Track Spatial Benchmark (Track A vs. Track B):} The PCam ground-truth label is clinically defined solely by the central $32 \times 32$ pixel box. Rather than assuming that cropping the image to $32 \times 32$ (Track B) would yield optimal performance, I instituted a dual-track benchmark comparing the central core against the full $96 \times 96$ context (Track A). The empirical results proved that Track A surpassed Track B across all linear models ($0.8652$ vs. $0.8330$ ROC-AUC) because surrounding stroma, fat vacuoles, and basement membranes provide essential structural context that informs whether central cells are invasive.
+    \item \textbf{Infinite-Dimensional RKHS Formulation (RBF Kernel):} Linear separation of handcrafted features collapsed at $\approx 78.18\%$ accuracy regardless of regularization strength. I selected a Gaussian Radial Basis Function (RBF) kernel $K(\mathbf{x}, \mathbf{x}') = \exp(-\gamma \|\mathbf{x} - \mathbf{x}'\|^2)$ to project features into an infinite-dimensional Reproducing Kernel Hilbert Space. In histopathology, benign-to-malignant tissue transitions follow continuous, multi-modal morphological distributions. The resulting model identified $16,571$ support vectors ($41.4\%$ of instances), establishing a smooth non-linear decision boundary that elevated validation accuracy by $+4.00\%$ over linear baselines.
+\end{itemize}
+
+\subsubsection{3. Evaluation \& Quantitative Findings}
+\begin{itemize}[leftmargin=*]
+    \item \textbf{Proof of the Linear Capacity Ceiling:} Evaluated the linear baseline across $C \in [0.1, 100.0]$ with $L_1$ and $L_2$ penalties, showing that the validation ROC-AUC plateaued at $0.8680$ and accuracy saturated at $78.38\%$, confirming that linear hyperplanes cannot partition non-linear tissue interactions.
+    \item \textbf{Cost-Sensitive Optimization:} In cancer screening, missing a malignancy (False Negative) is clinically disastrous compared to flagging benign tissue for review (False Positive). By introducing a cost-sensitive penalty $w_1 = 1.10$, I elevated validation sensitivity to $80.32\%$ ($2,008$ true tumors caught), delivering the project's highest individual-model $F_1$-score ($0.8214$).
+    \item \textbf{Bootstrap Stability on Sealed Test Cohort:} Evaluated Default and Tuned RBF SVM on the untouched test cohort across $1,000$ bootstrap resamples, verifying a test accuracy of $78.80\%$ ($95\%$ CI $[77.72\%, 80.04\%]$) and test sensitivity of $73.28\%$ (highest among all classical models).
+\end{itemize}
+
+\subsubsection{4. Identified Failure Mode \& System Limitation}
+\begin{itemize}[leftmargin=*]
+    \item \textbf{Spatial Pooling Signal Dilution (Tier 2 False Negatives):} The primary limitation of the 59-dimensional global feature approach is the loss of spatial locality through global pooling. In cases of focal micrometastasis where only $5$--$15$ malignant cells reside in the central $32 \times 32$ diagnostic window, their elevated edge sharpness and hematoxylin dye uptake are numerically diluted by the surrounding $90\%$ benign stromal tissue when computing patch-wide means and standard deviations. This causes the feature vector to mimic normal stroma, inducing false negatives.
+\end{itemize}
+
+\subsubsection{5. Reasoning About a Small Pipeline Modification}
+\begin{itemize}[leftmargin=*]
+    \item \textbf{Proposed Change:} Integrate an automated \textbf{Stain Normalization Preprocessing Module (Macenko Optical Density Decomposition)} prior to color moment extraction.
+    \item \textbf{Mechanistic Reasoning:} As shown in our slide clustering audit (Table~\ref{tab:eda_summary}), $10$ of $54$ Whole-Slide Images account for $37.9\%$ of validation patches, and dye intensity varies across slides due to variations in glass thickness, vendor scanner calibration, and reagent batching. This creates an artificial domain shift, contributing to the $2.16\%$--$3.34\%$ generalization drop between validation and test sets. By converting RGB pixels into optical density ($OD = -\log_{10}(I/I_0)$), projecting onto the two highest singular vectors to isolate pure Hematoxylin and Eosin stain vectors, and normalizing absorption histograms to a clinical reference patch, non-biological chromatic drift is removed.
+    \item \textbf{Hypothesized Impact:} This modification is hypothesized to decouple stain batch effects from biological basophilia, stabilizing color moments ($a^*$ and $S$ channels) across slides. We expect this would eliminate $15\%$--$25\%$ of false positives caused by hyper-stained normal germinal centers and compress the validation-to-test generalization gap by approximately $1.0\%$--$1.5\%$ ROC-AUC without increasing model inference latency.
+\end{itemize}
+
+\vspace{1em}
+\subsection{Dhrumil Bhutaiya (Roll No: 24110075)}
+
+\subsubsection{1. Primary Technical Ownership \& Implementation}
+\begin{itemize}[noitemsep]
+    \item \textbf{Tree-Based Ensemble Portfolio:} Implemented, tuned, and benchmarked the non-linear tree-based ensembles, including the 200-estimator Tuned Random Forest (bagging) and HistGradientBoosting (histogram-accelerated gradient boosting).
+    \item \textbf{Multi-Paradigm Ensemble Blend Architecture:} Designed and optimized the soft-voting convex blend combining continuous margin distance geometry from RBF Kernel SVM with orthogonal recursive partitioning probabilities from HistGradientBoosting.
+    \item \textbf{Diagnostic Error Analysis \& Pathology Taxonomy:} Conducted the empirical autopsy across all $1,009$ test misclassifications, computed Cohen's $d$ feature effect sizes between correct and erroneous predictions, and formulated the 4-tier histological failure taxonomy.
+    \item \textbf{Interactive Web Portal Development:} Architected and implemented the interactive web application (\texttt{docs/index.html}, \texttt{docs/app.js}, and \texttt{docs/explorer.js}), including the real-time clinical threshold simulator, interactive patch explorer, and dynamic confusion matrix visualizer.
+\end{itemize}
+
+\subsubsection{2. Key Methodological Choices \& Technical Defense}
+\begin{itemize}[leftmargin=*]
+    \item \textbf{Histogram Binning for Boosting (HistGBM):} Rather than deploying standard exact-split gradient boosted trees which scale with $O(N \cdot D \log N)$ complexity, I selected histogram-based gradient boosting. Continuous features are discretized into $K=256$ integer bins, reducing split evaluation to $O(K \cdot D)$. This allowed 300 boosting stages over $40,000$ training instances to train in only $3.97$ seconds ($16\times$ faster than RBF SVM) while acting as an implicit regularizer against high-frequency continuous feature noise.
+    \item \textbf{Orthogonal Inductive Bias Ensembling:} Rather than ensembling homogeneous models (\textit{e.g.}, averaging multiple random forests), I coupled two fundamentally divergent inductive biases: Gaussian kernel maximum-margin geometry (RBF SVM) and sequential axis-aligned orthogonal feature partitioning (HistGBM). Because their mathematical mechanisms and error distributions are conditionally decorrelated, soft-voting convex combination produced significant variance reduction and superior probability calibration (Brier score $0.1426$).
+\end{itemize}
+
+\subsubsection{3. Evaluation \& Quantitative Findings}
+\begin{itemize}[leftmargin=*]
+    \item \textbf{The Precision vs. Sensitivity Dilemma:} Identified that Tuned Random Forest achieved the benchmark's highest individual precision ($85.31\%$ on test), but its conservative bagging consensus caused it to miss $781$ malignant patches ($68.76\%$ sensitivity). Conversely, HistGradientBoosting achieved balanced performance ($78.82\%$ accuracy, $0.8845$ ROC-AUC).
+    \item \textbf{Champion Blend Validation:} Demonstrated that the 50/50 Hybrid Multi-Paradigm Blend achieved the \#1 global performance on the held-out test cohort: $79.76\%$ Accuracy, $0.8853$ ROC-AUC, $0.8767$ PR-AUC, and the lowest Brier score ($0.1426$), statistically outperforming all single models across 1,000 bootstrap resamples ($p < 10^{-7}$).
+    \item \textbf{Discovery of the Consensus Failure Ceiling ($12.3\%$):} Proved that $613$ test patches ($12.3\%$ of the test set, accounting for $60.75\%$ of all ensemble errors) were unanimously failed by all four evaluated model families simultaneously, establishing that the ceiling on classical performance is an intrinsic representation limitation of globally pooled spatial features rather than a failure of algorithmic tuning.
+\end{itemize}
+
+\subsubsection{4. Identified Failure Mode \& System Limitation}
+\begin{itemize}[leftmargin=*]
+    \item \textbf{Reactive Lymphoid Follicles (Tier 1 False Positives):} Active secondary lymphoid follicles in benign sentinel lymph nodes contain densely packed, proliferating centrocytes and centroblasts. This normal physiological immune response generates intense hematoxylin dye uptake ($d = +0.84$) and high boundary edge density ($d = +0.83$) that matches the statistical profile of invasive carcinoma sheets. Handcrafted spatial features lack the localized cytological acuity required to evaluate nuclear membrane indentations and chromatin clumping patterns under optical microscopy.
+\end{itemize}
+
+\subsubsection{5. Reasoning About a Small Pipeline Modification}
+\begin{itemize}[leftmargin=*]
+    \item \textbf{Proposed Change:} Replace static uniform blend weights with a \textbf{Dynamic Density-Gated Ensemble Function}:
+    \begin{equation}
+        P_{\text{gated}}(\mathbf{x}) = \alpha(\mathbf{x}) \cdot P_{\text{RBF}}(\mathbf{x}) + (1 - \alpha(\mathbf{x})) \cdot P_{\text{HistGBM}}(\mathbf{x})
+    \end{equation}
+    where $\alpha(\mathbf{x}) = \sigma\left(k \cdot (\theta_{\text{dense}} - \text{edge\_density}(\mathbf{x}))\right)$ dynamically modulates blending based on local cellular packing.
+    \item \textbf{Mechanistic Reasoning:} Error analysis revealed that RBF Kernel SVM and HistGradientBoosting possess complementary failure profiles across cellular density regimes. In hyper-dense tissue patches ($\text{edge\_density} > 0.35$), RBF SVM's Gaussian kernel over-triggers on high optical saturation, whereas HistGBM's hierarchical axis splits can isolate high-density benign follicles by gating on saturation variance. Conversely, in low-density stromal patches, RBF SVM's smooth continuous margin distance is superior at identifying sparse infiltrates that tree splits overlook.
+    \item \textbf{Hypothesized Impact:} By dynamically delegating decision authority to HistGBM in dense follicular regions ($\alpha \to 0$) and to RBF SVM in stroma-rich regions ($\alpha \to 1$), the model would mitigate Tier 1 false alarms and Tier 2 false negatives simultaneously. This targeted gating is projected to resolve $8\%$--$12\%$ of current consensus misclassifications, elevating overall test set accuracy beyond $80.5\%$ without requiring deep neural network infrastructure.
+\end{itemize}
+
 \section{Conclusion}
 This study evaluated classical, non-linear, and ensemble machine learning approaches for metastatic tumor detection on the PatchCamelyon dataset ($N=50,000$). By extracting a 59-dimensional multimodal feature set combining color moments, GLCM texture, Local Binary Patterns, Sobel edge gradients, and bilinear PCA, we mapped how model capacity scales from linear baselines ($75.84\%$ test accuracy) to tree-based ensembles ($78.82\%$ accuracy, $85.31\%$ precision) and RBF kernel SVMs ($78.80\%$ accuracy, $73.28\%$ sensitivity).
 
