@@ -281,7 +281,7 @@ Evaluate deeper capacity scaling and spatial cropping:
 
 ## Authors & Work Split
 
-* **Devarsh Patel** (Roll No: 24110245) — Multimodal feature engineering pipeline (59 features), zero-leakage preprocessing, linear baselines (Logistic Regression, Linear SVM), and RBF Kernel SVM implementation/tuning.
-* **Dhrumil Bhutaiya** (Roll No: 24110075) — Tree ensembles (Random Forest, HistGradientBoosting), multi-paradigm ensemble blending, diagnostic error analysis taxonomy, and interactive web application.
+* **Devarsh Patel** (Roll No: 24110245) — Multimodal feature engineering pipeline (59 features across 5 blocks), zero-leakage preprocessing, linear baselines (Logistic Regression, Linear SVM), RBF Kernel SVM implementation and tuning, and Deep Neural Networks (ResNet-18 architecture, PyTorch training pipeline, and ResNet-50 capacity scaling).
+* **Dhrumil Bhutaiya** (Roll No: 24110075) — Tree & boosting ensembles (Random Forest, AdaBoost, HistGradientBoosting), multi-paradigm ensemble blending, deep CNN benchmarking (EfficientNet-B0 and Track B 32x32 central crop), diagnostic error analysis taxonomy, and interactive web application.
 
-*Both authors contributed equally to benchmark experimentation, statistical error analysis, and manuscript preparation.*
+*Both authors contributed equally to comprehensive benchmark experimentation, statistical error analysis, and manuscript preparation.*
