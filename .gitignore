@@ -35,6 +35,12 @@ outputs/report/*.out
 outputs/report/*.synctex.gz
 outputs/report/*.toc
 
+# LaTeX Local Plot Duplicates (canonical plots tracked in root /plots/)
+report/plots/
+
+# Scratch & Prompts
+WEBSITE_GENERATION_PROMPT.md
+
 # Jupyter Checkpoints
 .ipynb_checkpoints/
 

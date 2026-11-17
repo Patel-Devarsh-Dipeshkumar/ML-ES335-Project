@@ -11,7 +11,7 @@ Course project for **ES 335: Machine Learning** at the **Indian Institute of Tec
 * **Devarsh Patel** (Roll No: 24110245) — `24110245@iitgn.ac.in`
 * **Dhrumil Bhutaiya** (Roll No: 24110075) — `24110075@iitgn.ac.in`
 
-> **Website:** (https://patel-devarsh-dipeshkumar.github.io/ML-ES335-Project/) and available locally in `docs/index.html`.
+> **Website:** [Live Interactive Portal](https://patel-devarsh-dipeshkumar.github.io/ML-ES335-Project/) (also viewable locally via `docs/index.html`).
 
 ---
 
@@ -23,7 +23,7 @@ Course project for **ES 335: Machine Learning** at the **Indian Institute of Tec
 5. [Key Empirical Discoveries](#key-empirical-discoveries)
    - [Discovery 1: The Linear Capacity Ceiling](#discovery-1-the-linear-capacity-ceiling)
    - [Discovery 2: Generalization Gap Stability](#discovery-2-generalization-gap-stability)
-   - [Discovery 3: The Multi-Paradigm Champion](#discovery-3-the-multi-paradigm-champion)
+   - [Discovery 3: Multi-Paradigm Ensemble Synergy](#discovery-3-multi-paradigm-ensemble-synergy)
    - [Discovery 4: Breaking the Feature Ceiling with Deep CNNs](#discovery-4-breaking-the-feature-ceiling-with-deep-cnns)
    - [Discovery 5: The ResNet-18 vs. ResNet-50 Capacity Paradox](#discovery-5-the-resnet-18-vs-resnet-50-capacity-paradox)
    - [Discovery 6: Spatial Context vs. Diagnostic Focus](#discovery-6-spatial-context-vs-diagnostic-focus)
@@ -96,7 +96,7 @@ All models were tuned strictly on training and validation splits. The held-out t
 | 2 | **EfficientNet-B0 (Central Focus - Track B 48x48)** | 82.64% | 0.9086 | 0.9142 | 76.48% | 88.80% | 86.23% | 0.8106 | 0.1314 |
 | 3 | **ResNet-50 (Deep CNN Scaling - Track A Full96)** | 82.14% | 0.9285 | 0.9318 | 70.36% | 93.92% | 92.05% | 0.7910 | 0.1378 |
 | 4 | **ResNet-18 (Strict Track B 32x32 Crop)** | 81.92% | 0.9024 | 0.9071 | 77.24% | 86.60% | 85.22% | 0.8103 | 0.1384 |
-| 5 | **Hybrid Multi-Paradigm Blend (50/50 Champion)** | 79.76% | 0.8853 | 0.8767 | 73.08% | 86.44% | 84.35% | 0.7831 | 0.1426 |
+| 5 | **Hybrid Multi-Paradigm Blend (50/50)** | 79.76% | 0.8853 | 0.8767 | 73.08% | 86.44% | 84.35% | 0.7831 | 0.1426 |
 | 6 | Hybrid Blend (70/30 RBF/HistGBM) | 79.56% | 0.8804 | 0.8740 | 72.32% | 86.80% | 84.57% | 0.7796 | 0.1453 |
 | 7 | HistGradientBoosting (59D) | 78.82% | 0.8845 | 0.8724 | 71.84% | 85.80% | 83.50% | 0.7723 | 0.1460 |
 | 8 | Default RBF Kernel SVM (59D) | 78.80% | 0.8746 | 0.8681 | 73.28% | 84.32% | 82.37% | 0.7756 | 0.1493 |
@@ -120,7 +120,7 @@ Tree ensembles generalized with remarkable stability:
 * **HistGradientBoosting:** dropped by only **1.84%** (80.66% -> 78.82%).
 * **High-C RBF SVM:** suffered from validation sample variance, dropping by **4.44%** (82.36% -> 77.92%).
 
-### Discovery 3: The Multi-Paradigm Champion
+### Discovery 3: Multi-Paradigm Ensemble Synergy
 Blending the continuous distance geometry of RBF SVM with the orthogonal partitioning of HistGradientBoosting achieved the lowest calibration error (Brier score 0.1426) and #1 classical test accuracy (**79.76%**).
 
 ### Discovery 4: Breaking the Feature Ceiling with Deep CNNs
@@ -132,7 +132,7 @@ Fine-tuning ResNet-18 with 8-fold dihedral rotational invariance augmentations b
   > *"Start with ResNet-18/34 on histology; ResNet-50 is too heavy for small patches without massive augmentation like CutMix."*
   Our experiments empirically confirmed this exact phenomenon.
 * **The Overparameterization Penalty:** In our controlled 10,000-patch training cohort, ResNet-50 carries **2,560 parameters per training image**, which causes it to overfit to minor slide preparation and staining variations. Furthermore, on 96x96 inputs, ResNet-50's 5 downsampling stages and 1x1 bottleneck blocks collapse the spatial feature map into an ultra-narrow 3x3 grid of 2,048 channels, discarding fine cytologic chromatin details that ResNet-18's 3x3 basic blocks preserve.
-* **The Sample Space Scaling Hypothesis:** This underperformance of ResNet-50 is strictly a function of the **limited training sample space**. If the sample space were expanded to the full PatchCamelyon dataset (**262,144 training patches** — a 26x increase), the parameter-to-sample ratio normalizes (~97 parameters/image). Under that larger data regime, ResNet-50's higher expressive capacity would have enough samples to generalize and could realistically surpass ResNet-18 (as demonstrated in large-scale published literature). However, on this controlled 10,000-sample benchmark, **ResNet-18 strikes the undisputed optimal bias-variance equilibrium**.
+* **The Sample Space Scaling Hypothesis:** This underperformance of ResNet-50 is strictly a function of the **limited training sample space**. If the sample space were expanded to the full PatchCamelyon dataset (**262,144 training patches** — a 26x increase), the parameter-to-sample ratio normalizes (~97 parameters/image). Under that larger data regime, ResNet-50's higher expressive capacity would have enough samples to generalize and could realistically surpass ResNet-18 (as demonstrated in large-scale published literature). However, on this controlled 10,000-sample benchmark, **ResNet-18 achieves the optimal bias-variance equilibrium**.
 
 ### Discovery 6: Spatial Context vs. Diagnostic Focus
 * To test whether focusing strictly on the diagnostic core improves performance, we fine-tuned **EfficientNet-B0 (5.3M parameters)** with a **central 48x48 diagnostic crop (Track B)**, resized to 96x96 (2x optical zoom on nuclei).
@@ -143,7 +143,7 @@ Fine-tuning ResNet-18 with 8-fold dihedral rotational invariance augmentations b
 
 ## The 4-Tier Pathological Failure Taxonomy
 
-Across the 5,000 test patches, our champion ensemble made 1,009 misclassifications. Crucially, **613 of these (12.3% of the entire test cohort, >60.7% of all ensemble errors) were consensus failures shared across all model families simultaneously**.
+Across the 5,000 test patches, our primary ensemble made 1,009 misclassifications. Crucially, **613 of these (12.3% of the entire test cohort, >60.7% of all ensemble errors) were consensus failures shared across all model families simultaneously**.
 
 This proves that errors are not caused by algorithmic failure, but by the **empirical representation limit of hand-engineered global features**:
 
@@ -191,7 +191,7 @@ Patel-Devarsh-Dipeshkumar/ML-ES335-Project/
 │   ├── tune_ensemble.py                       # Multi-paradigm ensemble blending
 │   ├── train_cnn.py                           # Deep Learning benchmark (ResNet-18)
 │   ├── evaluate_test.py                       # One-shot test evaluation & bootstrap CIs
-│   ├── error_analysis.py                      # Forensic autopsy & Cohen's d calculation
+│   ├── error_analysis.py                      # Error analysis & Cohen's d effect size calculation
 │   └── tracker.py                             # Milestone progress PDF generator
 ├── docs/                                      # Interactive diagnostic website (GitHub Pages ready)
 │   ├── index.html                             # Single-page diagnostic portal
@@ -217,9 +217,7 @@ Patel-Devarsh-Dipeshkumar/ML-ES335-Project/
 │   ├── efficientnet_b0_benchmark_metrics.csv  # EfficientNet-B0 metrics
 │   └── ...
 ├── plots/                                     # 41 High-resolution publication figures & curves
-├── report/                                    # 37-page academic technical report (PDF & TeX)
-├── COMPLETE_PROJECT_SYNTHESIS_AND_INSIGHTS.md # Master 30+ page synthesis document
-├── CHAT_CONVERSATION_AND_PROJECT_SUMMARY.md   # Complete chat history & engineering sagas
+├── report/                                    # 38-page academic technical report (PDF & TeX)
 ├── requirements.txt                           # Pinned Python package dependencies
 ├── .gitignore                                 # Protection against large caches and data
 └── README.md                                  # Project documentation
@@ -261,7 +259,7 @@ python src/evaluate_test.py
 ```
 
 ### 5. Error Analysis & Pathology Taxonomy
-Run the forensic error analysis:
+Run the error analysis and failure taxonomy generation:
 ```bash
 python src/error_analysis.py
 ```
