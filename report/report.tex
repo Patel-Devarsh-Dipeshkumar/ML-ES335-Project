@@ -63,13 +63,13 @@
     
     \begin{tcolorbox}[colback=boxbg,colframe=boxborder,title=\textbf{Executive Summary \& Abstract},fonttitle=\bfseries\color{primaryblue},width=0.96\textwidth]
     \small
-    Metastatic involvement in sentinel lymph nodes is the single most critical prognostic factor in breast cancer staging. Pathologists manually screen gigapixel Whole-Slide Images (WSIs) under optical microscopy, an exhausting process where small micrometastases can easily be overlooked. In this project, we implement a comprehensive, zero-leakage benchmark comparing classical statistical machine learning paradigms, handcrafted multimodal biological feature engineering, and non-linear ensemble architectures on the \textbf{PatchCamelyon (PCam)} histopathology benchmark ($N=50,000$ patches; 40k train, 5k validation, 5k held-out test).
+    Metastatic involvement in sentinel lymph nodes is the primary prognostic indicator in breast cancer staging. Pathologists manually screen gigapixel Whole-Slide Images (WSIs) under optical microscopy, a labor-intensive workflow where small micrometastases (focal clusters of malignant cells) are susceptible to being missed. In this study, we present a controlled benchmark evaluating classical statistical machine learning models, handcrafted biological feature representations, and non-linear ensemble architectures on the \textbf{PatchCamelyon (PCam)} histopathology benchmark ($N=50,000$ patches; 40,000 train, 5,000 validation, 5,000 sealed test).
     
     We engineered a 59-dimensional multimodal feature pipeline capturing color moments across RGB, HSV, and CIE-Lab spaces, GLCM spatial texture disorder, rotation-invariant Local Binary Patterns (LBP), spatial Sobel edge gradients, and bilinear PCA projections. We benchmarked five distinct model families: regularized Logistic Regression ($75.84\%$ test accuracy, $0.8373$ ROC-AUC), Linear SVM ($75.46\%$), Tuned Random Forest ($78.46\%$ accuracy, $85.31\%$ precision), HistGradientBoosting ($78.82\%$ accuracy, $0.8845$ ROC-AUC), and RBF Kernel SVM ($78.80\%$ accuracy, $73.28\%$ sensitivity). 
     
     To overcome single-model limitations, we constructed a \textbf{Hybrid Multi-Paradigm Ensemble Blend} (50\% RBF SVM + 50\% HistGBM) that achieved the \textbf{\#1 Overall Test Performance: $79.76\%$ Accuracy, $0.8853$ ROC-AUC, $0.8767$ PR-AUC, and lowest Brier score ($0.1426$)}, verified with 1,000-resample bootstrap 95\% confidence intervals ($p < 10^{-7}$). 
     
-    Finally, our forensic error analysis on $1,009$ test failures uncovered that \textbf{613 patches ($12.3\%$ of the cohort, $>60.7\%$ of ensemble errors) are consensus failures shared across all model families simultaneously}, establishing the empirical representation limit of engineered global spatial features. We formulate a concrete 4-tier histological failure taxonomy (reactive germinal centers, stroma-dense micrometastases, coagulative necrosis, and optical artifacts) and provide a rigorous scientific justification for why localized receptive fields in Convolutional Neural Networks (CNNs) represent the next logical frontier.
+    Finally, error analysis across the $1,009$ test misclassifications revealed that \textbf{613 patches ($12.3\%$ of the test cohort, accounting for $60.75\%$ of ensemble errors) are consensus failures shared across every evaluated classical model family simultaneously}. This indicates an empirical representation ceiling inherent to globally pooled color and texture descriptors. We classify these shared failures into a 4-tier histological taxonomy (reactive germinal centers, stroma-dense micrometastases, necrosis/artifacts, and sub-visual margin infiltrates) and explain why localized, hierarchical receptive fields in Convolutional Neural Networks (CNNs) provide the necessary inductive bias to resolve these ambiguous morphologies.
     \end{tcolorbox}
     
     \vfill
@@ -88,12 +88,10 @@
 \newpage
 \section{Project Overview \& Clinical Goal}
 
-When breast cancer spreads, cancer cells often reach the nearby lymph nodes under the armpit first. Doctors remove these sentinel lymph nodes and examine them on glass slides under a microscope. 
-
-However, searching through huge, gigapixel microscope slides by hand is slow and tiring for pathologists. Small clusters of cancer cells (micro-metastases) can easily be overlooked. The goal of this project is to build and compare machine learning models that can look at small tissue patches and accurately detect whether tumor cells are present.
+In breast cancer staging, assessing whether metastatic cells have invaded axillary sentinel lymph nodes is a crucial diagnostic step. Pathologists examine whole-slide histopathology images (WSIs), which frequently span over $100,000 \times 100,000$ pixels. Manually screening these gigapixel images across multiple glass slides per patient is labor-intensive and prone to fatigue, risking missed micrometastases---focal tumor clusters as small as a dozen cells. The objective of this project is to develop and systematically compare machine learning classifiers for automated tumor patch identification on the PatchCamelyon (PCam) benchmark.
 
 \subsection{How Labels are Defined: The Central 32x32 Rule}
-Every tissue patch in the dataset is $96 \times 96$ pixels in size. But the label is determined \textbf{only by the central $32 \times 32$ pixels}:
+Each tissue patch measures $96 \times 96$ pixels, but the ground-truth binary label is determined strictly by the central $32 \times 32$ pixel region:
 \begin{itemize}[noitemsep]
     \item \textbf{Label = 1 (Tumor):} If there is at least one cancer cell pixel inside the central $32 \times 32$ box.
     \item \textbf{Label = 0 (Normal):} If the central $32 \times 32$ box contains only healthy tissue.
@@ -113,7 +111,7 @@ The original PatchCamelyon dataset comes in compressed Parquet files that cannot
 \end{enumerate}
 
 \subsection{Split Sizes and Class Balance}
-We chose a cohort of \textbf{50,000 images} following the standard 80\% / 10\% / 10\% split. Every split was created with an exact 50\% / 50\% balance between tumor and normal tissue, as shown in Table~\ref{tab:splits}.
+We sampled a benchmark cohort of \textbf{50,000 images} partitioned into standard 80\% / 10\% / 10\% splits. Every split maintains an exact 50\% / 50\% balance between tumor and normal tissue, as shown in Table~\ref{tab:splits}.
 
 \begin{table}[H]
 \centering
@@ -133,13 +131,13 @@ We chose a cohort of \textbf{50,000 images} following the standard 80\% / 10\% /
 \end{tabular}
 \end{table}
 
-\subsection{Clean 4-Folder Project Organization}
-To keep the repository simple, we organized all files into four main folders:
+\subsection{Repository Architecture and Workflow Organization}
+To support reproducible experimentation, the codebase is structured across four primary directories:
 \begin{itemize}[noitemsep]
-    \item \texttt{data/}: Contains \texttt{train/}, \texttt{validation/}, and \texttt{test/} with PNG images and label CSVs.
-    \item \texttt{notebooks/}: Interactive Jupyter notebooks for step-by-step experiments and plots.
-    \item \texttt{src/}: Reusable Python code (\textit{e.g.}, data loading, feature extraction, evaluation).
-    \item \texttt{outputs/}: Where all generated files go (plots, feature tables, benchmark CSVs, this report).
+    \item \texttt{data/}: Partitioned cohorts (\texttt{train/}, \texttt{validation/}, \texttt{test/}) containing lossless PNG image patches and ground-truth label manifests.
+    \item \texttt{notebooks/}: Interactive Jupyter notebooks for step-by-step exploratory analysis, ablations, and visualization.
+    \item \texttt{src/}: Modular Python library modules (\textit{e.g.}, data loaders, multimodal feature extractors, and evaluation routines).
+    \item \texttt{outputs/}: Serialized experimental artifacts, including diagnostic plots, feature matrices, benchmark logs, and compiled reports.
 \end{itemize}
 
 % ----------------------------------------------------------------------
@@ -310,7 +308,7 @@ To translate our exploratory visual and statistical observations into concrete e
 \label{tab:eda_summary}
 \begin{tabular}{@{}p{0.15\textwidth}@{\hspace{10pt}}p{0.32\textwidth}@{\hspace{10pt}}p{0.48\textwidth}@{}}
 \toprule
-\textbf{EDA Step} & \textbf{Core Empirical Finding} & \textbf{How It Directly Helps Us Further} \\
+\textbf{EDA Step} & \textbf{Core Empirical Finding} & \textbf{Downstream Engineering Implications} \\
 \midrule
 \textbf{1. Class Balance} & Exactly 50.0\% Normal, 50.0\% Tumor across all splits (0 NaNs, 0 missing). & \textbf{Metric Selection \& Loss Formulation:} Standard accuracy and balanced cross-entropy can be used directly without synthetic re-balancing (SMOTE) or class weights. Chance accuracy is exactly 50.0\%. \\
 \midrule
@@ -327,7 +325,7 @@ To translate our exploratory visual and statistical observations into concrete e
 \end{tabular}
 \end{table}
 
-\noindent\textbf{Detailed Takeaways and Practical Benefits for Next Phases:}
+\noindent\textbf{Actionable Engineering Insights for Subsequent Phases:}
 \begin{enumerate}
     \item \textbf{Guiding Feature Representation (Phase 3):}
     Instead of passing $27,648$ raw RGB pixel values into machine learning models (which causes severe overfitting and extreme memory overhead), our EDA proved that tumor discrimination is governed by two physical phenomena: \textit{stain absorption} (color shifts) and \textit{nuclear crowding} (texture roughness). This allows us to distill the image into a compact, biologically grounded feature vector combining Color Moments (RGB, HSV, Lab), GLCM Texture, LBP Granulometry, and Sobel Sharpness.
@@ -339,7 +337,7 @@ To translate our exploratory visual and statistical observations into concrete e
     Our quality and slide audits confirmed two key properties: (a) zero corrupt files or label skew exist, meaning standard ROC-AUC and F1-score are uncompromised; and (b) slide-level clustering exists, warning us that models scoring high on cross-validation might experience a slight domain shift when evaluated on unseen slides. We will maintain strict data separation by fitting all transformers solely on training data.
 \end{enumerate}
 
-With Steps 1 through 6 complete and synthesized, the exploratory foundation was solidified. We proceeded directly to implement and execute \textbf{Phase 3: Feature Engineering and Statistical Audit}.
+These exploratory findings established the empirical basis for designing the 59-dimensional multimodal feature extraction pipeline in Phase~3.
 
 % ----------------------------------------------------------------------
 % SECTION 4: PHASE 3 FEATURE ENGINEERING & MULTIMODAL REPRESENTATION
@@ -472,7 +470,7 @@ Before training classifiers, we executed a dual-method statistical audit (\textt
 \noindent\textbf{Key Analytical Findings from the Feature Audit:}
 \begin{enumerate}
     \item \textbf{The Scale Divergence of PCA: Track A Context vs. Track B Core:}
-    A critical empirical discovery from our audit is the stark contrast in PCA utility across spatial scales:
+    A notable empirical discovery from our audit is the marked contrast in PCA utility across spatial scales:
     \begin{itemize}[leftmargin=*, noitemsep]
         \item \textbf{In Track A (Full $96 \times 96$):} PCA holds minor importance (the highest PCA feature only ranks \#8 in Random Forest). With $96 \times 96 = 9,216$ pixels, the surface area is large enough for micro-texture patterns to repeat hundreds of times, making handcrafted statistical descriptors (\texttt{lbp\_bin\_5} at $F = 8,213.42$ and \texttt{edge\_sobel\_mean}) overwhelmingly dominant. Meanwhile, PCA tries to model the entire image at once, blurring tumor cells with surrounding fat voids and connective stroma.
         \item \textbf{In Track B (Crop $32 \times 32$):} PCA component \texttt{pca\_pixel\_pc\_8} surges straight to \textbf{\#1 in both ANOVA ($F = 6,691.37$) and Random Forest (Importance = $0.0614$)}, surpassing all handcrafted features. Because the $32 \times 32$ crop contains only $1,024$ pixels ($9\times$ fewer samples), texture histograms suffer from small-sample noise. However, zoomed strictly into the diagnostic core, the PCA eigenvectors act as dedicated spatial filters measuring the optical density and central mass of the lesion.
@@ -644,7 +642,7 @@ $L_1$ (Lasso) & $10.0000$ & 81.25\% & 77.82\% & 0.8632 & 59 / 59 & 10.40s \\
 % ----------------------------------------------------------------------
 \section{Phase 5: Candidate Models Exploration \& Non-Linear Paradigm Benchmarking}
 
-\subsection{Motivation: Shattering the Linear Capacity Ceiling}
+\subsection{Motivation: Surpassing the Linear Capacity Ceiling}
 Phase~4 empirically proved that linear separation of multimodal histopathology features is bounded at $\approx 78.4\%$ accuracy and $0.868$ ROC-AUC. In clinical lymph node histology, metastatic malignancy is not characterized by isolated univariate linear thresholds. Instead, it manifests as complex morphological co-occurrences: intense basophilic nuclear chromatin (low $b^*$ and $R$ mean) combined with sharp spatial chromatin clumping (high $LBP$ micro-texture and high edge density) against variable eosinophilic cytoplasm. 
 
 To overcome the linear capacity ceiling, Phase~5 constructs a principled 4-paradigm candidate model ladder evaluated on all $40,000$ training patches and benchmarked across the identical $5,000$ unseen validation patches:
@@ -707,7 +705,7 @@ Table~\ref{tab:candidate_benchmark} presents the comprehensive benchmark results
 \toprule
 \textbf{Model Architecture} & \textbf{Track} & \textbf{Acc (\%)} & \textbf{ROC-AUC} & \textbf{Sens (\%)} & \textbf{Prec (\%)} & \textbf{F1} & \textbf{Time} \\
 \midrule
-\textbf{RBF Kernel SVM (Winner)} & \textbf{Track A (96)} & \textbf{82.14\%} & \textbf{0.9038} & \textbf{79.36\%} & 84.03\% & \textbf{0.8163} & 65.05s \\
+\textbf{RBF Kernel SVM (Top Candidate)} & \textbf{Track A (96)} & \textbf{82.14\%} & \textbf{0.9038} & \textbf{79.36\%} & 84.03\% & \textbf{0.8163} & 65.05s \\
 \textbf{HistGradientBoosting} & \textbf{Track A (96)} & \textbf{80.66\%} & \textbf{0.8990} & 74.44\% & 85.02\% & 0.7938 & \textbf{3.97s} \\
 Tuned Random Forest & Track A (96) & 79.44\% & 0.8946 & 70.64\% & \textbf{85.73\%} & 0.7746 & 53.31s \\
 Default Random Forest & Track A (96) & 78.68\% & 0.8878 & 71.12\% & 83.79\% & 0.7694 & 8.13s \\
@@ -726,7 +724,7 @@ Logistic Regression & Track B (32) & 75.54\% & 0.8330 & 74.88\% & 75.88\% & 0.75
 \begin{figure}[H]
 \centering
 \includegraphics[width=0.92\textwidth]{../plots/candidate_models_roc.png}
-\caption{Receiver Operating Characteristic (ROC) curve comparison across all 5 machine learning paradigms on the $5,000$-sample validation set (N=40,000 training patches). The RBF Kernel SVM (blue curve) dominates across all false positive operating rates, achieving the project-record ROC-AUC of $0.9038$.}
+\caption{Receiver Operating Characteristic (ROC) curve comparison across all 5 machine learning paradigms on the $5,000$-sample validation set (N=40,000 training patches). The RBF Kernel SVM (blue curve) dominates across all false positive operating rates, achieving the highest candidate validation ROC-AUC of $0.9038$.}
 \label{fig:candidate_roc}
 \end{figure}
 
@@ -735,17 +733,17 @@ Logistic Regression & Track B (32) & 75.54\% & 0.8330 & 74.88\% & 75.88\% & 0.75
 \subsubsection{1. The Identical Linear Hyperplane Ceiling (Linear SVM vs. LogReg)}
 As evidenced in Table~\ref{tab:candidate_benchmark}, Linear SVM ($78.14\%$ accuracy, $0.8684$ ROC-AUC) matches Logistic Regression ($78.18\%$ accuracy, $0.8652$ ROC-AUC) within just $2$ patches out of $5,000$ validation samples. Despite their different loss surfaces (hinge loss optimizing maximum margin separation versus log-loss optimizing calibrated class probabilities), both architectures are mathematically constrained to flat hyperplanes. This identical convergence rigorously proves that linear separability of multimodal histopathology features is exhausted at $\approx 78.2\%$.
 
-\subsubsection{2. The Non-Linear Manifold Breakthrough (RBF Kernel SVM)}
-Transitioning from a flat hyperplane to an infinite-dimensional Gaussian manifold produced the largest single leap in model performance in this investigation:
+\subsubsection{2. Non-Linear Manifold Separation (RBF Kernel SVM)}
+Transitioning from a flat hyperplane to an infinite-dimensional Gaussian manifold produced the largest single gain in model performance in this investigation:
 \begin{itemize}[noitemsep]
-    \item \textbf{Accuracy leaped $+4.00\%$}: from $78.14\%$ to $\mathbf{82.14\%}$.
-    \item \textbf{ROC-AUC shattered the $0.90$ threshold}: reaching $\mathbf{0.9038}$ (PR-AUC = $0.9003$).
+    \item \textbf{Accuracy increased $+4.00\%$}: from $78.14\%$ to $\mathbf{82.14\%}$.
+    \item \textbf{ROC-AUC exceeded $0.90$}: reaching $\mathbf{0.9038}$ (PR-AUC = $0.9003$).
     \item \textbf{Sensitivity increased significantly}: catching $1,984$ true tumors ($+83$ more than Linear SVM), cutting false negatives from $593$ down to $516$.
     \item \textbf{Support Vector Analysis}: RBF SVM identified $16,571$ support vectors ($41.4\%$ of the $40,000$ training dataset). In computational pathology, this high support vector proportion is clinically intuitive: tissue transitions between benign stroma and infiltrative tumor margins are morphologically continuous rather than cleanly isolated.
 \end{itemize}
 
 \subsubsection{3. The Random Forest Bagging Bottleneck: High Precision, Stalled Sensitivity}
-While Random Forest achieved project-record precision ($\mathbf{85.73\%}$ when tuned), its sensitivity stalled at $70.64\%$ ($722$ false negatives in default, $734$ in tuned). Because bagging trees are trained independently on random bootstrap subsamples, ambiguous boundary patches receive conflicting votes across trees. The majority voting threshold ($> 50\%$) leads to conservative tumor predictions. In clinical oncology, missing $29.4\%$ of tumor patches is unacceptable, capping Random Forest's overall utility.
+While Random Forest achieved the highest precision ($\mathbf{85.73\%}$ when tuned), its sensitivity stalled at $70.64\%$ ($722$ false negatives in default, $734$ in tuned). Because bagging trees are trained independently on random bootstrap subsamples, ambiguous boundary patches receive conflicting votes across trees. The majority voting threshold ($> 50\%$) leads to conservative tumor predictions. In clinical oncology, missing $29.4\%$ of tumor patches is unacceptable, capping Random Forest's overall utility.
 
 \subsubsection{4. Boosting Residual Recovery: HistGradientBoosting Surpasses Random Forest}
 HistGradientBoosting fundamentally solved the sensitivity deficit of bagging through sequential gradient residual descent:
@@ -803,14 +801,14 @@ To determine which histological features drove HistGradientBoosting's prediction
 }
 \end{table}
 
-\subsection{The Multi-Metric Evaluation Dilemma: Why RBF Kernel SVM is Declared the Benchmark Champion}
-A critical question in clinical machine learning arises when evaluating our benchmark leaderboard: \textit{Tuned Random Forest achieved the highest single-metric Precision ($85.73\%$), and HistGradientBoosting also posted $85.02\%$ Precision, exceeding RBF Kernel SVM ($84.03\%$). On what principled mathematical and clinical grounds is RBF Kernel SVM declared the champion architecture?}
+\subsection{Multi-Metric Evaluation: Selection Rationale for RBF Kernel SVM}
+A critical question in clinical machine learning arises when evaluating our benchmark leaderboard: \textit{Tuned Random Forest achieved the highest single-metric Precision ($85.73\%$), and HistGradientBoosting also posted $85.02\%$ Precision, exceeding RBF Kernel SVM ($84.03\%$). On what principled mathematical and clinical grounds was RBF Kernel SVM selected as the leading candidate architecture?}
 
 The answer rests on the fundamental trade-off between Precision, Sensitivity (Recall), threshold independence, and clinical loss asymmetry in oncology:
 
 \begin{enumerate}[leftmargin=*]
     \item \textbf{The Precision Trap \& The Cost of Missed Tumors:}
-    Precision reflects confidence when flagging malignancy ($\frac{\text{TP}}{\text{TP} + \text{FP}}$), while Sensitivity reflects diagnostic completeness ($\frac{\text{TP}}{\text{TP} + \text{FN}}$). On our $5,000$-sample validation cohort (containing exactly $2,500$ true tumor patches and $2,500$ benign tissue patches), the absolute diagnostic breakdown reveals a stark reality:
+    Precision reflects confidence when flagging malignancy ($\frac{\text{TP}}{\text{TP} + \text{FP}}$), while Sensitivity reflects diagnostic completeness ($\frac{\text{TP}}{\text{TP} + \text{FN}}$). On our $5,000$-sample validation cohort (containing exactly $2,500$ true tumor patches and $2,500$ benign tissue patches), the absolute diagnostic breakdown reveals a clear clinical trade-off:
     
     \begin{table}[H]
     \centering
@@ -824,7 +822,7 @@ The answer rests on the fundamental trade-off between Precision, Sensitivity (Re
     \midrule
     Tuned Random Forest & \textbf{85.73\%} & 70.64\% & 1,766 & \textbf{734 missed} & 294 & 1,028 errors \\
     HistGradientBoosting & 85.02\% & 74.44\% & 1,861 & \textbf{639 missed} & 328 & 967 errors \\
-    \textbf{RBF Kernel SVM (Winner)} & 84.03\% & \textbf{79.36\%} & \textbf{1,984} & \textbf{516 missed} & 377 & \textbf{893 errors} \\
+    \textbf{RBF Kernel SVM (Top Candidate)} & 84.03\% & \textbf{79.36\%} & \textbf{1,984} & \textbf{516 missed} & 377 & \textbf{893 errors} \\
     \bottomrule
     \end{tabular}%
     }
@@ -833,7 +831,7 @@ The answer rests on the fundamental trade-off between Precision, Sensitivity (Re
     Random Forest gained its $+1.70\%$ precision advantage through extreme conservatism: independent bagging trees vote cautiously, refusing to call a patch malignant unless certainty is high across most trees. As a direct result of this conservatism, Random Forest missed \textbf{734 metastatic tumor patches} ($29.36\%$ false negative rate). In contrast, RBF Kernel SVM caught \textbf{1,984 true tumors}---detecting $\mathbf{+218}$ more malignancies than Random Forest and $\mathbf{+123}$ more than HistGradientBoosting, cutting total classification errors to a benchmark-low $893$.
 
     \item \textbf{Clinical Asymmetry of Diagnostic Errors:}
-    In computational pathology, false positives and false negatives carry drastically asymmetric clinical costs:
+    In computational pathology, false positives and false negatives carry asymmetric operational and diagnostic costs:
     \begin{itemize}[noitemsep]
         \item \textit{False Positive (Type I Error):} Normal tissue is flagged as suspicious. The clinical impact is minimal: a pathologist spends a few moments inspecting the high-power field, or an additional immunohistochemical (IHC) stain is ordered. The patient is unharmed.
         \item \textit{False Negative (Type II Error):} Metastatic cancer in a sentinel lymph node is missed entirely. The patient is falsely declared cancer-free, curative adjuvant chemotherapy or radiotherapy is withheld, and micrometastases progress into fatal systemic disease.
@@ -851,7 +849,7 @@ The answer rests on the fundamental trade-off between Precision, Sensitivity (Re
     \end{itemize}
 \end{enumerate}
 
-In summary, RBF Kernel SVM wins on \textbf{5 of the 7 diagnostic evaluation dimensions}: Accuracy ($82.14\%$), ROC-AUC ($0.9038$), PR-AUC ($0.9003$), Sensitivity ($79.36\%$), and $F_1$-Score ($0.8163$), making it the undisputed candidate champion.
+In summary, RBF Kernel SVM wins on \textbf{5 of the 7 diagnostic evaluation dimensions}: Accuracy ($82.14\%$), ROC-AUC ($0.9038$), PR-AUC ($0.9003$), Sensitivity ($79.36\%$), and $F_1$-Score ($0.8163$), establishing it as the top-performing candidate architecture.
 
 
 % ----------------------------------------------------------------------
@@ -860,7 +858,7 @@ In summary, RBF Kernel SVM wins on \textbf{5 of the 7 diagnostic evaluation dime
 \section{Phase 6: Validation Hyperparameter Tuning \& Multi-Paradigm Ensemble Blending}
 
 \subsection{Phase 6 Protocol: Strict Validation Set Optimization}
-Having established the Non-Linear RBF Kernel SVM as the single candidate champion ($82.14\%$ accuracy, $0.9038$ ROC-AUC) and HistGradientBoosting as the top tree architecture ($80.66\%$ accuracy in $3.97$s), Phase~6 executes two targeted optimization thrusts:
+Having established the Non-Linear RBF Kernel SVM as the top candidate model ($82.14\%$ accuracy, $0.9038$ ROC-AUC) and HistGradientBoosting as the top tree architecture ($80.66\%$ accuracy in $3.97$s), Phase~6 executes two targeted optimization thrusts:
 \begin{enumerate}[leftmargin=*, noitemsep]
     \item \textbf{Systematic 2D Grid Search for RBF Kernel SVM:} Jointly optimizing the soft-margin penalty $C \in [0.5, 1.0, 2.0, 3.0, 4.0]$ and Gaussian kernel bandwidth $\gamma \in [0.010, \text{'scale'} \ (\approx 0.0169), 0.025]$, coupled with cost-sensitive class weighting.
     \item \textbf{Multi-Paradigm Ensemble Blending:} Fusing continuous margin distance scores (RBF SVM) with orthogonal tree split probabilities (HistGradientBoosting) in a soft-voting blend.
@@ -906,7 +904,7 @@ $C$ & $\gamma$ & Class Weight & Acc (\%) & ROC-AUC & Sens (\%) & Prec (\%) & $F_
 \subsection{Key Discoveries from RBF Kernel SVM Tuning}
 \begin{enumerate}[leftmargin=*]
     \item \textbf{Optimal Penalty Sweet Spot ($C=3.0$):} Increasing $C$ from $1.0 \to 3.0$ tightened the margin boundary around ambiguous histological margins, lifting ROC-AUC from $0.9038$ to a new peak of $\mathbf{0.9082}$ while reducing the support vector count from $16,571$ down to $15,569$ ($38.9\%$ of training instances).
-    \item \textbf{Clinical Cost-Sensitive Sensitivity Breakthrough ($\mathbf{80.32\%}$):} Applying a mild diagnostic class weight penalty ($w_1 = 1.10$ on tumor patches) produced the project's highest accuracy ($\mathbf{82.54\%}$) and pushed Sensitivity over the $80\%$ threshold to $\mathbf{80.32\%}$ ($2,008$ true tumors detected), achieving an all-time high $F_1$-score of $\mathbf{0.8214}$.
+    \item \textbf{Cost-Sensitive Sensitivity Improvement ($\mathbf{80.32\%}$):} Applying a mild diagnostic class weight penalty ($w_1 = 1.10$ on tumor patches) produced the highest candidate accuracy ($\mathbf{82.54\%}$) and elevated Sensitivity to $\mathbf{80.32\%}$ ($2,008$ true tumors detected), achieving an $F_1$-score of $\mathbf{0.8214}$.
 \end{enumerate}
 
 \subsection{Multi-Paradigm Ensemble Blending (RBF SVM + HistGradientBoosting)}
@@ -960,8 +958,8 @@ $w_{\text{RBF}}$ & $w_{\text{HGBM}}$ & Acc (\%) & ROC-AUC & Rank-AUC & Sens (\%)
 \subsection{Phase 6 Strategic Synthesis: Frozen Architectures for Phase 7}
 Validation hyperparameter tuning and multi-paradigm ensembling yielded two distinct, non-overlapping performance peaks:
 \begin{itemize}[noitemsep]
-    \item \textbf{Single Model Champion:} \textbf{Cost-Weighted RBF Kernel SVM} ($C=2.0, \gamma=\text{'scale'}, w=\{0: 1.0, 1: 1.10\}$) achieves the project's highest accuracy ($\mathbf{82.54\%}$), highest sensitivity ($\mathbf{80.32\%}$), and highest $F_1$-score ($\mathbf{0.8214}$).
-    \item \textbf{Ensemble Champion:} \textbf{Hybrid Blend ($70\%$ RBF $+ 30\%$ HistGBM)} shatters the $0.9100$ threshold, achieving project-record ROC-AUC ($\mathbf{0.9108}$ / $\mathbf{0.9114}$ Rank-AUC) and precision ($\mathbf{85.61\%}$).
+    \item \textbf{Top Individual Model:} \textbf{Cost-Weighted RBF Kernel SVM} ($C=2.0, \gamma=\text{'scale'}, w=\{0: 1.0, 1: 1.10\}$) achieves the project's highest accuracy ($\mathbf{82.54\%}$), highest sensitivity ($\mathbf{80.32\%}$), and highest $F_1$-score ($\mathbf{0.8214}$).
+    \item \textbf{Top Ensemble Configuration:} \textbf{Hybrid Blend ($70\%$ RBF $+ 30\%$ HistGBM)} achieves validation ROC-AUC ($\mathbf{0.9108}$ / $\mathbf{0.9114}$ Rank-AUC) and precision ($\mathbf{85.61\%}$).
 \end{itemize}
 Both configurations are formally frozen into \texttt{outputs/models/} for one-time evaluation on the untouched $5,000$-sample test set in Phase~7.
 
@@ -976,7 +974,7 @@ Both configurations are formally frozen into \texttt{outputs/models/} for one-ti
 \subsection{Strict One-Shot Protocol \& Validation Selection Bias Audit}
 A common vulnerability in clinical machine learning is \textit{validation overfitting} (or model selection bias): when dozens of models and hyperparameter combinations are evaluated against a single validation split, the top-performing configuration may partly benefit from sample-specific variance. 
 
-To conduct a scientifically rigorous and transparent assessment, Phase~7 evaluated our \textbf{entire top model portfolio} against the held-out, completely untouched test cohort ($N=5,000$ patches, exact $50.0\%$ normal / $50.0\%$ tumor balance) in a strict \textbf{one-shot pass}:
+To conduct a scicontrolled and objective evaluation, Phase~7 benchmarked our \textbf{trained model portfolio} against the held-out, completely untouched test cohort ($N=5,000$ patches, exact $50.0\%$ normal / $50.0\%$ tumor balance) in a single \textbf{one-shot pass}:
 \begin{itemize}[noitemsep]
     \item \textbf{No model parameters, thresholds, or blend weights were tuned or modified on the test split.}
     \item We evaluated the linear baseline (Logistic Regression, Linear SVM), tree ensembles (Tuned Random Forest, HistGradientBoosting), non-linear geometry (Default and Tuned RBF Kernel SVM), and multi-paradigm blends (50/50 and 70/30).
@@ -1051,7 +1049,7 @@ Tuned RBF Kernel SVM ($C=3.0$) & 82.36\% & 77.92\% & 4.44\% & 0.9082 & 0.8637 \\
 \end{table}
 
 \subsection{Bootstrap 95\% Confidence Intervals (1,000 Resamples)}
-To quantify sample variance and establish rigorous statistical bounds, we performed $1,000$ bootstrap iterations on the test set. As shown in Table~\ref{tab:test_ci}, the 95\% confidence interval for our champion Hybrid Blend's accuracy spans $[78.62\%, 80.92\%]$, confirming that its performance is tightly bounded and statistically superior to all linear baselines ($p < 10^{-7}$).
+To quantify sample variance and establish rigorous statistical bounds, we performed $1,000$ bootstrap iterations on the test set. As shown in Table~\ref{tab:test_ci}, the 95\% confidence interval for our primary Hybrid Blend's accuracy spans $[78.62\%, 80.92\%]$, confirming that its performance is tightly bounded and statistically superior to all linear baselines ($p < 10^{-7}$).
 
 \begin{table}[H]
 \centering
@@ -1094,9 +1092,9 @@ Linear SVM & 75.46\% [74.26\%, 76.72\%] & 0.8292 [0.8182, 0.8411] & 71.12\% [69.
 \label{fig:test_cm_eval}
 \end{figure}
 
-\subsection{Four empirical Scientific Discoveries from Test Evaluation}
+\subsection{Four Empirical Scientific Discoveries from Test Evaluation}
 \begin{enumerate}[leftmargin=*]
-    \item \textbf{The Ensembling complementarity (Hybrid Blend Champion):}
+    \item \textbf{Algorithmic Complementarity in Ensembling (Hybrid Blend):}
     The 50/50 soft-voting blend of RBF Kernel SVM and HistGradientBoosting won the overall benchmark on the test set ($\mathbf{79.76\%}$ accuracy, $\mathbf{0.8853}$ ROC-AUC, and benchmark-best Brier score of $\mathbf{0.1426}$). This confirms our core hypothesis: combining continuous distance geometry with discrete tree-split logic produces superior clinical robustness than relying on either model alone.
     
     \item \textbf{Random Forest Proves Most Generalization-Stable ($\Delta = 0.98\%$):}
@@ -1116,16 +1114,16 @@ Linear SVM & 75.46\% [74.26\%, 76.72\%] & 0.8292 [0.8182, 0.8411] & 71.12\% [69.
 % ----------------------------------------------------------------------
 \section{Phase 8: Diagnostic Error Analysis \& Pathological Failure Taxonomy}
 
-\subsection{Forensic Autopsy on Classification Failures}
-In translational medical machine learning, high aggregate metrics (\textit{e.g.}, $79.8\%$ test accuracy, $0.885$ ROC-AUC) must be accompanied by a rigorous forensic audit of failure modes. Uncovering \textit{why} and \textit{where} algorithms fail provides actionable guidance for clinical deployment, safety guardrails, and human-in-the-loop triage.
+\subsection{Failure Mode Analysis across Classification Errors}
+In clinical machine learning, aggregate benchmark metrics (\textit{e.g.}, $79.76\%$ test accuracy, $0.8853$ ROC-AUC) must be accompanied by a detailed examination of error patterns. Identifying where classifiers fail provides concrete guidance for clinical safety guardrails and pathologist triage workflows.
 
-Phase~8 conducts a comprehensive autopsy on the $1,009$ test misclassifications ($346$ False Positives, $663$ False Negatives) made by our champion Hybrid Multi-Paradigm Ensemble Blend.
+In this section, we analyze the $1,009$ test misclassifications ($339$ False Positives, $673$ False Negatives) produced by the primary Hybrid Multi-Paradigm Ensemble Blend.
 
 \subsection{Cross-Paradigm Consensus: The Empirical Feature Ceiling}
 To determine whether errors are idiosyncratic to specific algorithms or represent intrinsic biological ambiguities, we evaluated prediction overlap across all four distinct paradigms (Logistic Regression, Tuned Random Forest, HistGradientBoosting, and RBF Kernel SVM):
 \begin{itemize}[noitemsep]
     \item \textbf{Consensus Successes ($3,323$ patches, $66.5\%$ of test cohort):} All four model paradigms unanimously predicted the correct clinical diagnosis. These represent clear-cut histological morphologies (homogeneous benign stroma or obvious sheet-like malignant carcinoma).
-    \item \textbf{Consensus Failures ($613$ patches, $12.3\%$ of test cohort):} All four model paradigms simultaneously failed on the exact same patch. Remarkably, these $613$ consensus failures account for \textbf{over $60.7\%$ of all errors} made by the Hybrid Blend.
+    \item \textbf{Consensus Failures ($613$ patches, $12.3\%$ of test cohort):} All four model paradigms simultaneously failed on the exact same patch. In total, these $613$ consensus failures account for \textbf{over $60.7\%$ of all errors} made by the Hybrid Blend.
     \item \textbf{Disputed Cases ($1,064$ patches, $21.3\%$ of test cohort):} At least one architecture succeeded while another failed, proving that ensembling captures orthogonal predictive signal.
 \end{itemize}
 
@@ -1231,12 +1229,12 @@ Synthesizing visual reviews with statistical feature effect sizes yields a concr
 \subsection{Operational Regimes on the Held-Out Test Cohort}
 In clinical digital pathology, treating a machine learning model as a static binary classifier with a fixed threshold ($\tau = 0.50$) fails to reflect operational realities. Depending on whether an algorithm is deployed as a high-sensitivity initial screening filter or a high-precision confirmatory triage tool, the decision threshold must be adjusted. 
 
-Table~\ref{tab:clinical_thresholds} evaluates the performance of our champion Hybrid Multi-Paradigm Blend across three distinct operational regimes evaluated on all $5,000$ held-out test patches.
+Table~\ref{tab:clinical_thresholds} evaluates the performance of the primary Hybrid Multi-Paradigm Blend across three distinct operational regimes evaluated on all $5,000$ held-out test patches.
 
 \begin{table}[H]
 \centering
 \small
-\caption{Operational Clinical Performance of the Champion Hybrid Blend Across Decision Thresholds.}
+\caption{Operational Clinical Performance of the Primary Hybrid Blend Across Decision Thresholds.}
 \label{tab:clinical_thresholds}
 \resizebox{\textwidth}{!}{%
 \begin{tabular}{@{}lccccccc@{}}
@@ -1255,7 +1253,7 @@ Table~\ref{tab:clinical_thresholds} evaluates the performance of our champion Hy
     \item \textbf{High-Sensitivity Screening Regime ($\tau = 0.35$):}
     In secondary screening triage, missing an invasive micrometastasis is dangerous because untreated nodal disease leads to systemic recurrence. Shifting $\tau$ down to $0.35$ elevates Sensitivity to \textbf{$84.68\%$}, successfully detecting $2,117$ out of $2,500$ malignant patches and missing only $383$. Pathologists can comfortably use this mode as a rapid triage filter to flag suspicious slides for detailed microscope inspection.
     
-    \item \textbf{Balanced Champion Regime ($\tau = 0.50$):}
+    \item \textbf{Balanced Operating Regime ($\tau = 0.50$):}
     Our standard benchmark operating point achieves peak overall accuracy ($79.76\%$) and a balanced F1-score ($0.7831$), trading off false alarms ($339$ false positives) against missed tumors ($673$ false negatives).
     
     \item \textbf{High-Precision Confirmatory Regime ($\tau = 0.65$):}
@@ -1277,12 +1275,12 @@ In an ideal clinical trial setting, all slides from a given patient should be re
 \subsection{The Empirical Feature Representation Ceiling ($12.3\%$ Consensus Failure)}
 A central research question in machine learning is understanding the theoretical and empirical limits of handcrafted feature engineering. Across our 10-phase benchmark, we extracted 59 multimodal features (color moments across RGB, HSV, Lab; GLCM spatial textures; LBP uniform codes; Sobel gradients; and bilinear PCA) and trained diverse model architectures ranging from linear hyperplanes to gradient boosted trees and kernel SVMs.
 
-Our forensic error analysis in Phase~8 delivered a profound finding: \textbf{613 test patches ($12.3\%$ of the held-out test cohort, accounting for over $60.7\%$ of all ensemble errors) were simultaneously misclassified by all four distinct paradigms} (Logistic Regression, Random Forest, HistGradientBoosting, and RBF Kernel SVM). 
+Our error analysis in Phase~8 revealed a key empirical boundary: \textbf{613 test patches ($12.3\%$ of the held-out test cohort, representing $60.75\%$ of all ensemble errors) were simultaneously misclassified by all four distinct model families} (Logistic Regression, Random Forest, HistGradientBoosting, and RBF Kernel SVM). 
 
 This demonstrates that classification failure is \textbf{not} a flaw in algorithmic capacity or hyperparameter tuning. Rather, it reveals the \textbf{empirical representation limit} of hand-engineered global spatial and color descriptors.
 
 \subsection{Biological Mechanisms Driving the Representation Limit}
-Why do engineered features hit this ceiling? The answer lies in the physics of global spatial feature pooling:
+Why do globally pooled features encounter this barrier? The limitation arises directly from the spatial compression of tissue morphology:
 \begin{itemize}[leftmargin=*]
     \item \textbf{Dense Reactive Germinal Centers (Tier 1 False Positives):}
     Normal sentinel lymph nodes actively filter lymphatic fluid and mount immune responses. In reactive lymphoid follicles, normal proliferating centrocytes and centroblasts crowd with extreme cell density. When we compute global color moments and edge statistics across the patch, this packed normal tissue produces an edge density ($d = +0.83$) and intense hematoxylin dye absorption ($d = +0.84$) that is numerically identical to a cohesive sheet of invasive carcinoma. A global feature vector cannot distinguish between packed normal lymphocytes and malignant epithelial cells.
@@ -1299,7 +1297,7 @@ This finding provides the textbook mathematical and biological justification for
     \item \textbf{Sub-Cellular Atypicality Resolution:} Human pathologists distinguish reactive germinal centers from carcinoma under $40\times$ oil immersion by inspecting nuclear pleomorphism (irregular nuclear shapes, hyperchromatic clumped chromatin, and mitotic figures). Resolving these sub-cellular characteristics requires localized spatial feature maps rather than global summary statistics.
 \end{enumerate}
 
-\subsection{Milestone 10: Empirical Breakthrough with ResNet-18}
+\subsection{Milestone 10: Deep Convolutional Learning with ResNet-18}
 \label{sec:milestone10_cnn}
 To empirically validate the theoretical hypothesis that hierarchical convolutional representations overcome the $79.8\%$ handcrafted feature ceiling, we implemented and fine-tuned a deep Convolutional Neural Network (\textbf{ResNet-18}) on the raw histopathology patches of the PatchCamelyon dataset.
 
@@ -1329,7 +1327,7 @@ The best checkpoint selected via validation ROC-AUC ($0.9614$) was evaluated str
 \textbf{Rank} & \textbf{Model Architecture} & \textbf{Accuracy} & \textbf{ROC-AUC} & \textbf{PR-AUC} & \textbf{Sens (\%)} & \textbf{Spec (\%)} & \textbf{Prec (\%)} & \textbf{F1-Score} & \textbf{Brier} \\
 \midrule
 \textbf{1} & \textbf{ResNet-18 (Deep CNN)} & \textbf{84.94\%} & \textbf{0.9392} & \textbf{0.9455} & \textbf{75.04\%} & \textbf{94.84\%} & \textbf{93.57\%} & \textbf{0.8329} & \textbf{0.1168} \\
-2 & Hybrid Blend (50/50 Champion) & 79.76\% & 0.8853 & 0.8767 & 73.08\% & 86.44\% & 84.35\% & 0.7831 & 0.1426 \\
+2 & Hybrid Blend (50/50) & 79.76\% & 0.8853 & 0.8767 & 73.08\% & 86.44\% & 84.35\% & 0.7831 & 0.1426 \\
 3 & Hybrid Blend (70/30) & 79.56\% & 0.8804 & 0.8740 & 72.32\% & 86.80\% & 84.57\% & 0.7796 & 0.1453 \\
 4 & HistGradientBoosting & 78.82\% & 0.8845 & 0.8724 & 71.84\% & 85.80\% & 83.50\% & 0.7723 & 0.1460 \\
 5 & Default RBF Kernel SVM & 78.80\% & 0.8746 & 0.8681 & 73.28\% & 84.32\% & 82.37\% & 0.7756 & 0.1493 \\
@@ -1343,7 +1341,7 @@ The best checkpoint selected via validation ROC-AUC ($0.9614$) was evaluated str
 \end{table}
 
 \subsubsection{Clinical Diagnostic Interpretation of the Gains}
-The experimental results demonstrate a decisive breakthrough across every quantitative clinical dimension:
+The experimental results demonstrate substantial improvements across every quantitative clinical dimension:
 \begin{enumerate}[leftmargin=*]
     \item \textbf{Accuracy \& Discrimination Jump:} Test accuracy surged from $79.76\%$ to $\mathbf{84.94\%}$ ($+5.18\%$ absolute gain, correctly classifying $259$ additional patients). ROC-AUC reached $\mathbf{0.9392}$ ($+0.0539$), advancing the diagnostic pipeline firmly into the clinical-grade decision bracket.
     \item \textbf{62\% Reduction in False Positives:} The most dramatic clinical transformation occurred in precision and false positive control. Whereas our best classical ensemble generated $339$ false positives across the $2,500$ benign test patches (a specificity of $86.44\%$), ResNet-18 slashed false alarms to just $\mathbf{129}$ (a specificity of $\mathbf{94.84\%}$ and precision of $\mathbf{93.57\%}$). In a clinical laboratory triage setting, this represents a massive $61.9\%$ reduction in unwarranted pathologist re-examinations.
@@ -1370,9 +1368,9 @@ Every phase of this project is fully deterministic and reproducible:
 \section{Conclusion}
 This study evaluated classical, non-linear, and ensemble machine learning approaches for metastatic tumor detection on the PatchCamelyon dataset ($N=50,000$). By extracting a 59-dimensional multimodal feature set combining color moments, GLCM texture, Local Binary Patterns, Sobel edge gradients, and bilinear PCA, we mapped how model capacity scales from linear baselines ($75.84\%$ test accuracy) to tree-based ensembles ($78.82\%$ accuracy, $85.31\%$ precision) and RBF kernel SVMs ($78.80\%$ accuracy, $73.28\%$ sensitivity).
 
-Our champion \textbf{Hybrid Multi-Paradigm Blend} (50\% RBF SVM + 50\% HistGBM) achieved the highest overall test performance: \textbf{$79.76\%$ test accuracy, $0.8853$ ROC-AUC, $0.8767$ PR-AUC, and a Brier calibration score of $0.1426$}, validated across 1,000 bootstrap resamples ($p < 10^{-7}$).
+Our primary \textbf{Hybrid Multi-Paradigm Blend} (50\% RBF SVM + 50\% HistGBM) achieved the highest overall test performance: \textbf{$79.76\%$ test accuracy, $0.8853$ ROC-AUC, $0.8767$ PR-AUC, and a Brier calibration score of $0.1426$}, validated across 1,000 bootstrap resamples ($p < 10^{-7}$).
 
-Looking closely at the $1,009$ misclassifications on the held-out test set, we found that $613$ errors ($12.3\%$ of all test samples) are consensus failures shared across every classical model family. This marks the practical limit of global handcrafted features on this task, showing clearly why localized, multi-scale receptive fields from deep convolutional architectures like ResNet-18 ($84.94\%$ accuracy, $0.9392$ ROC-AUC) are needed to resolve complex, overlapping tissue morphologies.
+Looking closely at the $1,009$ misclassifications on the held-out test set, we found that $613$ errors ($12.3\%$ of all test samples) are consensus failures shared across every classical model family. This marks the practical limit of global handcrafted features on this task, demonstrating why localized, multi-scale receptive fields from deep convolutional architectures like ResNet-18 ($84.94\%$ accuracy, $0.9392$ ROC-AUC) are needed to resolve complex, overlapping tissue morphologies.
 
 % ----------------------------------------------------------------------
 % REFERENCES
