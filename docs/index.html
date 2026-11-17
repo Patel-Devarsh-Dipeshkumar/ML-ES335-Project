@@ -27,7 +27,6 @@
       <a href="#deep">6. Deep Learning Transition</a>
       <a href="#interactive">7. Interactive Studio &amp; Simulator</a>
       <a href="#limits">8. Limitations &amp; Codebase</a>
-      <a href="#defense">9. Author Defense</a>
     </nav>
     <button class="themebtn" id="themeBtn" type="button" aria-label="Switch colour theme" title="Switch colour theme">
       <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><circle cx="12" cy="12" r="8.5" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M12 3.5a8.5 8.5 0 0 1 0 17z" fill="currentColor"/></svg>
@@ -951,87 +950,12 @@ python src/train_cnn.py --eval-only # ResNet-18</code></pre>
   </div>
 </section>
 
-<section class="sec" id="defense">
-  <div class="wrap">
-    <div class="sec-head">
-      <span class="sec-tag">Individual Evaluation Deliverable</span>
-      <h2>9. Individual Understanding &amp; Technical Defense</h2>
-      <p class="lead">Per ES 335 grading guidelines (Criterion 10), each author independently documents primary implementation ownership, key engineering choices, quantitative evaluation findings, identified limitations, and rigorous reasoning regarding a proposed pipeline modification.</p>
-    </div>
-
-    <div class="grid grid-2" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 2rem; margin-top: 1.5rem;">
-      <article class="card" style="background: var(--bg-surface, #fff); border: 1px solid var(--border-color, #e2e8f0); border-radius: 8px; padding: 1.5rem; box-shadow: 0 2px 4px rgba(0,0,0,0.04);">
-        <h3 style="margin-top: 0; color: var(--primary, #1e40af); border-bottom: 2px solid var(--primary, #1e40af); padding-bottom: 0.5rem;">Devarsh Patel</h3>
-        <p><strong>Roll No:</strong> 24110245 &middot; <code>24110245@iitgn.ac.in</code></p>
-        
-        <h4 style="margin-top: 1rem; margin-bottom: 0.25rem;">1. Technical Ownership &amp; Code</h4>
-        <ul style="padding-left: 1.25rem; font-size: 0.92rem; line-height: 1.5;">
-          <li>Designed and implemented the 59-dimensional multimodal feature extraction engine (<code>src/features.py</code>, <code>src/feature_pipeline.py</code>) spanning RGB, HSV, Lab color moments, GLCM texture, uniform LBP, Sobel edge sharpness, and randomized PCA.</li>
-          <li>Engineered the zero-leakage pipeline protocol, ensuring all scaling and PCA transforms were fitted strictly on the 40,000-sample training partition.</li>
-          <li>Implemented the linear classification baseline (Logistic Regression MLE solver) and both Support Vector Machine models (Linear SVM and RBF Kernel SVM).</li>
-          <li>Conducted the systematic 2D validation grid search over $(C, \gamma)$ and cost-sensitive class re-weighting schemes.</li>
-        </ul>
-
-        <h4 style="margin-top: 1rem; margin-bottom: 0.25rem;">2. Key Choices &amp; Technical Defense</h4>
-        <ul style="padding-left: 1.25rem; font-size: 0.92rem; line-height: 1.5;">
-          <li><strong>Dual-Track Spatial Benchmark:</strong> Investigated whether full $96 	imes 96$ context outperforms central $32 	imes 32$ cropping. Demonstrated that surrounding stromal tissue architecture provides vital diagnostic context, yielding $+3.2\%$ higher ROC-AUC on Track A ($0.8652$ vs. $0.8330$).</li>
-          <li><strong>Non-Linear RBF Kernel Formulation:</strong> Because histological transitions between normal stroma and invasive carcinoma are continuous and multi-modal, linear hyperplanes hit a capacity ceiling at $78.18\%$. Formulating an RBF kernel projected features into an infinite-dimensional RKHS with 16,571 support vectors, boosting validation accuracy by $+4.00\%$.</li>
-        </ul>
-
-        <h4 style="margin-top: 1rem; margin-bottom: 0.25rem;">3. Evaluation &amp; Empirical Findings</h4>
-        <ul style="padding-left: 1.25rem; font-size: 0.92rem; line-height: 1.5;">
-          <li>Empirically proved the linear capacity ceiling ($78.38\%$ accuracy plateau under regularized sweeps).</li>
-          <li>Cost-weighted RBF SVM ($w_1 = 1.10$) boosted true tumor recall to $80.32\%$ ($2,008$ true tumors detected), achieving the project's highest single-model $F_1$-score ($0.8214$).</li>
-          <li>Validated stability on the sealed test cohort via 1,000 bootstrap resamples ($78.80\%$ accuracy, $95\%$ CI $[77.72\%, 80.04\%]$, $73.28\%$ sensitivity).</li>
-        </ul>
-
-        <h4 style="margin-top: 1rem; margin-bottom: 0.25rem;">4. Identified Failure Mode &amp; Limitation</h4>
-        <p style="font-size: 0.92rem; line-height: 1.5;"><strong>Spatial Pooling Dilution (Tier 2 False Negatives):</strong> In focal micrometastases containing only 5&ndash;15 cancer cells, global feature pooling across the entire patch numerically dilutes localized nuclear edges and hematoxylin uptake into background stroma, causing the model to predict normal benign tissue.</p>
-
-        <h4 style="margin-top: 1rem; margin-bottom: 0.25rem;">5. Reasoning on Pipeline Modification</h4>
-        <p style="font-size: 0.92rem; line-height: 1.5;"><strong>Proposed Change:</strong> Prepend an automated <em>Macenko Optical Density Stain Normalization</em> stage prior to color moment extraction.<br>
-        <strong>Mechanistic Reasoning &amp; Impact:</strong> 10 Whole-Slide Images account for $37.9\%$ of validation patches, and dye variance across slide preparations induces a $2.16\%$&ndash;$3.34\%$ generalization drop between validation and test splits. By decomposing optical density $OD = -\log_{10}(I/I_0)$ into Hematoxylin and Eosin stain vectors and normalizing absorption to a reference slide, non-biological chromatic drift is eliminated. This is hypothesized to resolve $15\%$&ndash;$25\%$ of false positives caused by hyper-stained normal germinal centers and compress the validation-to-test generalization gap by $pprox 1.0\%$&ndash;$1.5\%$ ROC-AUC.</p>
-      </article>
-
-      <article class="card" style="background: var(--bg-surface, #fff); border: 1px solid var(--border-color, #e2e8f0); border-radius: 8px; padding: 1.5rem; box-shadow: 0 2px 4px rgba(0,0,0,0.04);">
-        <h3 style="margin-top: 0; color: var(--primary, #1e40af); border-bottom: 2px solid var(--primary, #1e40af); padding-bottom: 0.5rem;">Dhrumil Bhutaiya</h3>
-        <p><strong>Roll No:</strong> 24110075 &middot; <code>24110075@iitgn.ac.in</code></p>
-        
-        <h4 style="margin-top: 1rem; margin-bottom: 0.25rem;">1. Technical Ownership &amp; Code</h4>
-        <ul style="padding-left: 1.25rem; font-size: 0.92rem; line-height: 1.5;">
-          <li>Implemented and tuned the tree-based ensemble architectures, including Tuned Random Forest (200 bagging trees) and HistGradientBoosting (<code>src/train_random_forest.py</code>, <code>src/train_gradient_boosting.py</code>).</li>
-          <li>Engineered and optimized the <strong>Hybrid Multi-Paradigm Ensemble Blend</strong> coupling continuous RBF SVM margin distance with HistGBM leaf probabilities (<code>src/tune_ensemble.py</code>).</li>
-          <li>Conducted the empirical error autopsy across all 1,009 test misclassifications, computed Cohen's $d$ feature effect sizes, and established the 4-tier histological failure taxonomy (<code>src/error_analysis.py</code>).</li>
-          <li>Architected and implemented the interactive web application (<code>docs/index.html</code>, <code>docs/app.js</code>, <code>docs/explorer.js</code>), including the real-time threshold simulator and patch explorer.</li>
-        </ul>
-
-        <h4 style="margin-top: 1rem; margin-bottom: 0.25rem;">2. Key Choices &amp; Technical Defense</h4>
-        <ul style="padding-left: 1.25rem; font-size: 0.92rem; line-height: 1.5;">
-          <li><strong>Histogram Discretization for Boosting:</strong> Continuous features were pre-binned into $K=256$ integer intervals, replacing $O(N \log N)$ exact split searches with $O(K)$ evaluations. This reduced training latency from $65$s to $3.97$s while regularizing high-frequency continuous feature noise.</li>
-          <li><strong>Multi-Paradigm Inductive Bias Coupling:</strong> Blended maximum-margin continuous distance geometry (RBF SVM) with recursive axis-aligned orthogonal feature partitioning (HistGBM). Because their mathematical mechanisms and error distributions are conditionally decorrelated, convex soft voting yielded optimal variance reduction and probability calibration (Brier score $0.1426$).</li>
-        </ul>
-
-        <h4 style="margin-top: 1rem; margin-bottom: 0.25rem;">3. Evaluation &amp; Empirical Findings</h4>
-        <ul style="padding-left: 1.25rem; font-size: 0.92rem; line-height: 1.5;">
-          <li>Discovered that Tuned Random Forest achieved the highest individual precision ($85.31\%$) at the cost of high false negatives ($68.76\%$ sensitivity), whereas the 50/50 Hybrid Blend won the global test benchmark ($79.76\%$ accuracy, $0.8853$ ROC-AUC, $0.8767$ PR-AUC, $p < 10^{-7}$).</li>
-          <li>Discovered the <strong>613-patch consensus failure boundary</strong> ($12.3\%$ of the test set, $>60.7\%$ of ensemble errors) shared across all classical paradigms, demonstrating that the ceiling on classical performance stems from feature representation limits rather than algorithmic tuning.</li>
-        </ul>
-
-        <h4 style="margin-top: 1rem; margin-bottom: 0.25rem;">4. Identified Failure Mode &amp; Limitation</h4>
-        <p style="font-size: 0.92rem; line-height: 1.5;"><strong>Reactive Lymphoid Germinal Centers (Tier 1 False Positives):</strong> Densely packed, proliferating normal lymphocytes in reactive lymph nodes mimic the high edge density ($d = +0.83$) and hematoxylin dye uptake ($d = +0.84$) of cohesive carcinoma, causing False Positives without localized sub-cellular resolution.</p>
-
-        <h4 style="margin-top: 1rem; margin-bottom: 0.25rem;">5. Reasoning on Pipeline Modification</h4>
-        <p style="font-size: 0.92rem; line-height: 1.5;"><strong>Proposed Change:</strong> Implement a <em>Dynamic Density-Gated Ensemble Weighting Function</em> $\alpha(\mathbf{x}) = \sigma(k \cdot (\theta_{\text{dense}} - \text{edge\_density}(\mathbf{x})))$.<br>
-        <strong>Mechanistic Reasoning &amp; Impact:</strong> In hyper-dense tissue patches ($	ext{edge\_density} > 0.35$), HistGBM's hierarchical axis splits isolate high-density benign follicles by conditioning on saturation variance better than RBF SVM. Conversely, in low-density stromal areas, RBF SVM's smooth Gaussian distance separates diffuse infiltrates more effectively. Dynamically delegating authority to HistGBM in dense tissue and to RBF SVM in stroma is hypothesized to resolve $8\%$&ndash;$12\%$ of consensus errors, pushing ensemble accuracy beyond $80.5\%$.</p>
-      </article>
-    </div>
-  </div>
-</section>
 </main>
 
 <footer class="foot">
   <div class="wrap">
-    <p>ES 335: Machine Learning, IIT Gandhinagar &middot; Devarsh Patel and Dhrumil Bhutaiya</p>
+    <p><strong>ES 335: Machine Learning, IIT Gandhinagar</strong></p>
+    <p><strong>Work Split:</strong> <strong>Devarsh Patel</strong> (Feature engineering, zero-leakage pipeline, linear models, RBF SVM) &middot; <strong>Dhrumil Bhutaiya</strong> (Tree ensembles, ensemble blending, error taxonomy, interactive web portal).</p>
     <p><a href="https://github.com/Patel-Devarsh-Dipeshkumar/ML-ES335-Project" target="_blank" rel="noopener">github.com/Patel-Devarsh-Dipeshkumar/ML-ES335-Project</a></p>
   </div>
 </footer>

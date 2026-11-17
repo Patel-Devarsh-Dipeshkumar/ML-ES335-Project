@@ -217,7 +217,7 @@ Patel-Devarsh-Dipeshkumar/ML-ES335-Project/
 │   ├── efficientnet_b0_benchmark_metrics.csv  # EfficientNet-B0 metrics
 │   └── ...
 ├── plots/                                     # 41 High-resolution publication figures & curves
-├── report/                                    # 41-page academic technical report (PDF & TeX)
+├── report/                                    # 38-page academic technical report (PDF & TeX)
 ├── requirements.txt                           # Pinned Python package dependencies
 ├── .gitignore                                 # Protection against large caches and data
 └── README.md                                  # Project documentation
@@ -279,43 +279,9 @@ Evaluate deeper capacity scaling and spatial cropping:
 
 ---
 
-## Authors & Individual Defense (ES 335 Deliverable)
+## Authors & Work Split
 
-### Devarsh Patel (Roll No: 24110245) — `24110245@iitgn.ac.in`
-* **Primary Technical Ownership:**
-  - Implemented the 59-dimensional multimodal feature extraction engine (`src/features.py`), spanning RGB/HSV/Lab color moments, Haralick GLCM textures, rotation-invariant Local Binary Patterns, Sobel edge sharpness, and randomized PCA projections.
-  - Built the zero-leakage preprocessing protocol (`src/feature_pipeline.py`), enforcing that all scaling and PCA transforms were fitted strictly on the $40,000$ training split.
-  - Implemented the linear baseline (Logistic Regression MLE solver) and Support Vector Machines (Linear SVM and Non-Linear RBF Kernel SVM).
-  - Designed the systematic validation grid search over $(C, \gamma)$ and cost-sensitive class re-weighting strategies (`src/tune_rbf_svm.py`).
-* **Key Choices & Technical Defense:**
-  - *Dual-Track Spatial Benchmark (Track A vs. Track B):* Tested whether full $96 \times 96$ context outperforms central $32 \times 32$ cropping. Demonstrated that surrounding stromal margins provide critical architectural context, yielding $+3.2\%$ higher ROC-AUC on Track A ($0.8652$ vs. $0.8330$).
-  - *Infinite-Dimensional RKHS Projection:* Transitioned from linear hyperplanes to an RBF kernel $K(\mathbf{x}, \mathbf{x}') = \exp(-\gamma \|\mathbf{x} - \mathbf{x}'\|^2)$, capturing non-linear histological transitions with $16,571$ support vectors and lifting validation accuracy by $+4.00\%$.
-* **Evaluation & Quantitative Findings:**
-  - Proved the linear capacity ceiling ($78.38\%$ accuracy plateau under regularized sweeps).
-  - Cost-weighted RBF SVM ($w_1 = 1.10$) boosted true tumor sensitivity to $80.32\%$ ($2,008$ true tumors caught) with peak individual $F_1$-score ($0.8214$).
-  - Bootstrap analysis on sealed test cohort verified $78.80\%$ accuracy ($95\%$ CI $[77.72\%, 80.04\%]$) and project-high classical sensitivity ($73.28\%$).
-* **Identified Limitation:**
-  - *Spatial Pooling Dilution (Tier 2 Errors):* In focal micrometastases with only $5$--$15$ malignant cells, global spatial averaging across the patch dilutes localized nuclear signals into surrounding stroma, inducing False Negatives.
-* **Reasoning About a Small Pipeline Change:**
-  - *Proposed Modification:* Prepend **Macenko Optical Density Stain Normalization** prior to feature extraction.
-  - *Reasoning & Impact:* Decomposing RGB pixels into optical density ($OD = -\log_{10}(I/I_0)$) and normalizing Hematoxylin/Eosin vectors to a reference slide will eliminate non-biological slide-to-slide dye variance, closing the $2.16\%$--$3.34\%$ test generalization gap and reducing false alarms from dark benign follicles by $15\%$--$25\%$.
+* **Devarsh Patel** (Roll No: 24110245) — Multimodal feature engineering pipeline (59 features), zero-leakage preprocessing, linear baselines (Logistic Regression, Linear SVM), and RBF Kernel SVM implementation/tuning.
+* **Dhrumil Bhutaiya** (Roll No: 24110075) — Tree ensembles (Random Forest, HistGradientBoosting), multi-paradigm ensemble blending, diagnostic error analysis taxonomy, and interactive web application.
 
----
-
-### Dhrumil Bhutaiya (Roll No: 24110075) — `24110075@iitgn.ac.in`
-* **Primary Technical Ownership:**
-  - Implemented the tree ensemble models: Tuned Random Forest (200 de-correlated bagging trees) and HistGradientBoosting (`src/train_random_forest.py`, `src/train_gradient_boosting.py`).
-  - Designed and optimized the **Hybrid Multi-Paradigm Ensemble Blend** combining continuous RBF SVM margin geometry with HistGBM leaf probabilities (`src/tune_ensemble.py`).
-  - Conducted the empirical error autopsy across $1,009$ test misclassifications, computed Cohen's $d$ feature effect sizes, and established the 4-tier histological failure taxonomy (`src/error_analysis.py`).
-  - Architected and built the interactive web application (`docs/index.html`, `docs/app.js`, `docs/explorer.js`), including the real-time clinical threshold simulator and patch explorer.
-* **Key Choices & Technical Defense:**
-  - *Histogram Discretization for Boosting:* Binned continuous features into $K=256$ integer intervals, speeding up tree splits to $O(K)$ and training 300 boosting stages in $3.97$ seconds ($16\times$ faster than SVM) while regularizing continuous feature noise.
-  - *Multi-Paradigm Inductive Bias Coupling:* Combined two orthogonal mathematical paradigms—Gaussian maximum-margin distance and recursive axis-aligned decision trees—maximizing error independence and achieving optimal calibration (Brier score $0.1426$).
-* **Evaluation & Quantitative Findings:**
-  - Highlighted the precision-recall trade-off: Tuned Random Forest achieved highest precision ($85.31\%$) but poor recall ($68.76\%$), while the 50/50 Hybrid Blend won the global test benchmark ($79.76\%$ accuracy, $0.8853$ ROC-AUC, $0.8767$ PR-AUC, $p < 10^{-7}$).
-  - Discovered the **613-patch consensus failure boundary** ($12.3\%$ of test data, $>60.7\%$ of ensemble errors) shared across all classical paradigms, proving the representation ceiling of globally pooled features.
-* **Identified Limitation:**
-  - *Reactive Lymphoid Germinal Centers (Tier 1 Errors):* Densely packed benign centrocytes in reactive lymph nodes mimic the high edge density ($d = +0.83$) and hematoxylin uptake ($d = +0.84$) of invasive carcinoma, causing False Positives without localized sub-cellular resolution.
-* **Reasoning About a Small Pipeline Change:**
-  - *Proposed Modification:* Implement a **Dynamic Density-Gated Blending Function** $\alpha(\mathbf{x}) = \sigma(k \cdot (\theta_{\text{dense}} - \text{edge\_density}(\mathbf{x})))$.
-  - *Reasoning & Impact:* In hyper-dense regions ($\text{edge\_density} > 0.35$), HistGBM handles saturation variance better than RBF SVM; in sparse stromal areas, RBF SVM's smooth Gaussian distance identifies subtle infiltrates. Dynamically weighting HistGBM in dense tissue and RBF SVM in stroma is projected to resolve $8\%$--$12\%$ of consensus failures, lifting ensemble accuracy past $80.5\%$.
+*Both authors contributed equally to benchmark experimentation, statistical error analysis, and manuscript preparation.*
